@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/input_title.dart';
 import 'package:footloose_tickets/presentation/widgets/label_error_input.dart';
-// import 'package:footloose_puntodeventa/src/data/provider/credenciales_provider.dart';
-// import 'package:footloose_puntodeventa/src/helpers/helpers.dart';
-// import 'package:footloose_puntodeventa/src/ui/common/style.dart';
-// import 'package:footloose_puntodeventa/src/ui/shared/inputTitle.dart';
-// import 'package:footloose_puntodeventa/src/ui/shared/labelErrorInput.dart';
-// import 'package:provider/provider.dart';
 
-class InputCodLogin extends StatelessWidget {
+class InputCodLogin extends ConsumerWidget {
   const InputCodLogin({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    // final credencialesProvider = Provider.of<CredencialesProvider>(context, listen: true);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authProvider);
 
-    return const Column(
+    return Column(
       children: [
-        InputTitle(title: "Código de colaborador"),
-        SizedBox(height: 5),
-        _InputCodeColaborador(),
-        SizedBox(height: 12),
+        const InputTitle(title: "Código de colaborador"),
+        const SizedBox(height: 5),
+        const _InputCodeColaborador(),
+        const SizedBox(height: 12),
         LabelErrorInput(
-          eval: true,
+          eval: auth.codeColaboradorValid ?? true,
           customError: "Ingrese un código de colaborador válido",
         )
       ],
@@ -34,21 +31,17 @@ class InputCodLogin extends StatelessWidget {
   }
 }
 
-class _InputCodeColaborador extends StatefulWidget {
+class _InputCodeColaborador extends ConsumerStatefulWidget {
   const _InputCodeColaborador();
-  // {
-  // required this.credencialesProvider,
-  //}
-
-  // final CredencialesProvider credencialesProvider;
 
   @override
-  State<_InputCodeColaborador> createState() => _InputCodeColaboradorState();
+  _InputCodeColaboradorState createState() => _InputCodeColaboradorState();
 }
 
-class _InputCodeColaboradorState extends State<_InputCodeColaborador> {
+class _InputCodeColaboradorState extends ConsumerState<_InputCodeColaborador> {
   @override
   Widget build(BuildContext context) {
+    final auth = ref.read(authProvider);
     return Container(
       height: 60.0,
       width: double.infinity,
@@ -59,15 +52,17 @@ class _InputCodeColaboradorState extends State<_InputCodeColaborador> {
           style: AppTheme.styleInput,
           onChanged: (value) {
             setState(() {});
-            // widget.credencialesProvider.usuario = value;
-            // widget.credencialesProvider.codeColaboradorValid = (value.length == 6 && isNumeric(value));
+            // credenciales.usuario = value;
+            // credenciales.codeColaboradorValid = (value.length == 6 && isNumeric(value));
+            auth.usuario = value;
+            auth.codeColaboradorValid = (value.length == 6 && isNumeric(value));
           },
           textAlign: TextAlign.start,
           autocorrect: false,
           keyboardType: TextInputType.number,
           cursorColor: AppTheme.colorStyleText,
           inputFormatters: [LengthLimitingTextInputFormatter(8)],
-          decoration: AppTheme.getCustomDecorationInput(false), // widget.credencialesProvider.codeColaboradorValid ??
+          decoration: AppTheme.getCustomDecorationInput(auth.codeColaboradorValid ?? false),
         ),
       ),
     );

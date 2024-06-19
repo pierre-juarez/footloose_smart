@@ -1,8 +1,9 @@
-import 'package:footloose_tickets/presentation/screens/login/home_screen.dart';
+import 'package:footloose_tickets/presentation/screens/home/home_screen.dart';
+import 'package:footloose_tickets/presentation/screens/login/login_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(initialLocation: '/', routes: [
-  GoRoute(path: '/', name: HomeScreen.name, builder: (context, state) => const HomeScreen(), routes: const [
+  GoRoute(path: '/', name: LoginScreen.name, builder: (context, state) => const LoginScreen(), routes: [
     // GoRoute(
     //   path: 'movie/:id',
     //   name: MovieScreen.name,
@@ -11,5 +12,15 @@ final appRouter = GoRouter(initialLocation: '/', routes: [
     //     return MovieScreen(movieId: movieId);
     //   },
     // )
+    GoRoute(
+      path: 'home',
+      name: HomeScreen.name,
+      builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: 'login',
+      name: LoginScreen.name,
+      builder: (context, state) => const LoginScreen(),
+    )
   ]),
 ]);

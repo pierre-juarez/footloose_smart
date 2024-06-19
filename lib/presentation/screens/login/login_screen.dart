@@ -7,10 +7,10 @@ import 'package:footloose_tickets/presentation/widgets/login/input_cod_login.dar
 import 'package:footloose_tickets/presentation/widgets/login/input_password.dart';
 import 'package:footloose_tickets/presentation/widgets/logo_widget.dart';
 
-class HomeScreen extends StatelessWidget {
-  static const name = 'home-screen';
+class LoginScreen extends StatelessWidget {
+  static const name = 'login-screen';
 
-  const HomeScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

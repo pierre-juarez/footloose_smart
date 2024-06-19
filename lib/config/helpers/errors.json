@@ -1,0 +1,17 @@
+{
+  "E001": "Por favor, ingrese una tienda válida",
+  "E002": "Ingresa un usuario o contraseña válidos",
+  "E003": "Hubo un problema con el servidor, notificar a Soporte",
+  "E004": "El proceso excedió el tiempo de espera, notificar a Soporte",
+  "E005": "Al parecer no estás conectado a Internet",
+  "E006": "Surgió algo inesperado, por favor inténtalo nuevamente más tarde",
+  "E007": "Código de usuario no válido",
+  "E008": "Ingresa un código válido",
+  "E009": "Error en el servidor, notificar a Soporte",
+  "E010": "Usuario o contraseña incorrectas",
+  "E011": "",
+  "E012": "",
+  "E013": "",
+  "E014": "",
+  "E015": ""
+}
