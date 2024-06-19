@@ -62,8 +62,10 @@ class ButtonInitLogin extends ConsumerWidget {
       }
 
       if (loginStatus) {
+        auth.isConnect = true;
         redirectToHome();
       } else {
+        auth.isConnect = false;
         if (context.mounted) {
           handleError(auth.statusCodeLogin);
         }

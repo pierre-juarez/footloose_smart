@@ -29,6 +29,7 @@ class AuthProvider with ChangeNotifier {
   bool _conexionLentaServidorLogin = false;
   bool _errorServidor = false;
   int _statusCodeLogin = 0;
+  int _statusCodeLoggedIn = 0;
 
   String _tokenInApp = "";
   String _usercod = "";
@@ -103,6 +104,12 @@ class AuthProvider with ChangeNotifier {
   int get statusCodeLogin => _statusCodeLogin;
   set statusCodeLogin(int user) {
     _statusCodeLogin = user;
+    notifyListeners();
+  }
+
+  int get statusCodeLoggedIn => _statusCodeLoggedIn;
+  set statusCodeLoggedIn(int user) {
+    _statusCodeLoggedIn = user;
     notifyListeners();
   }
 
@@ -210,7 +217,7 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
-      // if (resp.statusCode == 500) {
+// if (resp.statusCode == 500) {
       //   isConnetLogin = true;
       //   errorServidor = true;
       //   print(resp.body);
@@ -228,7 +235,7 @@ class AuthProvider with ChangeNotifier {
       //   errorServidor = false;
       //   isConnetLogin = true;
       //   print(resp.body);
-      //   return false;
+      //   return false
       // }
     } catch (e) {
       // isConnetLogin = false;
@@ -254,7 +261,7 @@ class AuthProvider with ChangeNotifier {
         "Authorization": "Bearer $token",
         "Content-Type": "application/json"
       }).timeout(const Duration(seconds: 15), onTimeout: () {
-        print("STATUS CONEXION LENTA IsLoggedIn: "); // TODO - Cambiar el mensaje conexión sin internet por uno de timeout
+        statusCodeLoggedIn = 408;
         print("🚀 ~ file: auth_service.dart ~ line: 204 ~ Timeout en el Renew Auth");
         return http.Response("Error", 408);
       });
@@ -267,30 +274,28 @@ class AuthProvider with ChangeNotifier {
         final subject = UserWithTokenModel.fromMap(payload);
         userModelWithToken = subject;
         userCod = await AuthProvider.getUserCod();
-        print("TOKEN ISLOGGEDIN>>> desencriptado $payload");
-        print("USERCOD ISLOGGEDIN>>>  $userCod");
 
         isLoged = true;
         isConnect = true;
         return isLoged;
-      } else if (resp.statusCode == 408) {
+      } else {
         //* CONEXION LENTA
-        print("CONEXION LENTA");
 
         isConnect = true;
         isLoged = false;
         conexionLentaServidor = true;
         return isLoged;
-      } else {
-        //* REGISTRADO Y NO LOGEADO TOKEN EXPIRADO O NO REGISTRADO Y NO LOGEADO
-        print("STATUS: ${resp.statusCode}");
-        print("REGISTRADO Y NO LOGEADO TOKEN EXPIRADO O NO REGISTRADO Y NO LOGEADO");
-        logOut();
-        isConnect = true;
-        isLoged = false;
-        conexionLentaServidor = false;
-        return isLoged;
       }
+      //  else {
+      //   //* REGISTRADO Y NO LOGEADO TOKEN EXPIRADO O NO REGISTRADO Y NO LOGEADO
+      //   print("STATUS: ${resp.statusCode}");
+      //   print("REGISTRADO Y NO LOGEADO TOKEN EXPIRADO O NO REGISTRADO Y NO LOGEADO");
+      //   logOut();
+      //   isConnect = true;
+      //   isLoged = false;
+      //   conexionLentaServidor = false;
+      //   return isLoged;
+      // }
     } catch (e) {
       //* ESTADO DE SIN CONEXION
       isConnect = false;
