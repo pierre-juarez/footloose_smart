@@ -1,6 +1,8 @@
+import 'package:footloose_tickets/presentation/screens/detail/detail_product_screen.dart';
 import 'package:footloose_tickets/presentation/screens/home/home_screen.dart';
 import 'package:footloose_tickets/presentation/screens/home/splash_screen.dart';
 import 'package:footloose_tickets/presentation/screens/login/login_screen.dart';
+import 'package:footloose_tickets/presentation/screens/scan/scan_product_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(initialLocation: '/', routes: [
@@ -18,5 +20,15 @@ final appRouter = GoRouter(initialLocation: '/', routes: [
     path: '/login',
     name: LoginScreen.name,
     builder: (context, state) => const LoginScreen(),
+  ),
+  GoRoute(
+    path: '/scan',
+    name: ScanerPage.name,
+    builder: (context, state) => const ScanerPage(),
+  ),
+  GoRoute(
+    path: '/product',
+    name: DetailProductPage.name,
+    builder: (context, state) => const DetailProductPage(),
   )
 ]);
