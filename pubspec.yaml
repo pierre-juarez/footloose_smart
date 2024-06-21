@@ -32,6 +32,7 @@ dependencies:
   blue_thermal_printer: ^1.2.3
   crypto: ^3.0.3
   cupertino_icons: ^1.0.6
+  dio: ^5.4.3+1
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.5.1

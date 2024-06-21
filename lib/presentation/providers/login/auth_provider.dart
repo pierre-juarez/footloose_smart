@@ -1,11 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:footloose_puntodeventa/src/domian/models/login_model.dart';
-// import 'package:footloose_puntodeventa/src/domian/models/user_model.dart';
-// import 'package:footloose_puntodeventa/src/domian/utils/globals.dart';
 import 'package:footloose_tickets/config/constants/environment.dart';
 import 'package:footloose_tickets/infraestructure/models/login_model.dart';
 import 'package:footloose_tickets/infraestructure/models/user_with_token_model.dart';
@@ -16,6 +12,8 @@ import 'package:logging/logging.dart';
 //Servicios
 
 //Serivio de login nuevo basado en la nueva API
+
+// TODO - Cambiar a DIO
 
 class AuthProvider with ChangeNotifier {
   final Logger logger = Logger('MyApp');
@@ -216,29 +214,7 @@ class AuthProvider with ChangeNotifier {
       } else {
         return false;
       }
-
-// if (resp.statusCode == 500) {
-      //   isConnetLogin = true;
-      //   errorServidor = true;
-      //   print(resp.body);
-      //   return false;
-      // } else if (resp.statusCode == 408) {
-      //   //* CONEXION LENTA DE SERVIDOR
-      //   conexionLentaServidorLogin = true;
-      //   errorServidor = false;
-      //   isConnetLogin = true;
-      //   print(resp.body);
-      //   return false;
-      // } else {
-      //   //* DATOS INCORRECTOS DE INICIO DE SESION
-      //   print("STATUS CODE LOGIN:${resp.statusCode}");
-      //   errorServidor = false;
-      //   isConnetLogin = true;
-      //   print(resp.body);
-      //   return false
-      // }
     } catch (e) {
-      // isConnetLogin = false;
       _statusCodeLogin = 404;
       logger.severe("Error al intentar logearse: ", e);
       return false;
@@ -286,16 +262,6 @@ class AuthProvider with ChangeNotifier {
         conexionLentaServidor = true;
         return isLoged;
       }
-      //  else {
-      //   //* REGISTRADO Y NO LOGEADO TOKEN EXPIRADO O NO REGISTRADO Y NO LOGEADO
-      //   print("STATUS: ${resp.statusCode}");
-      //   print("REGISTRADO Y NO LOGEADO TOKEN EXPIRADO O NO REGISTRADO Y NO LOGEADO");
-      //   logOut();
-      //   isConnect = true;
-      //   isLoged = false;
-      //   conexionLentaServidor = false;
-      //   return isLoged;
-      // }
     } catch (e) {
       //* ESTADO DE SIN CONEXION
       isConnect = false;
