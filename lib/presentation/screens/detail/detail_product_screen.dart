@@ -24,14 +24,18 @@ class DetailProductPage extends StatelessWidget {
     final String material =
         "${productModel.data?[0].caracteristica.material.material1.nombre} ${productModel.data?[0].caracteristica.material.material2.nombre} ${productModel.data?[0].caracteristica.material.material3.nombre}";
     final String nombre = productModel.data?[0].nombre ?? "-";
-    const String marca = "#marca" ?? "#marca";
-    const String abrev = "#abrev" ?? "#abrev";
-    const String modelo = "#modelo" ?? "#modelo";
+
     final String sku = productModel.data?[0].sku ?? "#modelo";
     const String cu = "#cu" ?? "#cu";
     final double pvp = productModel.data?[0].precioBlanco ?? 0.0;
     final String talla = productModel.data?[0].caracteristica.tallas.tallas.nombre ?? "#talla";
     const String fechaCreacion = "#fechaCreacion" ?? "#fechaCreacion";
+
+    List<String> splitNombre = nombre.split(" ");
+
+    final String marca = (splitNombre.isNotEmpty) ? splitNombre[0] : "-";
+    final String modelo = (splitNombre.isNotEmpty) ? splitNombre[1] : "-";
+    final String abrev = (splitNombre.isNotEmpty) ? splitNombre[4] : "-";
 
     return SafeArea(
       child: Scaffold(
@@ -68,7 +72,7 @@ class DetailProductPage extends StatelessWidget {
                       const SizedBox(height: 20.0),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: const ButtonPrimary(validator: false, title: "Imprimir"),
+                        child: const ButtonPrimary(validator: false, title: "Previsualizar etiqueta"),
                       )
                     ],
                   ),
@@ -162,7 +166,8 @@ class CardProduct extends StatelessWidget {
               const SizedBox(height: 15.0),
               Text(name),
               const SizedBox(height: 10),
-              Text("$marca $abrev $modelo"),
+              Text(marca),
+              Text("$abrev - $modelo"),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
