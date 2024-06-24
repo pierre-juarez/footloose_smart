@@ -9,8 +9,8 @@ import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
+import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
-import 'package:footloose_tickets/presentation/widgets/navbar.dart';
 import 'package:go_router/go_router.dart';
 
 class PreviewPrintScreen extends StatefulWidget {
@@ -28,6 +28,7 @@ class PreviewPrintScreen extends StatefulWidget {
 
 class _PreviewPrintScreenState extends State<PreviewPrintScreen> {
   final GlobalKey _globalKey = GlobalKey();
+  bool loadingPrint = false;
 
   Future<Uint8List> _capturePng() async {
     try {
@@ -42,6 +43,10 @@ class _PreviewPrintScreenState extends State<PreviewPrintScreen> {
   }
 
   void _navigateToPrintScreen() async {
+    setState(() {
+      loadingPrint = true;
+    });
+    await Future.delayed(const Duration(milliseconds: 500));
     bool isVerify = await verifyBluetooth();
 
     if (isVerify) {
@@ -57,6 +62,9 @@ class _PreviewPrintScreenState extends State<PreviewPrintScreen> {
         Navigator.pop(context);
       });
     }
+    setState(() {
+      loadingPrint = false;
+    });
   }
 
   @override
@@ -66,14 +74,9 @@ class _PreviewPrintScreenState extends State<PreviewPrintScreen> {
 
     return SafeArea(
         child: Scaffold(
+      appBar: const AppBarCustom(title: "Previsualización de etiqueta"),
       body: Column(
         children: [
-          NavbarHome(
-            title: "Previsualización de etiqueta",
-            onTap: () {
-              context.pop();
-            },
-          ),
           Center(
             child: Column(
               children: [
@@ -136,7 +139,10 @@ class _PreviewPrintScreenState extends State<PreviewPrintScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
-                  child: InkWell(onTap: _navigateToPrintScreen, child: const ButtonPrimary(validator: false, title: "Imprimir")),
+                  child: InkWell(
+                    onTap: _navigateToPrintScreen,
+                    child: ButtonPrimary(validator: loadingPrint, title: "Imprimir"),
+                  ),
                 )
               ],
             ),

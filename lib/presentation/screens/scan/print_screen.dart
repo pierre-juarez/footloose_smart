@@ -6,6 +6,7 @@ import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
 
@@ -40,14 +41,7 @@ class _PrintPageProductState extends State<PrintScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: AppTheme.backgroundColor,
-        title: Text(
-          "Busca y selecciona una impresora",
-          style: robotoStyle(18, FontWeight.w400, Colors.white),
-        ),
-      ),
+      appBar: const AppBarCustom(title: "Busca y selecciona una impresora"),
       backgroundColor: Colors.white,
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),

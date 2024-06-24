@@ -83,12 +83,41 @@ class _NavbarHome extends StatelessWidget {
   }
 }
 
-class _ConsultPage extends StatelessWidget {
+class _ConsultPage extends StatefulWidget {
   const _ConsultPage({
     required this.camera,
   });
 
   final CameraProvider camera;
+
+  @override
+  State<_ConsultPage> createState() => _ConsultPageState();
+}
+
+class _ConsultPageState extends State<_ConsultPage> {
+  bool loadingScan = false;
+
+  Future<void> navigateToScan() async {
+    setState(() {
+      loadingScan = true;
+    });
+    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      print(
+          "🚀 ~ file: consultaPage.dart ~ line: 41 ~ cameraController.mobileScannerController.isStarting: ${widget.camera.mobileScannerController.value.isRunning}");
+      await widget.camera.mobileScannerController.start();
+      await redirectToPage("/scan");
+      setState(() {
+        loadingScan = false;
+      });
+    } catch (e) {
+      await widget.camera.mobileScannerController.stop();
+      print("Error al ir a la página de Escanner: $e");
+      setState(() {
+        loadingScan = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,24 +137,9 @@ class _ConsultPage extends StatelessWidget {
           ),
           const SizedBox(height: 80),
           InkWell(
-            onTap: () async {
-              //FIXME validar funcionalidad del scanner, solo se ejecuta consulta una vez, luego falla...
-              try {
-                print(
-                    "🚀 ~ file: consultaPage.dart ~ line: 41 ~ cameraController.mobileScannerController.isStarting: ${camera.mobileScannerController.value.isRunning}");
-                // await camera.mobileScannerController.stop();
-                // if (!camera.mobileScannerController.autoStart) {
-                await camera.mobileScannerController.start();
-                // }
-                //navigateToPush(context, ScannerPage());
-                await redirectToPage("/scan");
-              } catch (e) {
-                await camera.mobileScannerController.stop();
-                print("Error al ir a la página de Escanner: $e");
-              }
-            },
-            child: const ButtonPrimary(
-              validator: false,
+            onTap: () async => navigateToScan(),
+            child: ButtonPrimary(
+              validator: loadingScan,
               title: "Escanear producto",
               icon: FontAwesomeIcons.qrcode,
             ),

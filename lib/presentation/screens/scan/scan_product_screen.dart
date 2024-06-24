@@ -73,7 +73,6 @@ class ScanerPage extends ConsumerWidget {
                     redirectToPage("/home");
                   },
                 ),
-                // ImageLogoFootloose(),
                 const SizedBox(height: 10.0),
                 Container(
                   height: MediaQuery.of(context).size.height * 0.32,
@@ -83,7 +82,6 @@ class ScanerPage extends ConsumerWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
                     child: MobileScanner(
-                      // fit: BoxFit.contain,
                       controller: camera.mobileScannerController,
                       onDetect: (capture) async {
                         await scanProduct(
@@ -169,7 +167,7 @@ class _AlertSearchingProduct extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const TextWidgetInput(
-                  text: "Buscando producto",
+                  text: "Obteniendo información del producto...",
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,

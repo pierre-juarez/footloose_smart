@@ -2,14 +2,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
+import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_model.dart';
+import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
-import 'package:footloose_tickets/presentation/widgets/navbar.dart';
 import 'package:go_router/go_router.dart';
 
-class DetailProductPage extends StatelessWidget {
+class DetailProductPage extends StatefulWidget {
   static const name = "product-screen";
   final ProductModel productModel;
 
@@ -19,18 +20,23 @@ class DetailProductPage extends StatelessWidget {
   });
 
   @override
+  State<DetailProductPage> createState() => _DetailProductPageState();
+}
+
+class _DetailProductPageState extends State<DetailProductPage> {
+  bool loadingPage = false;
+  @override
   Widget build(BuildContext context) {
-    print("🚀 ~ file: detail_product_screen.dart ~ line: 74 ~ TM_FUNCTION: ${productModel.data?[0].nombre}");
-    final String temporada = productModel.data?[0].caracteristica.temporada.nombre ?? "-";
+    final String temporada = widget.productModel.data?[0].caracteristica.temporada.nombre ?? "-";
     const String tipoArticulo = "--tipoArticulo" ?? "--tipoArticulo";
     final String material =
-        "${productModel.data?[0].caracteristica.material.material1.nombre} ${productModel.data?[0].caracteristica.material.material2.nombre} ${productModel.data?[0].caracteristica.material.material3.nombre}";
-    final String nombre = productModel.data?[0].nombre ?? "-";
+        "${widget.productModel.data?[0].caracteristica.material.material1.nombre} ${widget.productModel.data?[0].caracteristica.material.material2.nombre} ${widget.productModel.data?[0].caracteristica.material.material3.nombre}";
+    final String nombre = widget.productModel.data?[0].nombre ?? "-";
 
-    final String sku = productModel.data?[0].sku ?? "#modelo";
+    final String sku = widget.productModel.data?[0].sku ?? "#modelo";
     const String cu = "--cu" ?? "--cu";
-    final double pvp = productModel.data?[0].precioBlanco ?? 0.0;
-    final String talla = productModel.data?[0].caracteristica.tallas.tallas.nombre ?? "--talla";
+    final double pvp = widget.productModel.data?[0].precioBlanco ?? 0.0;
+    final String talla = widget.productModel.data?[0].caracteristica.tallas.tallas.nombre ?? "--talla";
     const String fechaCreacion = "--fechaCreacion" ?? "--fechaCreacion";
 
     List<String> splitNombre = nombre.split(" ");
@@ -40,10 +46,38 @@ class DetailProductPage extends StatelessWidget {
     final String abrev = (splitNombre.isNotEmpty) ? splitNombre[4] : "-";
     final String color = (splitNombre.isNotEmpty) ? splitNombre[7].split("-")[0] : "-";
 
+    Future<void> navigateToPreview() async {
+      setState(() {
+        loadingPage = true;
+      });
+
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      EtiquetaModel etiqueta = EtiquetaModel(
+        marcaAbrev: "$marca - $abrev",
+        tipoArticulo: tipoArticulo,
+        modelo: modelo,
+        color: color,
+        material: material,
+        precio: "\$/. $pvp",
+        talla: talla,
+        sku: sku,
+        cu: cu,
+        fechaCreacion: fechaCreacion,
+        temporada: temporada,
+      );
+      final etiquetaJson = jsonEncode(etiqueta.toJson());
+      await context.push('/preview?etiqueta=$etiquetaJson');
+      setState(() {
+        loadingPage = false;
+      });
+    }
+
     return SafeArea(
       child: Scaffold(
           floatingActionButton: const FloatingButton(),
           backgroundColor: Colors.white,
+          appBar: const AppBarCustom(title: "Detalle de producto"),
           body: Stack(
             children: [
               SingleChildScrollView(
@@ -51,10 +85,6 @@ class DetailProductPage extends StatelessWidget {
                   color: Colors.white,
                   child: Column(
                     children: [
-                      const NavbarHome(
-                        onTap: null,
-                        title: "Detalle de producto",
-                      ),
                       const SizedBox(height: 21.0),
                       CardProduct(
                         temporada: temporada,
@@ -75,24 +105,8 @@ class DetailProductPage extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 25),
                         child: InkWell(
-                          onTap: () async {
-                            EtiquetaModel etiqueta = EtiquetaModel(
-                              marcaAbrev: "$marca - $abrev",
-                              tipoArticulo: tipoArticulo,
-                              modelo: modelo,
-                              color: color,
-                              material: material,
-                              precio: "\$/. $pvp",
-                              talla: talla,
-                              sku: sku,
-                              cu: cu,
-                              fechaCreacion: fechaCreacion,
-                              temporada: temporada,
-                            );
-                            final etiquetaJson = jsonEncode(etiqueta.toJson());
-                            context.push('/preview?etiqueta=$etiquetaJson');
-                          },
-                          child: const ButtonPrimary(validator: false, title: "Previsualizar etiqueta"),
+                          onTap: () async => navigateToPreview(),
+                          child: ButtonPrimary(validator: loadingPage, title: "Previsualizar etiqueta"),
                         ),
                       )
                     ],
@@ -115,8 +129,7 @@ class FloatingButton extends StatelessWidget {
     return FloatingActionButton(
       backgroundColor: AppTheme.colorSecondary,
       onPressed: () async {
-        // Navigator.pop(context);
-        // await cameraController.mobileScannerController.start();
+        await appRouter.pushReplacement("/home");
       },
       child: const Icon(
         FontAwesomeIcons.barcode,
