@@ -4,9 +4,14 @@ import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 
 class NavbarHome extends StatelessWidget {
-  const NavbarHome({super.key, required this.onTap});
+  const NavbarHome({
+    super.key,
+    required this.onTap,
+    this.title,
+  });
 
   final VoidCallback onTap;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class NavbarHome extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "Impresión de Etiquetas",
+                  (title != null) ? title! : "Impresión de Etiquetas",
                   style: robotoStyle(20, FontWeight.w400, Colors.white),
                 ),
                 Container()

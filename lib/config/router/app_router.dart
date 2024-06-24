@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_model.dart';
 import 'package:footloose_tickets/presentation/screens/detail/detail_product_screen.dart';
 import 'package:footloose_tickets/presentation/screens/home/home_screen.dart';
 import 'package:footloose_tickets/presentation/screens/home/splash_screen.dart';
 import 'package:footloose_tickets/presentation/screens/login/login_screen.dart';
+import 'package:footloose_tickets/presentation/screens/scan/preview_print_screen.dart';
 import 'package:footloose_tickets/presentation/screens/scan/scan_product_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -38,6 +40,16 @@ final appRouter = GoRouter(
         final decodedJson = jsonDecode(productJson);
         final product = ProductModel.fromJson(decodedJson);
         return DetailProductPage(productModel: product);
+      },
+    ),
+    GoRoute(
+      path: '/preview',
+      name: PreviewPrintScreen.name,
+      builder: (context, state) {
+        final etiquetaJson = state.uri.queryParameters['etiqueta']!;
+        final decodedJson = jsonDecode(etiquetaJson);
+        final etiqueta = EtiquetaModel.fromJson(decodedJson);
+        return PreviewPrintScreen(etiqueta: etiqueta);
       },
     )
   ],

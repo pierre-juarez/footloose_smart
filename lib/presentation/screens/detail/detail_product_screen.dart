@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
+import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_model.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/navbar.dart';
@@ -20,22 +24,23 @@ class DetailProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     print("🚀 ~ file: detail_product_screen.dart ~ line: 74 ~ TM_FUNCTION: ${productModel.data?[0].nombre}");
     final String temporada = productModel.data?[0].caracteristica.temporada.nombre ?? "-";
-    const String tipoArticulo = "#tipoArticulo" ?? "#tipoArticulo";
+    const String tipoArticulo = "--tipoArticulo" ?? "--tipoArticulo";
     final String material =
         "${productModel.data?[0].caracteristica.material.material1.nombre} ${productModel.data?[0].caracteristica.material.material2.nombre} ${productModel.data?[0].caracteristica.material.material3.nombre}";
     final String nombre = productModel.data?[0].nombre ?? "-";
 
     final String sku = productModel.data?[0].sku ?? "#modelo";
-    const String cu = "#cu" ?? "#cu";
+    const String cu = "--cu" ?? "--cu";
     final double pvp = productModel.data?[0].precioBlanco ?? 0.0;
-    final String talla = productModel.data?[0].caracteristica.tallas.tallas.nombre ?? "#talla";
-    const String fechaCreacion = "#fechaCreacion" ?? "#fechaCreacion";
+    final String talla = productModel.data?[0].caracteristica.tallas.tallas.nombre ?? "--talla";
+    const String fechaCreacion = "--fechaCreacion" ?? "--fechaCreacion";
 
     List<String> splitNombre = nombre.split(" ");
 
     final String marca = (splitNombre.isNotEmpty) ? splitNombre[0] : "-";
     final String modelo = (splitNombre.isNotEmpty) ? splitNombre[1] : "-";
     final String abrev = (splitNombre.isNotEmpty) ? splitNombre[4] : "-";
+    final String color = (splitNombre.isNotEmpty) ? splitNombre[7].split("-")[0] : "-";
 
     return SafeArea(
       child: Scaffold(
@@ -57,7 +62,7 @@ class DetailProductPage extends StatelessWidget {
                       CardProduct(
                         temporada: temporada,
                         tipoArticulo: tipoArticulo,
-                        color: "",
+                        color: color,
                         material: material,
                         name: nombre,
                         marca: marca,
@@ -72,7 +77,26 @@ class DetailProductPage extends StatelessWidget {
                       const SizedBox(height: 20.0),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: const ButtonPrimary(validator: false, title: "Previsualizar etiqueta"),
+                        child: InkWell(
+                          onTap: () async {
+                            EtiquetaModel etiqueta = EtiquetaModel(
+                              marcaAbrev: "$marca - $abrev",
+                              tipoArticulo: tipoArticulo,
+                              modelo: modelo,
+                              color: color,
+                              material: material,
+                              precio: "\$/. $pvp",
+                              talla: talla,
+                              sku: sku,
+                              cu: cu,
+                              fechaCreacion: fechaCreacion,
+                              temporada: temporada,
+                            );
+                            final etiquetaJson = jsonEncode(etiqueta.toJson());
+                            await appRouter.pushReplacement('/preview?etiqueta=$etiquetaJson');
+                          },
+                          child: const ButtonPrimary(validator: false, title: "Previsualizar etiqueta"),
+                        ),
                       )
                     ],
                   ),
@@ -179,7 +203,7 @@ class CardProduct extends StatelessWidget {
                         style: robotoStyle(15, FontWeight.w400, const Color(0xff666666)),
                       ),
                       Text(
-                        "\$. $precio",
+                        "\$/. $precio",
                         style: robotoStyle(22, FontWeight.bold, AppTheme.colorSecondary),
                       )
                     ],

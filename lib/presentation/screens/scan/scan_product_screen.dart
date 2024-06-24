@@ -36,7 +36,7 @@ class ScanerPage extends ConsumerWidget {
         showError(
           context,
           title: "Código escaneado",
-          errorMessage: "El códido $codeProduct ha sido escaneado",
+          errorMessage: "El código $codeProduct ha sido escaneado",
           onTap: () async {
             await Future.delayed(const Duration(milliseconds: 20));
             showDialog(
