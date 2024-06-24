@@ -1,21 +1,23 @@
+import 'dart:typed_data';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
-// import 'package:footloose_puntodeventa/src/helpers/bluetooth_validate.dart';
-// import 'package:footloose_puntodeventa/src/ui/common/style.dart';
-// import 'package:footloose_puntodeventa/src/ui/common/textStyle.dart';
-// import 'package:blue_thermal_printer/blue_thermal_printer.dart';
-// import 'package:footloose_puntodeventa/src/ui/detail/pages/preview_page.dart';
 
 class PrintScreen extends StatefulWidget {
   static const name = 'print-screen';
 
   const PrintScreen({
     super.key,
+    required this.imageBytes,
   });
+
+  final Uint8List imageBytes;
 
   @override
   State<PrintScreen> createState() => _PrintPageProductState();
@@ -26,6 +28,8 @@ class _PrintPageProductState extends State<PrintScreen> {
   BlueThermalPrinter bluetooth = BlueThermalPrinter.instance;
   bool loadingDevices = false;
   List<BluetoothDevice> _devices = [];
+  BluetoothDevice? selectedDevice;
+  bool loadingPrint = false;
 
   @override
   void initState() {
@@ -39,97 +43,48 @@ class _PrintPageProductState extends State<PrintScreen> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: AppTheme.backgroundColor,
-        title: const TextWidgetInput(
-            text: "Buscar y seleccionar impresora",
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            textAlign: TextAlign.start),
+        title: Text(
+          "Busca y selecciona una impresora",
+          style: robotoStyle(18, FontWeight.w400, Colors.white),
+        ),
       ),
-      backgroundColor: AppTheme.backgroundColor,
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TextWidgetInput(
-                text: messageOfPrinters,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                textAlign: TextAlign.start),
-            (!loadingDevices)
-                ? Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    height: 400.0,
+      backgroundColor: Colors.white,
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        child: (!loadingDevices)
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Dispositivos conectados: ${_devices.length}",
+                    style: robotoStyle(18, FontWeight.w500, Colors.black),
+                  ),
+                  const SizedBox(height: 8),
+                  Expanded(
                     child: ListView.builder(
                       itemCount: _devices.length,
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                            print("🚀 ~ file: home_screen.dart ~ line: 70 ~ TM_FUNCTION: ");
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => PreviewPrintPage(
-                            //         //printerBluetooth: selectPrinterBluethoo,
-                            //         ),
-                            //   ),
-                            // );
+                            setState(() {
+                              selectedDevice = _devices[index];
+                            });
                           },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.symmetric(
-                                horizontal: BorderSide(color: Colors.black.withOpacity(0.20)),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 10.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Icon(
-                                  Icons.print_outlined,
-                                  color: Colors.black,
-                                  size: 40.0,
-                                ),
-                                const SizedBox(width: 10.0),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextWidgetInput(
-                                        text: _devices[index].name ?? "-",
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        textAlign: TextAlign.start),
-                                    TextWidgetInput(
-                                        text:
-                                            "${_devices[index].address} - ${_devices[index].connected} - ${_devices[index].type}",
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.grey,
-                                        textAlign: TextAlign.start)
-                                  ],
-                                )
-                              ],
-                            ),
+                          child: _CardPrint(
+                            selectedDevice: selectedDevice,
+                            devices: _devices,
+                            index: index,
                           ),
                         );
                       },
                     ),
-                  )
-                : const Column(
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(
-                        height: 13,
-                      ),
-                      Text("Buscando impresoras...")
-                    ],
-                  )
-          ],
-        ),
+                  ),
+                  const SizedBox(height: 30),
+                  InkWell(onTap: _print, child: ButtonPrimary(validator: loadingPrint, title: "Imprimir")),
+                  const SizedBox(height: 50)
+                ],
+              )
+            : const _LoadingPrinters(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -150,8 +105,6 @@ class _PrintPageProductState extends State<PrintScreen> {
 
       bool isVerify = await verifyBluetooth();
 
-      print("🚀 ~ file: home_screen.dart ~ line: 153 ~ TM_FUNCTION: $isVerify");
-
       if (isVerify) {
         setState(() {
           _devices = devices;
@@ -161,7 +114,6 @@ class _PrintPageProductState extends State<PrintScreen> {
         if (context != null) {
           showBluetoothDialog(context, () {
             Navigator.pop(context);
-            // Navigator.pop(context);
           });
         }
       }
@@ -172,7 +124,112 @@ class _PrintPageProductState extends State<PrintScreen> {
       setState(() {
         loadingDevices = false;
       });
-      print("🚀 ~ file: print_page.dart ~ line: 153 ~ Error al obtener lista de dispositivos: $e");
+      print("🚀 ~  Error al obtener lista de dispositivos: $e");
     }
+  }
+
+  void _print() async {
+    if (selectedDevice != null) {
+      try {
+        setState(() {
+          loadingPrint = true;
+        });
+        await bluetooth.connect(selectedDevice!);
+        await bluetooth.printImageBytes(widget.imageBytes);
+        await bluetooth.disconnect();
+        setState(() {
+          loadingPrint = false;
+        });
+      } catch (e) {
+        setState(() {
+          loadingPrint = false;
+        });
+        print("🚀 ~ Error al imprimir la etiqueta: $e");
+        showError(context, title: "Error", errorMessage: "Error al imprimir, comuníquese con soporte");
+      }
+    } else {
+      setState(() {
+        loadingPrint = false;
+      });
+      showError(context, title: "Error", errorMessage: "Seleccione al menos una impresora");
+    }
+  }
+}
+
+class _CardPrint extends StatelessWidget {
+  const _CardPrint({
+    required this.selectedDevice,
+    required List<BluetoothDevice> devices,
+    required this.index,
+  }) : _devices = devices;
+
+  final BluetoothDevice? selectedDevice;
+  final List<BluetoothDevice> _devices;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: (selectedDevice == _devices[index]) ? const Color.fromARGB(105, 58, 129, 230) : Colors.transparent,
+        border: Border.symmetric(
+          horizontal: BorderSide(color: Colors.black.withOpacity(0.20)),
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.print_outlined,
+            color: Colors.black,
+            size: 40.0,
+          ),
+          const SizedBox(width: 10.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextWidgetInput(
+                text: "${index + 1}.- ${_devices[index].name} ${(selectedDevice == _devices[index]) ? "(Seleccionado)" : ""}",
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                textAlign: TextAlign.start,
+              ),
+              TextWidgetInput(
+                text: "MAC: ${_devices[index].address} - ${_devices[index].connected}",
+                fontSize: 14.0,
+                fontWeight: FontWeight.normal,
+                color: Colors.black87,
+                textAlign: TextAlign.start,
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class _LoadingPrinters extends StatelessWidget {
+  const _LoadingPrinters();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(color: AppTheme.colorSecondary),
+          const SizedBox(height: 13),
+          Text(
+            "Buscando impresoras...",
+            style: robotoStyle(15, FontWeight.w400, Colors.black),
+          )
+        ],
+      ),
+    );
   }
 }

@@ -6,6 +6,7 @@ import 'package:footloose_tickets/presentation/screens/home/home_screen.dart';
 import 'package:footloose_tickets/presentation/screens/home/splash_screen.dart';
 import 'package:footloose_tickets/presentation/screens/login/login_screen.dart';
 import 'package:footloose_tickets/presentation/screens/scan/preview_print_screen.dart';
+import 'package:footloose_tickets/presentation/screens/scan/print_screen.dart';
 import 'package:footloose_tickets/presentation/screens/scan/scan_product_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -50,6 +51,15 @@ final appRouter = GoRouter(
         final decodedJson = jsonDecode(etiquetaJson);
         final etiqueta = EtiquetaModel.fromJson(decodedJson);
         return PreviewPrintScreen(etiqueta: etiqueta);
+      },
+    ),
+    GoRoute(
+      path: '/print',
+      name: PrintScreen.name,
+      builder: (context, state) {
+        final imageBytesBase64 = state.uri.queryParameters['image'];
+        final imageBytes = base64Decode(imageBytesBase64!);
+        return PrintScreen(imageBytes: imageBytes);
       },
     )
   ],

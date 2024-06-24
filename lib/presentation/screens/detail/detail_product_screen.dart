@@ -1,15 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
-import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_model.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/navbar.dart';
+import 'package:go_router/go_router.dart';
 
 class DetailProductPage extends StatelessWidget {
   static const name = "product-screen";
@@ -53,10 +51,9 @@ class DetailProductPage extends StatelessWidget {
                   color: Colors.white,
                   child: Column(
                     children: [
-                      NavbarHome(
-                        onTap: () {
-                          redirectToPage("/home");
-                        },
+                      const NavbarHome(
+                        onTap: null,
+                        title: "Detalle de producto",
                       ),
                       const SizedBox(height: 21.0),
                       CardProduct(
@@ -93,7 +90,7 @@ class DetailProductPage extends StatelessWidget {
                               temporada: temporada,
                             );
                             final etiquetaJson = jsonEncode(etiqueta.toJson());
-                            await appRouter.pushReplacement('/preview?etiqueta=$etiquetaJson');
+                            context.push('/preview?etiqueta=$etiquetaJson');
                           },
                           child: const ButtonPrimary(validator: false, title: "Previsualizar etiqueta"),
                         ),

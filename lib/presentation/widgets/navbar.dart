@@ -10,7 +10,7 @@ class NavbarHome extends StatelessWidget {
     this.title,
   });
 
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final String? title;
 
   @override
@@ -25,17 +25,19 @@ class NavbarHome extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
-                  onTap: onTap,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Icon(
-                      FontAwesomeIcons.arrowLeft,
-                      size: 25,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                onTap != null
+                    ? InkWell(
+                        onTap: onTap,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: Icon(
+                            FontAwesomeIcons.arrowLeft,
+                            size: 25,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    : Container(),
                 Text(
                   (title != null) ? title! : "Impresión de Etiquetas",
                   style: robotoStyle(20, FontWeight.w400, Colors.white),
