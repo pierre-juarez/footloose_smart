@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
+import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/camera/camera_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
@@ -28,10 +29,27 @@ class _PageHome extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: AppTheme.backgroundColor,
+        title: Text(
+          "Impresión de etiquetas",
+          style: robotoStyle(19, FontWeight.w400, Colors.white),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: InkWell(
+                onTap: () {
+                  showOptions(context);
+                },
+                child: const Icon(FontAwesomeIcons.arrowRightToBracket)),
+          ),
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const _NavbarHome(),
           Expanded(
             child: _ConsultPage(camera: camera),
           ),

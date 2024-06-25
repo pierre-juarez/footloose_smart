@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
+import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 BlueThermalPrinter bluetooth = BlueThermalPrinter.instance;
@@ -100,6 +103,31 @@ Future<void> showBluetoothDialog(BuildContext context, VoidCallback? onTap) {
                   Navigator.pop(context);
                 },
           child: const Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
+
+Future<void> showOptions(BuildContext context) async {
+  return showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Cerrar sesión'),
+      content: const Text('¿Está seguro que desea cerrar sesión?'),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            AuthProvider.deleteToken();
+            redirectToPage("/login");
+          },
+          child: const Text('CERRAR SESIÓN'),
+        ),
+        TextButton(
+          onPressed: () {
+            context.pop();
+          },
+          child: const Text('CANCELAR'),
         ),
       ],
     ),
