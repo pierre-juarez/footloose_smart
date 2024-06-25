@@ -9,6 +9,7 @@ class AlertError extends StatelessWidget {
   final String? buttonText;
   final VoidCallback? onTap;
   final Widget? icon;
+  final String? type;
 
   const AlertError({
     super.key,
@@ -17,6 +18,7 @@ class AlertError extends StatelessWidget {
     this.buttonText,
     this.onTap,
     this.icon,
+    this.type,
   });
 
   _handleTap(BuildContext context) {
@@ -49,7 +51,7 @@ class AlertError extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               title ?? "Advertencia",
-              style: robotoStyle(16, FontWeight.w500, Colors.red),
+              style: robotoStyle(16, FontWeight.w500, (icon != null ? ((icon as Icon).color ?? Colors.red) : Colors.red)),
             ),
             const SizedBox(height: 18),
             Text(

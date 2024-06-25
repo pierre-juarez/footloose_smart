@@ -167,6 +167,12 @@ class AuthProvider with ChangeNotifier {
     await storage.delete(key: "token");
   }
 
+  void clearInputs() {
+    _usuario = "";
+    _password = "";
+    notifyListeners();
+  }
+
   Future logOut() async {
     await _storage.delete(key: "token");
   }

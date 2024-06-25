@@ -109,7 +109,7 @@ Future<void> showBluetoothDialog(BuildContext context, VoidCallback? onTap) {
   );
 }
 
-Future<void> showOptions(BuildContext context) async {
+Future<void> showOptions(BuildContext context, AuthProvider auth) async {
   return showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -118,6 +118,7 @@ Future<void> showOptions(BuildContext context) async {
       actions: <Widget>[
         TextButton(
           onPressed: () {
+            auth.clearInputs();
             AuthProvider.deleteToken();
             redirectToPage("/login");
           },

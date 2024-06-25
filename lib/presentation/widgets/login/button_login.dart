@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/get_errors.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
@@ -20,7 +21,14 @@ class ButtonInitLogin extends ConsumerWidget {
       await showError(
         context,
         errorMessage: "Bienvenido al Sistema",
+        title: "¡Hola usuari@!",
         buttonText: "OK",
+        type: "success",
+        icon: const Icon(
+          FontAwesomeIcons.circleCheck,
+          color: Color(0xff034A2C),
+          size: 30,
+        ),
         onTap: () async {
           await redirectToPage("/home");
         },

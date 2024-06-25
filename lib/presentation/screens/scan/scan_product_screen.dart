@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
@@ -35,6 +36,11 @@ class ScanerPage extends ConsumerWidget {
 
         showError(
           context,
+          icon: Icon(
+            FontAwesomeIcons.check,
+            size: 30,
+            color: AppTheme.colorSecondary,
+          ),
           title: "Código escaneado",
           errorMessage: "El código $codeProduct ha sido escaneado",
           onTap: () async {

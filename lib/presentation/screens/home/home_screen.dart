@@ -6,6 +6,7 @@ import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/camera/camera_provider.dart';
+import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -26,6 +27,7 @@ class _PageHome extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final camera = ref.watch(cameraProvider);
+    final auth = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -41,7 +43,7 @@ class _PageHome extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 25),
             child: InkWell(
                 onTap: () {
-                  showOptions(context);
+                  showOptions(context, auth);
                 },
                 child: const Icon(FontAwesomeIcons.arrowRightToBracket)),
           ),

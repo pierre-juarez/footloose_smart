@@ -14,6 +14,7 @@ Future<void> showError(
   String? buttonText,
   VoidCallback? onTap,
   Widget? icon,
+  String? type,
 }) async {
   return await showDialog(
     context: context,
@@ -24,6 +25,7 @@ Future<void> showError(
       buttonText: buttonText,
       onTap: onTap,
       icon: icon,
+      type: type,
     ),
   );
 }
