@@ -120,7 +120,7 @@ Future<void> showOptions(BuildContext context, AuthProvider auth) async {
           onPressed: () {
             auth.clearInputs();
             AuthProvider.deleteToken();
-            redirectToPage("/login");
+            redirectToPage("/configuration");
           },
           child: const Text('CERRAR SESIÓN'),
         ),

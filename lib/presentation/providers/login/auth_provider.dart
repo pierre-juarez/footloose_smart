@@ -165,6 +165,8 @@ class AuthProvider with ChangeNotifier {
   static Future<void> deleteToken() async {
     const storage = FlutterSecureStorage();
     await storage.delete(key: "token");
+    await storage.delete(key: "configOption");
+    await storage.delete(key: "configOptionId");
   }
 
   void clearInputs() {
