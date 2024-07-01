@@ -20,26 +20,25 @@ class ProductModel {
 
   Map<String, dynamic> toJson() => {
         "exito": exito,
-        "mensaje": mensaje,
-        "fecha_peticion":
-            "${fechaPeticion?.year.toString().padLeft(4, '0')}-${fechaPeticion?.month.toString().padLeft(2, '0')}-${fechaPeticion?.day.toString().padLeft(2, '0')}",
+        "mensaje": mensaje ?? "",
+        "fecha_peticion": fechaPeticion?.toIso8601String(),
         "data": (data != null) ? List<dynamic>.from(data!.map((x) => x.toJson())) : [],
       };
 }
 
 class Datum {
-  final String sku;
-  final String nombre;
-  final String descripcion;
-  final String detalle;
-  final double pvp;
-  final double precioBlanco;
-  final double ultimaCompra;
-  final double costoUnitario;
-  final double precioUnitario;
-  final double costoUnitarioInicial;
-  final double precioUnitarioInicial;
-  final DateTime fechaRegistro;
+  final String? sku;
+  final String? nombre;
+  final String? descripcion;
+  final String? detalle;
+  final double? pvp;
+  final double? precioBlanco;
+  final double? ultimaCompra;
+  final double? costoUnitario;
+  final double? precioUnitario;
+  final double? costoUnitarioInicial;
+  final double? precioUnitarioInicial;
+  final DateTime? fechaRegistro;
   final DateTime? fechaMdificacion; // Puede ser DateTime o null
   final Caracteristica caracteristica;
 
@@ -61,10 +60,10 @@ class Datum {
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        sku: json["sku"],
-        nombre: json["nombre"],
+        sku: json["sku"] ?? "",
+        nombre: json["nombre"] ?? "",
         descripcion: json["descripcion"],
-        detalle: json["detalle"],
+        detalle: json["detalle"] ?? "",
         pvp: (json["pvp"] ?? 0).toDouble(),
         precioBlanco: (json["precio_blanco"] ?? 0).toDouble(),
         ultimaCompra: (json["ultima_compra"] ?? 0).toDouble(),
@@ -72,7 +71,7 @@ class Datum {
         precioUnitario: (json["precio_unitario"] ?? 0).toDouble(),
         costoUnitarioInicial: (json["costo_unitario_inicial"] ?? 0).toDouble(),
         precioUnitarioInicial: (json["precio_unitario_inicial"] ?? 0).toDouble(),
-        fechaRegistro: DateTime.parse(json["fecha_registro"]),
+        fechaRegistro: json["fecha_registro"] != null ? DateTime.parse(json["fecha_registro"]) : null,
         fechaMdificacion: json["fecha_mdificacion"] != null ? DateTime.parse(json["fecha_mdificacion"]) : null,
         caracteristica: Caracteristica.fromJson(json["CARACTERISTICA"]),
       );
@@ -89,14 +88,14 @@ class Datum {
         "precio_unitario": precioUnitario,
         "costo_unitario_inicial": costoUnitarioInicial,
         "precio_unitario_inicial": precioUnitarioInicial,
-        "fecha_registro": fechaRegistro.toIso8601String(),
+        "fecha_registro": fechaRegistro?.toIso8601String(),
         "fecha_mdificacion": fechaMdificacion?.toIso8601String(),
         "CARACTERISTICA": caracteristica.toJson(),
       };
 }
 
 class Caracteristica {
-  final Tallas tallas;
+  final AccesorioCalzado tallas;
   final Material material;
   final AccesorioCalzado campana;
   final AccesorioCalzado temporada;
@@ -137,24 +136,24 @@ class Caracteristica {
   });
 
   factory Caracteristica.fromJson(Map<String, dynamic> json) => Caracteristica(
-        tallas: Tallas.fromJson(json["TALLAS"]),
-        material: Material.fromJson(json["MATERIAL"]),
-        campana: AccesorioCalzado.fromJson(json["CAMPANA"]),
-        temporada: AccesorioCalzado.fromJson(json["TEMPORADA"]),
-        presentacionAccesorio: AccesorioCalzado.fromJson(json["PRESENTACION ACCESORIO"]),
-        tecPlantilla: AccesorioCalzado.fromJson(json["TEC PLANTILLA"]),
-        materialPlantilla: AccesorioCalzado.fromJson(json["MATERIAL PLANTILLA"]),
-        materialForro: AccesorioCalzado.fromJson(json["MATERIAL FORRO"]),
-        estiloPunta: AccesorioCalzado.fromJson(json["ESTILO PUNTA"]),
-        tecPlanta1: AccesorioCalzado.fromJson(json["TEC PLANTA 1"]),
-        tipoHuella: AccesorioCalzado.fromJson(json["TIPO HUELLA"]),
-        materialHuella: AccesorioCalzado.fromJson(json["MATERIAL HUELLA"]),
-        colorPlanta: AccesorioCalzado.fromJson(json["COLOR PLANTA"]),
-        materialPlanta: AccesorioCalzado.fromJson(json["MATERIAL PLANTA"]),
-        construccion: AccesorioCalzado.fromJson(json["CONSTRUCCION"]),
-        tipoConstruccion: AccesorioCalzado.fromJson(json["TIPO CONSTRUCCION"]),
-        tipoHorma: AccesorioCalzado.fromJson(json["TIPO HORMA"]),
-        alturaCana: AccesorioCalzado.fromJson(json["ALTURA CANA"]),
+        tallas: AccesorioCalzado.fromJson(json["TALLAS"] ?? {}),
+        material: Material.fromJson(json["MATERIAL"] ?? {}),
+        campana: AccesorioCalzado.fromJson(json["CAMPANA"] ?? {}),
+        temporada: AccesorioCalzado.fromJson(json["TEMPORADA"] ?? {}),
+        presentacionAccesorio: AccesorioCalzado.fromJson(json["PRESENTACION ACCESORIOS"] ?? {}),
+        tecPlantilla: AccesorioCalzado.fromJson(json["TEC PLANTILLA"] ?? {}),
+        materialPlantilla: AccesorioCalzado.fromJson(json["MATERIAL PLANTILLA"] ?? {}),
+        materialForro: AccesorioCalzado.fromJson(json["MATERIAL FORRO"] ?? {}),
+        estiloPunta: AccesorioCalzado.fromJson(json["ESTILO PUNTA"] ?? {}),
+        tecPlanta1: AccesorioCalzado.fromJson(json["TEC PLANTA 1"] ?? {}),
+        tipoHuella: AccesorioCalzado.fromJson(json["TIPO HUELLA"] ?? {}),
+        materialHuella: AccesorioCalzado.fromJson(json["MATERIAL HUELLA"] ?? {}),
+        colorPlanta: AccesorioCalzado.fromJson(json["COLOR PLANTA"] ?? {}),
+        materialPlanta: AccesorioCalzado.fromJson(json["MATERIAL PLANTA"] ?? {}),
+        construccion: AccesorioCalzado.fromJson(json["CONSTRUCCION"] ?? {}),
+        tipoConstruccion: AccesorioCalzado.fromJson(json["TIPO CONSTRUCCION"] ?? {}),
+        tipoHorma: AccesorioCalzado.fromJson(json["TIPO HORMA"] ?? {}),
+        alturaCana: AccesorioCalzado.fromJson(json["ALTURA CANA"] ?? {}),
       );
 
   Map<String, dynamic> toJson() => {
@@ -162,7 +161,7 @@ class Caracteristica {
         "MATERIAL": material.toJson(),
         "CAMPANA": campana.toJson(),
         "TEMPORADA": temporada.toJson(),
-        "PRESENTACION ACCESORIO": presentacionAccesorio.toJson(),
+        "PRESENTACION ACCESORIOS": presentacionAccesorio.toJson(),
         "TEC PLANTILLA": tecPlantilla.toJson(),
         "MATERIAL PLANTILLA": materialPlantilla.toJson(),
         "MATERIAL FORRO": materialForro.toJson(),
@@ -180,10 +179,10 @@ class Caracteristica {
 }
 
 class AccesorioCalzado {
-  final String id;
-  final String nombre;
-  final int padreId;
-  final String nombrePadre;
+  final String? id;
+  final String? nombre;
+  final int? padreId;
+  final String? nombrePadre;
 
   AccesorioCalzado({
     required this.id,
@@ -193,10 +192,10 @@ class AccesorioCalzado {
   });
 
   factory AccesorioCalzado.fromJson(Map<String, dynamic> json) => AccesorioCalzado(
-        id: json["ID"],
-        nombre: json["NOMBRE"],
-        padreId: json["PADRE_ID"],
-        nombrePadre: json["NOMBRE_PADRE"],
+        id: json["ID"] ?? "",
+        nombre: json["NOMBRE"] ?? "",
+        padreId: json["PADRE_ID"] ?? 0,
+        nombrePadre: json["NOMBRE_PADRE"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -219,30 +218,14 @@ class Material {
   });
 
   factory Material.fromJson(Map<String, dynamic> json) => Material(
-        material1: AccesorioCalzado.fromJson(json["MATERIAL 1"]),
-        material2: AccesorioCalzado.fromJson(json["MATERIAL 2"]),
-        material3: AccesorioCalzado.fromJson(json["MATERIAL 3"]),
+        material1: AccesorioCalzado.fromJson(json["MATERIAL 1"] ?? {}),
+        material2: AccesorioCalzado.fromJson(json["MATERIAL 2"] ?? {}),
+        material3: AccesorioCalzado.fromJson(json["MATERIAL 3"] ?? {}),
       );
 
   Map<String, dynamic> toJson() => {
         "MATERIAL 1": material1.toJson(),
         "MATERIAL 2": material2.toJson(),
         "MATERIAL 3": material3.toJson(),
-      };
-}
-
-class Tallas {
-  final AccesorioCalzado tallas;
-
-  Tallas({
-    required this.tallas,
-  });
-
-  factory Tallas.fromJson(Map<String, dynamic> json) => Tallas(
-        tallas: AccesorioCalzado.fromJson(json["TALLAS"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "TALLAS": tallas.toJson(),
       };
 }

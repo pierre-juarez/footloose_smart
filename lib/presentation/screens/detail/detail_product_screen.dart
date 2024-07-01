@@ -36,7 +36,7 @@ class _DetailProductPageState extends State<DetailProductPage> {
     final String sku = widget.productModel.data?[0].sku ?? "#modelo";
     const String cu = "--cu" ?? "--cu";
     final double pvp = widget.productModel.data?[0].precioBlanco ?? 0.0;
-    final String talla = widget.productModel.data?[0].caracteristica.tallas.tallas.nombre ?? "--talla";
+    final String talla = widget.productModel.data?[0].caracteristica.tallas.nombre ?? "--talla";
     const String fechaCreacion = "--fechaCreacion" ?? "--fechaCreacion";
 
     List<String> splitNombre = nombre.split(" ");
