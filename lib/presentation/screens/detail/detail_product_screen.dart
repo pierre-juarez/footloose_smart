@@ -8,7 +8,6 @@ import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_model.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
-import 'package:go_router/go_router.dart';
 
 class DetailProductPage extends StatefulWidget {
   static const name = "product-screen";
@@ -67,7 +66,7 @@ class _DetailProductPageState extends State<DetailProductPage> {
         temporada: temporada,
       );
       final etiquetaJson = jsonEncode(etiqueta.toJson());
-      await context.push('/preview?etiqueta=$etiquetaJson');
+      await appRouter.pushReplacement('/preview?etiqueta=$etiquetaJson');
       setState(() {
         loadingPage = false;
       });

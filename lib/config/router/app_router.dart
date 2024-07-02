@@ -8,6 +8,7 @@ import 'package:footloose_tickets/presentation/screens/home/splash_screen.dart';
 import 'package:footloose_tickets/presentation/screens/login/login_screen.dart';
 import 'package:footloose_tickets/presentation/screens/scan/preview_print_screen.dart';
 import 'package:footloose_tickets/presentation/screens/scan/print_screen.dart';
+import 'package:footloose_tickets/presentation/screens/scan/queue_print_screen.dart';
 import 'package:footloose_tickets/presentation/screens/scan/scan_product_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -67,6 +68,16 @@ final appRouter = GoRouter(
       path: '/configuration',
       name: ConfigurationScreen.name,
       builder: (context, state) => ConfigurationScreen(),
+    ),
+    GoRoute(
+      path: '/review-queue',
+      name: QueuePrintScreen.name,
+      builder: (context, state) {
+        final etiquetasJson = state.uri.queryParameters['etiquetas']!;
+        final decodedJson = jsonDecode(etiquetasJson) as List<dynamic>;
+        final etiquetas = decodedJson.map((json) => EtiquetaModel.fromJson(json as Map<String, dynamic>)).toList();
+        return QueuePrintScreen(etiquetas: etiquetas);
+      },
     ),
   ],
 );

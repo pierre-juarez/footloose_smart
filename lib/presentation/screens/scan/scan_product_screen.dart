@@ -2,36 +2,96 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:footloose_tickets/config/helpers/delete_all_items.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/product_model.dart';
-import 'package:footloose_tickets/presentation/providers/camera/camera_provider.dart';
+import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/product_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/navbar.dart';
 import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-class ScanerPage extends ConsumerWidget {
+class ScanerPage extends ConsumerStatefulWidget {
   static const name = "scaner-page";
   const ScanerPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final camera = ref.watch(cameraProvider);
+  ScannerPageState createState() => ScannerPageState();
+}
+
+class ScannerPageState extends ConsumerState<ScanerPage> {
+  late final MobileScannerController mobileScannerController;
+  bool isInit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    mobileScannerController = MobileScannerController(
+      detectionSpeed: DetectionSpeed.noDuplicates,
+      autoStart: false,
+      formats: [BarcodeFormat.code128, BarcodeFormat.code39, BarcodeFormat.all],
+    );
+    mobileScannerController.stop();
+    _startCamera();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    mobileScannerController.stop();
+    mobileScannerController.dispose();
+  }
+
+  Future<void> _startCamera() async {
+    try {
+      setState(() {
+        isInit = false;
+      });
+      await Future.delayed(const Duration(milliseconds: 800));
+      await mobileScannerController.start();
+      setState(() {
+        isInit = true;
+      });
+    } catch (e) {
+      print("🚀 ~ Error al aperturar la cámara: $e");
+      showError(
+        context,
+        title: "Error",
+        errorMessage: "No se ha podido aperturar la cámara, cierra y abre la aplicación",
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final product = ref.watch(productProvider);
-    print("🚀 ~ file: scan_product_screen.dart ~ line: 37 ~ TM_FUNCTION: ${camera.mobileScannerController.value.isRunning}");
+    final list = ref.watch(listProductProvider)['products'] ?? [];
+
+    print("🚀 ~ file: scan_product_screen.dart ~ line: 28 ~ TM_FUNCTION: ${list.length}");
+
+    // print("🚀 ~ file: scan_product_screen.dart ~ line: 37 ~ TM_FUNCTION: ${camera.mobileScannerController.value.isRunning}");
+    print("🚀 ~ file: scan_product_screen.dart ~ line: 38 ~ TM_FUNCTION: ${mobileScannerController.value.isRunning}");
+
+    Future<void> viewPrint() async {
+      final listsJson = jsonEncode(list.map((product) => product.toJson()).toList());
+      await appRouter.pushReplacement('/review-queue?etiquetas=$listsJson');
+    }
 
     Future<void> scanProduct(
       BuildContext context,
-      CameraProvider cameraController,
       BarcodeCapture capture,
     ) async {
-      await cameraController.mobileScannerController.stop();
+      final listUpd = ref.watch(listProductProvider)['products'] ?? [];
+
+      await mobileScannerController.stop();
       if (capture.barcodes.isNotEmpty) {
         final Barcode barcode = capture.barcodes[0];
-        //final Uint8List? image = capture.image;
-        debugPrint('Barcode found! ${barcode.rawValue}');
         String codeProduct = barcode.rawValue ?? "";
 
         showError(
@@ -53,9 +113,37 @@ class ScanerPage extends ConsumerWidget {
                 });
 
             debugPrint("🚀 ~ file: scanner_page.dart ~ line: 102 ~ value search: $codeProduct");
+
             if (codeProduct.length >= 11 && codeProduct.length <= 12) {
-              camera.mobileScannerController.stop();
+              if (listUpd.isNotEmpty) {
+                bool exists = listUpd.any((p) => p.sku == codeProduct);
+                if (exists) {
+                  showError(
+                    context,
+                    title: "Error",
+                    errorMessage: "El producto ya ha sido agregado a la fila",
+                    onTap: () async {
+                      await mobileScannerController.start();
+                      Navigator.of(context).pop();
+                    },
+                  );
+                  return;
+                }
+              }
+
               ProductModel productDetail = await product.getProduct(codeProduct);
+
+              if (productDetail.data == null) {
+                showError(
+                  context,
+                  errorMessage: "Error al obtener detalle del producto, inténtalo nuevamente",
+                  title: "Error",
+                  onTap: () async {
+                    await redirectToPage("/home");
+                  },
+                );
+                return;
+              }
               final productJson = jsonEncode(productDetail.toJson());
               await appRouter.pushReplacement('/product?productJson=$productJson');
             }
@@ -65,19 +153,30 @@ class ScanerPage extends ConsumerWidget {
       capture.barcodes.clear();
     }
 
+    Future<void> deleteAllItems() async {
+      deleteAllItemsQueue(ref, context, () {
+        setState(() {});
+      });
+    }
+
+    Widget? floatingOption = (list.isNotEmpty)
+        ? FloatingActionButton(
+            onPressed: () async => viewPrint(),
+            child: const Icon(Icons.print_outlined),
+          )
+        : null;
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
+        floatingActionButton: floatingOption,
         body: Stack(
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 NavbarHome(
-                  onTap: () {
-                    camera.mobileScannerController.stop();
-                    redirectToPage("/home");
-                  },
+                  onTap: () => redirectToPage("/home"),
                 ),
                 const SizedBox(height: 10.0),
                 Container(
@@ -85,19 +184,17 @@ class ScanerPage extends ConsumerWidget {
                   width: double.infinity,
                   margin: const EdgeInsets.symmetric(horizontal: 10.0),
                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: MobileScanner(
-                      controller: camera.mobileScannerController,
-                      onDetect: (capture) async {
-                        await scanProduct(
-                          context,
-                          camera,
-                          capture,
-                        );
-                      },
-                    ),
-                  ),
+                  child: !isInit
+                      ? const _LoadingCamera()
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: MobileScanner(
+                            controller: mobileScannerController,
+                            onDetect: (capture) async {
+                              await scanProduct(context, capture);
+                            },
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 10.0),
                 TextWidgetInput(
@@ -109,12 +206,131 @@ class ScanerPage extends ConsumerWidget {
                 ),
                 const RowInfoScann(
                   pathIcon: "lib/assets/scan.png",
-                  textInfo: "Identifica el codigo de barras que se encuentra en la caja",
+                  textInfo: "Identifica el código de barras que se encuentra en la caja",
                 ),
                 const RowInfoScann(
                   pathIcon: "lib/assets/phone.png",
-                  textInfo: "Acerca la camara al sticker del codigo, listo",
+                  textInfo: "Acerca la cámara al sticker del código, listo",
                 ),
+                Visibility(
+                  visible: list.isNotEmpty,
+                  child: Expanded(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 15),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Column(
+                            children: [
+                              Text(
+                                "Productos en cola: ${list.length}",
+                                style:
+                                    robotoStyle(18, FontWeight.bold, Colors.black).copyWith(decoration: TextDecoration.underline),
+                              ),
+                              const SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("(Desliza a la izquierda para eliminar)"),
+                                  InkWell(
+                                    onTap: () async => deleteAllItems(),
+                                    child: Text(
+                                      "Vaciar todo",
+                                      style: robotoStyle(15, FontWeight.bold, Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 5),
+                              SizedBox(
+                                height: 200,
+                                child: ListView.builder(
+                                  itemCount: list.length,
+                                  itemBuilder: (context, index) {
+                                    final product = list[index];
+                                    return Dismissible(
+                                      key: Key(list[index].sku),
+                                      direction: DismissDirection.endToStart,
+                                      confirmDismiss: (DismissDirection direction) async {
+                                        bool deleteConfirmed = await showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Confirmación'),
+                                              content: Text(
+                                                  '¿Estás seguro de que quieres eliminar el producto con SKU: ${product.sku}?'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () => Navigator.of(context).pop(false), // No eliminar
+                                                  child: const Text('Cancelar'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () => Navigator.of(context).pop(true), // Confirmar eliminar
+                                                  child: const Text('Eliminar'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+
+                                        return deleteConfirmed;
+                                      },
+                                      onDismissed: (direction) async {
+                                        if (direction == DismissDirection.endToStart) {
+                                          ref.read(listProductProvider.notifier).deleteProduct(product.sku);
+
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Producto con SKU: ${product.sku} eliminado'),
+                                              duration: const Duration(milliseconds: 1000),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      background: Container(
+                                          color: Colors.red,
+                                          alignment: Alignment.centerRight,
+                                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                                          child: const Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              Icon(Icons.delete, color: Colors.white),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                'Eliminar',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          )),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                                border: Border.all(color: Colors.black, width: 1),
+                                                borderRadius: BorderRadius.circular(15)),
+                                            child: ListTile(
+                                              title: Text("${index + 1}.- SKU ${product.sku} - ${product.modelo}"),
+                                            ),
+                                          ),
+                                          const Divider()
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                      ],
+                    ),
+                  ),
+                )
               ],
             ),
             // const _ButtonManual()
@@ -122,6 +338,15 @@ class ScanerPage extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class _LoadingCamera extends StatelessWidget {
+  const _LoadingCamera();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: CircularProgressIndicator());
   }
 }
 
