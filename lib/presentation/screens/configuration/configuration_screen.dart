@@ -5,42 +5,38 @@ import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
+import 'package:footloose_tickets/presentation/providers/pais/pais_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_basic.dart';
 import 'package:footloose_tickets/presentation/widgets/configuration/option_pais.dart';
 
 class ConfigurationScreen extends ConsumerWidget {
-  ConfigurationScreen({super.key});
+  const ConfigurationScreen({super.key});
 
   static const name = "configuration-screen";
-  String optionSelect = "";
-  String optionIdSelect = "";
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void selectOption(String option, String optionId) {
-      optionSelect = option;
-      optionIdSelect = optionId;
-    }
+    final selectedOption = ref.watch(selectedOptionProvider);
 
     void handleContinue() async {
       final config = ref.watch(configurationProvider);
 
-      if (optionSelect.isEmpty || optionIdSelect.isEmpty) {
+      if (selectedOption.option.isEmpty || selectedOption.optionId.isEmpty) {
         showError(context, title: "Error", errorMessage: "Seleccione un país válido");
         return;
       }
 
-      config.saveConfiguration(optionSelect, optionIdSelect);
-      print("🚀 ~ file: configuration_screen.dart ~ line: 20 ~ TM_FUNCTION: $optionSelect");
-      print("🚀 ~ file: configuration_screen.dart ~ line: 21 ~ TM_FUNCTION: $optionIdSelect");
+      config.saveConfiguration(selectedOption.option, selectedOption.optionId);
+      print("🚀 ~ file: configuration_screen.dart ~ line: 20 ~ TM_FUNCTION: ${selectedOption.option}");
+      print("🚀 ~ file: configuration_screen.dart ~ line: 21 ~ TM_FUNCTION: ${selectedOption.optionId}");
 
       await redirectToPage("/login");
     }
 
     return SafeArea(
-        child: Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
-      body: Container(
+      child: Scaffold(
+        backgroundColor: AppTheme.backgroundColor,
+        body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 50),
           child: Column(
             children: [
@@ -60,23 +56,39 @@ class ConfigurationScreen extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  InkWell(
-                    onTap: () => selectOption("Peru", "2"),
-                    child: const OptionPais(stringAsset: "lib/assets/peru.png"),
+                  GestureDetector(
+                    onTap: () => ref.read(selectedOptionProvider.notifier).selectOption("Perú", "2"),
+                    child: OptionPais(stringAsset: "lib/assets/peru.png", select: selectedOption.option == "Perú"),
                   ),
-                  InkWell(
-                    onTap: () => selectOption("Ecuador", "1"),
-                    child: const OptionPais(stringAsset: "lib/assets/ecuador.png"),
+                  GestureDetector(
+                    onTap: () => ref.read(selectedOptionProvider.notifier).selectOption("Ecuador", "1"),
+                    child: OptionPais(stringAsset: "lib/assets/ecuador.png", select: selectedOption.option == "Ecuador"),
                   ),
                 ],
               ),
-              const SizedBox(height: 100),
+              Visibility(
+                visible: selectedOption.option.isNotEmpty,
+                child: FadeInRight(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 30),
+                      Text(
+                        "País seleccionado: ${selectedOption.option}",
+                        style: robotoStyle(16, FontWeight.w600, AppTheme.colorStyleText),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 80),
               InkWell(
                 onTap: () async => handleContinue(),
                 child: const ButtonBasic(state: true, title: "Continuar"),
               )
             ],
-          )),
-    ));
+          ),
+        ),
+      ),
+    );
   }
 }
