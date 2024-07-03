@@ -7,7 +7,7 @@ import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
-import 'package:footloose_tickets/infraestructure/models/product_model.dart';
+import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/product_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
@@ -132,7 +132,7 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
                 }
               }
 
-              ProductModel productDetail = await product.getProduct(codeProduct);
+              ProductDetailModel productDetail = await product.getProduct(codeProduct);
 
               if (productDetail.data == null) {
                 showError(

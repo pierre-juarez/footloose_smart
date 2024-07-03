@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
-import 'package:footloose_tickets/infraestructure/models/product_model.dart';
+import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/presentation/screens/configuration/configuration_screen.dart';
 import 'package:footloose_tickets/presentation/screens/detail/detail_product_screen.dart';
 import 'package:footloose_tickets/presentation/screens/home/home_screen.dart';
@@ -41,8 +41,8 @@ final appRouter = GoRouter(
       builder: (context, state) {
         final productJson = state.uri.queryParameters['productJson']!;
         final decodedJson = jsonDecode(productJson);
-        final product = ProductModel.fromJson(decodedJson);
-        return DetailProductPage(productModel: product);
+        final product = ProductDetailModel.fromJson(decodedJson);
+        return DetailProductPage(product: product);
       },
     ),
     GoRoute(
@@ -67,7 +67,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/configuration',
       name: ConfigurationScreen.name,
-      builder: (context, state) => ConfigurationScreen(),
+      builder: (context, state) => const ConfigurationScreen(),
     ),
     GoRoute(
       path: '/review-queue',

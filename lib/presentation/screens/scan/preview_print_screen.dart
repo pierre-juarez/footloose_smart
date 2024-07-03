@@ -139,138 +139,144 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
     final list = ref.watch(listProductProvider);
 
     return SafeArea(
-        child: Scaffold(
-      appBar: const AppBarCustom(title: "Previsualización de etiqueta"),
-      body: Column(
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  RepaintBoundary(
-                    key: _globalKey,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 40),
-                      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                      decoration: BoxDecoration(border: Border.all(color: AppTheme.colorPrimary, width: 2)),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TextDescription(description: widget.etiqueta.marcaAbrev),
-                                  TextDescription(description: widget.etiqueta.tipoArticulo),
-                                  TextDescription(description: widget.etiqueta.modelo),
-                                  TextDescription(description: widget.etiqueta.color),
-                                  TextDescription(description: widget.etiqueta.material),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    widget.etiqueta.precio,
-                                    style: robotoStyle(19, FontWeight.w500, Colors.black),
-                                  ),
-                                  TextDescription(description: widget.etiqueta.talla),
-                                  Row(
-                                    children: [
-                                      Text("SKU:", style: robotoStyle(15, FontWeight.w900, Colors.black)),
-                                      Text(
-                                        widget.etiqueta.sku,
-                                        style: robotoStyle(18, FontWeight.w500, Colors.black),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SvgPicture.string(
-                            svg,
-                            fit: BoxFit.contain,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextDescription(description: widget.etiqueta.fechaCreacion),
-                              TextDescription(description: widget.etiqueta.temporada),
-                            ],
-                          )
-                        ],
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async => await redirectToPage("/scan"),
+          child: const Icon(FontAwesomeIcons.camera),
+        ),
+        appBar: const AppBarCustom(title: "Previsualización de etiqueta"),
+        body: Column(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    RepaintBoundary(
+                      key: _globalKey,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 40),
+                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                        decoration: BoxDecoration(border: Border.all(color: AppTheme.colorPrimary, width: 2)),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextDescription(description: widget.etiqueta.marcaAbrev),
+                                    TextDescription(description: widget.etiqueta.tipoArticulo),
+                                    TextDescription(description: widget.etiqueta.modelo),
+                                    TextDescription(description: widget.etiqueta.color),
+                                    TextDescription(description: widget.etiqueta.material),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      widget.etiqueta.precio,
+                                      style: robotoStyle(19, FontWeight.w500, Colors.black),
+                                    ),
+                                    TextDescription(description: widget.etiqueta.talla),
+                                    Row(
+                                      children: [
+                                        Text("SKU:", style: robotoStyle(15, FontWeight.w900, Colors.black)),
+                                        Text(
+                                          widget.etiqueta.sku,
+                                          style: robotoStyle(18, FontWeight.w500, Colors.black),
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SvgPicture.string(
+                              svg,
+                              fit: BoxFit.contain,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextDescription(description: widget.etiqueta.fechaCreacion),
+                                TextDescription(description: widget.etiqueta.temporada),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: _navigateToPrintScreen,
-                    child: ButtonPrimary(validator: loadingPrint, title: "Imprimir solo este ítem"),
-                  ),
-                  Visibility(
-                    visible: list['products']?.isNotEmpty ?? false,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        InkWell(
-                          onTap: () async => _redirectToScan(),
-                          child: const ButtonBasic(state: true, title: "Agregar otro producto"),
-                        ),
-                      ],
+                    InkWell(
+                      onTap: _navigateToPrintScreen,
+                      child: ButtonPrimary(validator: loadingPrint, title: "Imprimir solo este ítem"),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  InkWell(
-                    onTap: () async => _addQueue(widget.etiqueta),
-                    child: ButtonPrimary(validator: addingQueue, title: "Agregar a la fila"),
-                  ),
-                  Visibility(
-                    visible: list['products']?.isNotEmpty ?? false,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        InkWell(
-                          onTap: () async => _handleReviewQueue(),
-                          child: const ButtonBasic(state: true, title: "Revisar fila"),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Visibility(
+                    Visibility(
                       visible: list['products']?.isNotEmpty ?? false,
                       child: Column(
                         children: [
                           const SizedBox(height: 10),
                           InkWell(
-                            onTap: () async => _cancelProcess(),
-                            child: ButtonPrimary(validator: cancelProcess, title: "Cancelar proceso"),
+                            onTap: () async => _redirectToScan(),
+                            child: const ButtonBasic(state: true, title: "Agregar otro producto"),
                           ),
                         ],
-                      )),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text.rich(
-                        TextSpan(
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    InkWell(
+                      onTap: () async => _addQueue(widget.etiqueta),
+                      child: ButtonPrimary(validator: addingQueue, title: "Agregar a la fila"),
+                    ),
+                    Visibility(
+                      visible: list['products']?.isNotEmpty ?? false,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 10),
+                          InkWell(
+                            onTap: () async => _handleReviewQueue(),
+                            child: const ButtonBasic(state: true, title: "Revisar fila"),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                        visible: list['products']?.isNotEmpty ?? false,
+                        child: Column(
                           children: [
-                            TextSpan(text: "Ítems en la fila: ", style: robotoStyle(16, FontWeight.bold, Colors.black)),
-                            TextSpan(
-                                text: "${list['products']?.length ?? 0}", style: robotoStyle(16, FontWeight.normal, Colors.black))
+                            const SizedBox(height: 10),
+                            InkWell(
+                              onTap: () async => _cancelProcess(),
+                              child: ButtonPrimary(validator: cancelProcess, title: "Cancelar proceso"),
+                            ),
                           ],
-                        ),
-                      )
-                    ],
-                  )
-                ],
+                        )),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(text: "Ítems en la fila: ", style: robotoStyle(16, FontWeight.bold, Colors.black)),
+                              TextSpan(
+                                  text: "${list['products']?.length ?? 0}",
+                                  style: robotoStyle(16, FontWeight.normal, Colors.black))
+                            ],
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
 

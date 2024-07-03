@@ -68,3 +68,11 @@ void navigateToPushReplacement(BuildContext context, Widget page) {
 Future<void> redirectToPage(String routeName) async {
   await appRouter.pushReplacement(routeName);
 }
+
+String formatToTwoDecimalPlaces(double value) {
+  return value.toStringAsFixed(2);
+}
+
+String formatDate(DateTime dateTime) {
+  return "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+}

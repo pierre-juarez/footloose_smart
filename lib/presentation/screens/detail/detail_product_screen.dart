@@ -1,21 +1,22 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
-import 'package:footloose_tickets/infraestructure/models/product_model.dart';
+import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 
 class DetailProductPage extends StatefulWidget {
   static const name = "product-screen";
-  final ProductModel productModel;
+  final ProductDetailModel product;
 
   const DetailProductPage({
     super.key,
-    required this.productModel,
+    required this.product,
   });
 
   @override
@@ -26,22 +27,21 @@ class _DetailProductPageState extends State<DetailProductPage> {
   bool loadingPage = false;
   @override
   Widget build(BuildContext context) {
-    final String temporada = widget.productModel.data?[0].caracteristica.temporada.nombre ?? "-";
-    const String tipoArticulo = "--tipoArticulo" ?? "--tipoArticulo";
+    final String temporada = widget.product.data?[0].temporada ?? "-";
+    final String tipoArticulo = widget.product.data?[0].tipoDeArticulo ?? "-";
     final String material =
-        "${widget.productModel.data?[0].caracteristica.material.material1.nombre} ${widget.productModel.data?[0].caracteristica.material.material2.nombre} ${widget.productModel.data?[0].caracteristica.material.material3.nombre}";
-    final String nombre = widget.productModel.data?[0].nombre ?? "-";
-
-    final String sku = widget.productModel.data?[0].sku ?? "#modelo";
-    const String cu = "--cu" ?? "--cu";
-    final double pvp = widget.productModel.data?[0].precioBlanco ?? 0.0;
-    final String talla = widget.productModel.data?[0].caracteristica.tallas.nombre ?? "--talla";
-    const String fechaCreacion = "--fechaCreacion" ?? "--fechaCreacion";
+        "${widget.product.data?[0].material1}  ${widget.product.data?[0].material2}  ${widget.product.data?[0].material3}";
+    final String nombre = widget.product.data?[0].nombre ?? "-";
+    final String sku = widget.product.data?[0].producto ?? "-";
+    final double pvp = widget.product.data?[0].preciobancoCiva ?? 0.0;
+    final String talla = widget.product.data?[0].tallas ?? "-";
+    final String fechaCreacion = formatDate(widget.product.data?[0].fechacompra ?? DateTime.now());
+    final String marca = widget.product.data?[0].marca ?? "-";
+    final String modelo = widget.product.data?[0].modelo ?? "-";
+    final String imgUrl = widget.product.data?[0].urlimagen ?? "";
 
     List<String> splitNombre = nombre.split(" ");
 
-    final String marca = (splitNombre.isNotEmpty) ? splitNombre[0] : "-";
-    final String modelo = (splitNombre.isNotEmpty) ? splitNombre[1] : "-";
     final String abrev = (splitNombre.isNotEmpty) ? splitNombre[4] : "-";
     final String color = (splitNombre.isNotEmpty) ? splitNombre[7].split("-")[0] : "-";
 
@@ -61,7 +61,7 @@ class _DetailProductPageState extends State<DetailProductPage> {
         precio: "\$/. $pvp",
         talla: talla,
         sku: sku,
-        cu: cu,
+        cu: "cu",
         fechaCreacion: fechaCreacion,
         temporada: temporada,
       );
@@ -74,7 +74,6 @@ class _DetailProductPageState extends State<DetailProductPage> {
 
     return SafeArea(
       child: Scaffold(
-          floatingActionButton: const FloatingButton(),
           backgroundColor: Colors.white,
           appBar: const AppBarCustom(title: "Detalle de producto"),
           body: Stack(
@@ -95,10 +94,11 @@ class _DetailProductPageState extends State<DetailProductPage> {
                         abrev: abrev,
                         modelo: modelo,
                         sku: sku,
-                        cu: cu,
+                        cu: "cu",
                         talla: talla,
                         fechaCreacion: fechaCreacion,
                         precio: pvp,
+                        img: imgUrl,
                       ),
                       const SizedBox(height: 20.0),
                       Container(
@@ -153,6 +153,7 @@ class CardProduct extends StatelessWidget {
   final double precio;
   final String talla;
   final String fechaCreacion;
+  final String img;
 
   const CardProduct({
     super.key,
@@ -169,6 +170,7 @@ class CardProduct extends StatelessWidget {
     required this.precio,
     required this.talla,
     required this.fechaCreacion,
+    required this.img,
   });
 
   @override
@@ -188,12 +190,10 @@ class CardProduct extends StatelessWidget {
                 style: robotoStyle(13, FontWeight.w400, Colors.black),
               ),
               const SizedBox(height: 10.0),
-              const Center(
+              Center(
                 child: SizedBox(
                   height: 150.0,
-                  child:
-                      // (imageProduct.isNotEmpty) ? _ImageFound(path: imageProduct) :
-                      _ImageNotFound(),
+                  child: (img.isNotEmpty) ? _ImageFound(path: img) : const _ImageNotFound(),
                 ),
               ),
               const SizedBox(height: 15.0),
@@ -212,7 +212,7 @@ class CardProduct extends StatelessWidget {
                         style: robotoStyle(15, FontWeight.w400, const Color(0xff666666)),
                       ),
                       Text(
-                        "\$/. $precio",
+                        "\$/. ${formatToTwoDecimalPlaces(precio)}",
                         style: robotoStyle(22, FontWeight.bold, AppTheme.colorPrimary),
                       )
                     ],
