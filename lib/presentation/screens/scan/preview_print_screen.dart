@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/delete_all_items.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
@@ -107,6 +108,11 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
           },
           buttonText: "Agregar +",
           buttonText2: "Visualizar",
+          icon: Icon(
+            FontAwesomeIcons.checkToSlot,
+            color: AppTheme.colorSecondary,
+            size: 30,
+          ),
         );
       } else {
         showError(context, title: "Error", errorMessage: "El producto ya ha sido agregado a la fila");
@@ -147,7 +153,7 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 40),
                       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                      decoration: BoxDecoration(border: Border.all(color: AppTheme.colorSecondary, width: 2)),
+                      decoration: BoxDecoration(border: Border.all(color: AppTheme.colorPrimary, width: 2)),
                       child: Column(
                         children: [
                           Row(

@@ -216,7 +216,7 @@ class _LoadingPrinters extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(color: AppTheme.colorSecondary),
+          CircularProgressIndicator(color: AppTheme.colorPrimary),
           const SizedBox(height: 13),
           Text(
             "Buscando impresoras...",

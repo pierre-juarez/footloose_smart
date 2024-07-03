@@ -32,7 +32,7 @@ class ButtonPrimary extends StatelessWidget {
       // Cambiar a !validator
       colorButton = Colors.grey;
     } else {
-      colorButton = color != null ? color! : AppTheme.colorSecondary;
+      colorButton = color != null ? color! : AppTheme.colorPrimary;
     }
 
     return Container(

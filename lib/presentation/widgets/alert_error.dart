@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
+import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 
 class AlertError extends StatelessWidget {
@@ -43,15 +44,19 @@ class AlertError extends StatelessWidget {
           children: [
             icon != null
                 ? icon!
-                : const Icon(
+                : Icon(
                     FontAwesomeIcons.triangleExclamation,
-                    color: Colors.red,
+                    color: AppTheme.colorError,
                     size: 30,
                   ),
             const SizedBox(height: 10),
             Text(
               title ?? "Advertencia",
-              style: robotoStyle(16, FontWeight.w500, (icon != null ? ((icon as Icon).color ?? Colors.red) : Colors.red)),
+              style: robotoStyle(
+                16,
+                FontWeight.w500,
+                (icon != null ? ((icon as Icon).color ?? AppTheme.colorError) : AppTheme.colorError),
+              ),
             ),
             const SizedBox(height: 18),
             Text(

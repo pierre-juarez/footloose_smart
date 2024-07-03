@@ -63,7 +63,7 @@ class ButtonResetPassword extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   "Restablécela acá",
-                  style: robotoStyle(15, FontWeight.bold, AppTheme.colorSecondary),
+                  style: robotoStyle(15, FontWeight.bold, AppTheme.colorTerciary),
                 ),
               ),
               onTap: () async => ()

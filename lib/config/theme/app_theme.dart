@@ -3,11 +3,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 
 class AppTheme {
-  static Color backgroundColor = const Color(0xff272727);
+  static Color backgroundColor = Colors.black;
   static Color inputBgColor = const Color.fromRGBO(240, 240, 240, 0.2);
   static TextStyle styleInput = robotoStyle(15, FontWeight.w400, Colors.white);
-  static Color colorSecondary = const Color(0xff515BEB);
+  static Color colorPrimary = const Color(0xff6F359C);
+  static Color colorSecondary = const Color(0xff0033A0);
+  static Color colorTerciary = const Color(0xffFDB913);
   static Color colorStyleText = Colors.white;
+  static Color colorError = const Color(0xffD52B1E);
 
   static BoxDecoration inputCustomDecoration = BoxDecoration(
     color: AppTheme.inputBgColor,

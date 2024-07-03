@@ -225,7 +225,7 @@ class _TicketDetail extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10, top: 5),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: AppTheme.colorSecondary, width: 2),
+        border: Border.all(color: AppTheme.colorPrimary, width: 2),
       ),
       child: Column(
         children: [

@@ -10,6 +10,7 @@ import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/product_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/product_provider.dart';
+import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/navbar.dart';
 import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -99,7 +100,7 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
           icon: Icon(
             FontAwesomeIcons.check,
             size: 30,
-            color: AppTheme.colorSecondary,
+            color: AppTheme.colorPrimary,
           ),
           title: "Código escaneado",
           errorMessage: "El código $codeProduct ha sido escaneado",
@@ -253,21 +254,47 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
                                       direction: DismissDirection.endToStart,
                                       confirmDismiss: (DismissDirection direction) async {
                                         bool deleteConfirmed = await showDialog(
+                                          barrierDismissible: false,
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
-                                              title: const Text('Confirmación'),
+                                              title: Text(
+                                                'Confirmación',
+                                                style: robotoStyle(20, FontWeight.w600, Colors.black),
+                                                textAlign: TextAlign.center,
+                                              ),
                                               content: Text(
-                                                  '¿Estás seguro de que quieres eliminar el producto con SKU: ${product.sku}?'),
+                                                '¿Estás seguro de que quieres eliminar el producto con SKU: ${product.sku}?',
+                                                style: robotoStyle(15, FontWeight.normal, Colors.black),
+                                                textAlign: TextAlign.center,
+                                              ),
                                               actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () => Navigator.of(context).pop(false), // No eliminar
-                                                  child: const Text('Cancelar'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () => Navigator.of(context).pop(true), // Confirmar eliminar
-                                                  child: const Text('Eliminar'),
-                                                ),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: InkWell(
+                                                        onTap: () => Navigator.of(context).pop(true),
+                                                        child: const ButtonPrimary(
+                                                          validator: false,
+                                                          title: "Eliminar",
+                                                          type: "small",
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    Expanded(
+                                                      child: InkWell(
+                                                        onTap: () => Navigator.of(context).pop(false),
+                                                        child: ButtonPrimary(
+                                                          validator: false,
+                                                          title: "Cancelar",
+                                                          type: "small",
+                                                          color: AppTheme.colorSecondary,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
                                               ],
                                             );
                                           },
@@ -368,8 +395,8 @@ class _ButtonManual extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
           decoration: BoxDecoration(
-              color: AppTheme.colorSecondary,
-              border: Border.all(color: AppTheme.colorSecondary),
+              color: AppTheme.colorPrimary,
+              border: Border.all(color: AppTheme.colorPrimary),
               borderRadius: BorderRadius.circular(100.0)),
           child: const TextWidgetInput(
             text: "Ingreso manual",

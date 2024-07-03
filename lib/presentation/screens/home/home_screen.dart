@@ -11,7 +11,6 @@ import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
-import 'package:footloose_tickets/presentation/widgets/button_basic.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -49,15 +48,22 @@ class _PageHome extends ConsumerWidget {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () async => deleteAllItems(),
-                    child: const ButtonBasic(state: true, title: "Vacíar fila"),
+                    onTap: () async => viewPrint(),
+                    child: const ButtonPrimary(
+                      validator: false,
+                      title: "Revisar fila",
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: InkWell(
-                    onTap: () async => viewPrint(),
-                    child: const ButtonBasic(state: true, title: "Revisar fila"),
+                    onTap: () async => deleteAllItems(),
+                    child: ButtonPrimary(
+                      validator: false,
+                      title: "Vaciar fila",
+                      color: AppTheme.colorSecondary,
+                    ),
                   ),
                 ),
               ],

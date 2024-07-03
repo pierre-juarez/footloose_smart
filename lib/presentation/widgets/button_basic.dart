@@ -23,7 +23,7 @@ class ButtonBasic extends StatelessWidget {
       // Cambiar a !state
       colorButton = Colors.grey;
     } else {
-      colorButton = (loading != null && loading!) ? Colors.grey : AppTheme.colorSecondary;
+      colorButton = (loading != null && loading!) ? Colors.grey : AppTheme.colorPrimary;
     }
 
     return Container(

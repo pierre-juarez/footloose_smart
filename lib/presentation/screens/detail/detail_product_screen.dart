@@ -126,7 +126,7 @@ class FloatingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      backgroundColor: AppTheme.colorSecondary,
+      backgroundColor: AppTheme.colorPrimary,
       onPressed: () async {
         await appRouter.pushReplacement("/home");
       },
@@ -213,7 +213,7 @@ class CardProduct extends StatelessWidget {
                       ),
                       Text(
                         "\$/. $precio",
-                        style: robotoStyle(22, FontWeight.bold, AppTheme.colorSecondary),
+                        style: robotoStyle(22, FontWeight.bold, AppTheme.colorPrimary),
                       )
                     ],
                   ),
@@ -287,7 +287,7 @@ class _ImageNotFound extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color.fromARGB(213, 81, 91, 235),
         border: Border.all(
-          color: AppTheme.colorSecondary,
+          color: AppTheme.colorPrimary,
           width: 2.0,
         ),
       ),

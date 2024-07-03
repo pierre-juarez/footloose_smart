@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/get_errors.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:crypto/crypto.dart';
@@ -24,9 +25,9 @@ class ButtonInitLogin extends ConsumerWidget {
         title: "¡Hola usuari@!",
         buttonText: "OK",
         type: "success",
-        icon: const Icon(
+        icon: Icon(
           FontAwesomeIcons.circleCheck,
-          color: Color(0xff034A2C),
+          color: AppTheme.colorSecondary,
           size: 30,
         ),
         onTap: () async {

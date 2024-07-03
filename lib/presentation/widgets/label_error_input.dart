@@ -23,13 +23,13 @@ class LabelErrorInput extends StatelessWidget {
         children: [
           Icon(
             FontAwesomeIcons.circleExclamation,
-            color: AppTheme.colorSecondary,
+            color: AppTheme.colorTerciary,
             size: 14,
           ),
           const SizedBox(width: 8),
           Text(
             customError,
-            style: robotoStyle(13, FontWeight.w500, AppTheme.colorSecondary),
+            style: robotoStyle(13, FontWeight.w500, AppTheme.colorTerciary),
           )
         ],
       ),
