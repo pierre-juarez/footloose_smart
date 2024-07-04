@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
@@ -7,10 +8,12 @@ import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
+import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
+import 'package:footloose_tickets/presentation/providers/product/queue_active_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 
-class DetailProductPage extends StatefulWidget {
+class DetailProductPage extends ConsumerStatefulWidget {
   static const name = "product-screen";
 
   final ProductDetailModel product;
@@ -21,15 +24,18 @@ class DetailProductPage extends StatefulWidget {
   });
 
   @override
-  State<DetailProductPage> createState() => _DetailProductPageState();
+  DetailProductPageState createState() => DetailProductPageState();
 }
 
-class _DetailProductPageState extends State<DetailProductPage> {
+class DetailProductPageState extends ConsumerState<DetailProductPage> {
   bool loadingPage = false;
   int count = 2;
 
   @override
   Widget build(BuildContext context) {
+    final activeQueue = ref.watch(queueActiveProvider)['activeQueue'];
+    print("🚀 ~ file: detail_product_screen.dart ~ line: 36 ~ activeQueue: $activeQueue");
+
     final String temporada = widget.product.data?[0].temporada ?? "-";
     final String tipoArticulo = widget.product.data?[0].tipoDeArticulo ?? "-";
     final String material =
@@ -76,7 +82,7 @@ class _DetailProductPageState extends State<DetailProductPage> {
       }
 
       final listsJson = jsonEncode(listProducts.map((product) => product.toJson()).toList());
-      await appRouter.pushReplacement('/preview?etiquetas=$listsJson');
+      await appRouter.pushReplacement('/preview?etiquetas=$listsJson&param=$activeQueue');
 
       setState(() {
         loadingPage = false;

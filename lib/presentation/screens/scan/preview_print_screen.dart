@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:barcode/barcode.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -15,6 +16,7 @@ import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
+import 'package:footloose_tickets/presentation/providers/product/queue_active_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_basic.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
@@ -26,9 +28,11 @@ class PreviewPrintScreen extends ConsumerStatefulWidget {
   const PreviewPrintScreen({
     super.key,
     required this.etiquetas,
+    required this.state,
   });
 
   final List<EtiquetaModel> etiquetas;
+  final bool state;
 
   @override
   PreviewPrintScreenState createState() => PreviewPrintScreenState();
@@ -46,6 +50,11 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
   void initState() {
     super.initState();
     _globalKeys = List.generate(widget.etiquetas.length, (index) => GlobalKey());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.state) {
+        _addQueue(widget.etiquetas[0]);
+      }
+    });
   }
 
   Future<Uint8List> _capturePng() async {
@@ -138,28 +147,16 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
         addingQueue = true;
       });
       final list = ref.watch(listProductProvider)['products'] ?? [];
+      // final queueState = ref.watch(queueActiveProvider);
       bool exists = list.any((p) => p.sku == product.sku);
       int countItems = widget.etiquetas.length;
 
       if (!exists) {
+        ref.read(queueActiveProvider.notifier).changeState();
         for (var i = 0; i < countItems; i++) {
           ref.read(listProductProvider.notifier).saveProduct(product);
         }
-        showErrorTwo(
-          context,
-          title: "Ítem agregado",
-          errorMessage: "El producto ha sido agregado a la fila",
-          onTap: () async {
-            await _redirectToScan();
-          },
-          buttonText: "Agregar +",
-          buttonText2: "Visualizar",
-          icon: Icon(
-            FontAwesomeIcons.checkToSlot,
-            color: AppTheme.colorSecondary,
-            size: 30,
-          ),
-        );
+        !widget.state ? modalErrorOne() : modalErrorTwo();
       } else {
         showError(context, title: "Error", errorMessage: "El producto ya ha sido agregado a la fila");
       }
@@ -172,15 +169,50 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
     }
   }
 
+  Future<void> modalErrorOne() {
+    return showError(
+      context,
+      title: "Ítem agregado",
+      errorMessage: "El producto ha sido agregado a la fila",
+      onTap: () async {
+        await _redirectToScan();
+      },
+      buttonText: "Agregar +",
+      icon: Icon(
+        FontAwesomeIcons.checkToSlot,
+        color: AppTheme.colorSecondary,
+        size: 30,
+      ),
+    );
+  }
+
+  Future<void> modalErrorTwo() {
+    return showErrorTwo(
+      context,
+      title: "Ítem agregado",
+      errorMessage: "El producto ha sido agregado a la fila",
+      onTap: () async {
+        await _redirectToScan();
+      },
+      buttonText: "Agregar +",
+      buttonText2: "Continuar",
+      icon: Icon(
+        FontAwesomeIcons.checkToSlot,
+        color: AppTheme.colorSecondary,
+        size: 30,
+      ),
+    );
+  }
+
   Future<void> _handleReviewQueue() async {
-    final list = ref.watch(listProductProvider)['products']!;
+    final list = ref.watch(listProductProvider)['products'] ?? [];
     final listsJson = jsonEncode(list.map((product) => product.toJson()).toList());
     await context.push('/review-queue?etiquetas=$listsJson');
   }
 
   @override
   Widget build(BuildContext context) {
-    final list = ref.watch(listProductProvider);
+    final list = ref.watch(listProductProvider)['products'] ?? [];
     final barcode = Barcode.code128();
     List<String> svgs = [];
     for (var etiqueta in widget.etiquetas) {
@@ -188,7 +220,7 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
       svgs.add(svg);
     }
     // final svg = barcode.toSvg(widget.etiqueta.sku, width: 400, height: 150);
-    List<EtiquetaModel> listProducts = list['products'] ?? [];
+    List<EtiquetaModel> listProducts = list;
     int countItems = listProducts.length;
 
     Set<String> skusUnicos = listProducts.map((etiqueta) => etiqueta.sku).toSet();
@@ -231,45 +263,44 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
                   const SizedBox(height: 10),
                   InkWell(
                     onTap: _navigateToPrintScreen,
-                    child: ButtonPrimary(validator: loadingPrint, title: "Imprimir solo este ítem"),
+                    child: ButtonPrimary(validator: loadingPrint, title: "Imprimir ${countProducts > 0 ? "solo este" : ""} ítem"),
                   ),
                   Visibility(
-                    visible: list['products']?.isNotEmpty ?? false,
+                    visible: !widget.state,
                     child: Column(
                       children: [
                         const SizedBox(height: 10),
                         InkWell(
-                          onTap: () async => _redirectToScan(),
-                          child: const ButtonBasic(state: true, title: "Agregar otro producto"),
+                          onTap: () async => _addQueue(widget.etiquetas[0]),
+                          child: ButtonPrimary(validator: addingQueue, title: "Agregar a la fila"),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  InkWell(
-                    onTap: () async => _addQueue(widget.etiquetas[0]),
-                    child: ButtonPrimary(validator: addingQueue, title: "Agregar a la fila"),
-                  ),
                   Visibility(
-                    visible: list['products']?.isNotEmpty ?? false,
+                    visible: list.isNotEmpty,
                     child: Column(
                       children: [
                         const SizedBox(height: 10),
                         InkWell(
                           onTap: () async => _handleReviewQueue(),
-                          child: const ButtonBasic(state: true, title: "Revisar fila"),
+                          child: const ButtonPrimary(validator: false, title: "Imprimir todos los ítems"),
                         ),
                       ],
                     ),
                   ),
                   Visibility(
-                      visible: list['products']?.isNotEmpty ?? false,
+                      visible: list.isNotEmpty,
                       child: Column(
                         children: [
                           const SizedBox(height: 10),
                           InkWell(
                             onTap: () async => _cancelProcess(),
-                            child: ButtonPrimary(validator: cancelProcess, title: "Cancelar proceso"),
+                            child: ButtonPrimary(
+                              validator: cancelProcess,
+                              title: "Cancelar proceso",
+                              color: AppTheme.colorSecondary,
+                            ),
                           ),
                         ],
                       )),

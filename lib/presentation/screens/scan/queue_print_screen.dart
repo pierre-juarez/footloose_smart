@@ -87,6 +87,7 @@ class QueuePrintScreenState extends ConsumerState<QueuePrintScreen> {
   }
 
   void _navigateToPrintScreen() async {
+    // TODO  - DESPUÉS DE IMPRIMIR RESETEAR EL VALOR DE QUEUEACTIVE
     setState(() {
       loadingPrint = true;
     });
@@ -171,7 +172,11 @@ class QueuePrintScreenState extends ConsumerState<QueuePrintScreen> {
                   const SizedBox(height: 10),
                   InkWell(
                     onTap: () async => _cancel(),
-                    child: const ButtonBasic(state: true, title: "Cancelar operación"),
+                    child: ButtonPrimary(
+                      validator: false,
+                      title: "Cancelar operación",
+                      color: AppTheme.colorSecondary,
+                    ),
                   ),
                   const SizedBox(height: 10),
                 ],

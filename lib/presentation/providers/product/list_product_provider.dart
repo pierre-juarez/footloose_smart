@@ -16,14 +16,6 @@ class ListProductProvider extends StateNotifier<Map<String, List<EtiquetaModel>>
     state = {...state, "products": products};
   }
 
-  void deleteProductAtIndex(int index) {
-    List<EtiquetaModel> products = state["products"] ?? [];
-    if (index >= 0 && index < products.length) {
-      products.removeAt(index);
-      state = {...state, "products": products};
-    }
-  }
-
   void deleteAllProducts() {
     state = {...state, "products": []};
   }
