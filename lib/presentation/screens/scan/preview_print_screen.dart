@@ -60,7 +60,17 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
       for (GlobalKey key in _globalKeys) {
         RenderRepaintBoundary? boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
         if (boundary != null) {
-          ui.Image image = await boundary.toImage();
+          if (boundary.debugNeedsPaint) {
+            // Esperar un frame más si necesita ser pintado
+            await Future.delayed(const Duration(milliseconds: 20));
+            await WidgetsBinding.instance.endOfFrame;
+            boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+            if (boundary == null || boundary.debugNeedsPaint) {
+              print("El widget aún necesita pintarse después del retraso y el fin del frame.");
+              continue; // O saltar este widget
+            }
+          }
+          ui.Image image = await boundary.toImage(pixelRatio: 3.0);
           ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png) ?? ByteData(0);
           pngBytesList.add(byteData.buffer.asUint8List());
         } else {
