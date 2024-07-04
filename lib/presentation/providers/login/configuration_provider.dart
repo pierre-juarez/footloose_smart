@@ -19,6 +19,12 @@ class ConfigurationProvider extends ChangeNotifier {
       return "";
     }
   }
+
+  Future<void> deleteConfig() async {
+    const storage = FlutterSecureStorage();
+    await storage.delete(key: "configOption");
+    await storage.delete(key: "configOptionId");
+  }
 }
 
 final configurationProvider = ChangeNotifierProvider((ref) => ConfigurationProvider());

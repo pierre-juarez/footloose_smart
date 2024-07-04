@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
 import 'package:footloose_tickets/presentation/providers/pais/pais_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_basic.dart';
@@ -20,6 +21,9 @@ class ConfigurationScreen extends ConsumerWidget {
 
     void handleContinue() async {
       final config = ref.watch(configurationProvider);
+      final auth = ref.watch(authProvider);
+
+      final bool logeado = await auth.isLoggedIn();
 
       if (selectedOption.option.isEmpty || selectedOption.optionId.isEmpty) {
         showError(context, title: "Error", errorMessage: "Seleccione un país válido");
@@ -30,7 +34,12 @@ class ConfigurationScreen extends ConsumerWidget {
       print("🚀 ~ file: configuration_screen.dart ~ line: 20 ~ TM_FUNCTION: ${selectedOption.option}");
       print("🚀 ~ file: configuration_screen.dart ~ line: 21 ~ TM_FUNCTION: ${selectedOption.optionId}");
 
-      await redirectToPage("/login");
+      if (logeado) {
+        await redirectToPage("/home");
+      } else {
+        auth.clearInputs();
+        await redirectToPage("/login");
+      }
     }
 
     return SafeArea(

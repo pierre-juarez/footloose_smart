@@ -12,6 +12,7 @@ import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 
 class DetailProductPage extends StatefulWidget {
   static const name = "product-screen";
+
   final ProductDetailModel product;
 
   const DetailProductPage({
@@ -25,6 +26,8 @@ class DetailProductPage extends StatefulWidget {
 
 class _DetailProductPageState extends State<DetailProductPage> {
   bool loadingPage = false;
+  int count = 2;
+
   @override
   Widget build(BuildContext context) {
     final String temporada = widget.product.data?[0].temporada ?? "-";
@@ -52,6 +55,8 @@ class _DetailProductPageState extends State<DetailProductPage> {
 
       await Future.delayed(const Duration(milliseconds: 500));
 
+      List<EtiquetaModel> listProducts = [];
+
       EtiquetaModel etiqueta = EtiquetaModel(
         marcaAbrev: "$marca - $abrev",
         tipoArticulo: tipoArticulo,
@@ -65,10 +70,32 @@ class _DetailProductPageState extends State<DetailProductPage> {
         fechaCreacion: fechaCreacion,
         temporada: temporada,
       );
-      final etiquetaJson = jsonEncode(etiqueta.toJson());
-      await appRouter.pushReplacement('/preview?etiqueta=$etiquetaJson');
+
+      for (var i = 0; i < count; i++) {
+        listProducts.add(etiqueta);
+      }
+
+      final listsJson = jsonEncode(listProducts.map((product) => product.toJson()).toList());
+      await appRouter.pushReplacement('/preview?etiquetas=$listsJson');
+
       setState(() {
         loadingPage = false;
+      });
+    }
+
+    void add() {
+      setState(() {
+        count++;
+      });
+    }
+
+    void subtract() {
+      setState(() {
+        if (count == 1) {
+          showError(context, title: "Error", errorMessage: "El número actual de impresiones no puede ser menor a 1");
+          return;
+        }
+        count--;
       });
     }
 
@@ -100,6 +127,32 @@ class _DetailProductPageState extends State<DetailProductPage> {
                         precio: pvp,
                         img: imgUrl,
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 45),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 15),
+                            Text("Número de impresiones", style: robotoStyle(16, FontWeight.w600, Colors.black)),
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: InkWell(
+                                        onTap: () => subtract(), child: const ButtonPrimary(validator: false, title: "-1"))),
+                                const SizedBox(width: 25),
+                                Text(
+                                  "$count",
+                                  style: robotoStyle(18, FontWeight.w500, Colors.black),
+                                ),
+                                const SizedBox(width: 25),
+                                Expanded(
+                                    child:
+                                        InkWell(onTap: () => add(), child: const ButtonPrimary(validator: false, title: "+1"))),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 20.0),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -107,7 +160,7 @@ class _DetailProductPageState extends State<DetailProductPage> {
                           onTap: () async => navigateToPreview(),
                           child: ButtonPrimary(validator: loadingPage, title: "Previsualizar etiqueta"),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),

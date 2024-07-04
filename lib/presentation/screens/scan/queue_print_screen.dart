@@ -194,14 +194,27 @@ class _Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<EtiquetaModel> listProducts = widget.etiquetas;
+    int countItems = listProducts.length;
+
+    Set<String> skusUnicos = listProducts.map((etiqueta) => etiqueta.sku).toSet();
+    int countProducts = skusUnicos.length;
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text.rich(
           TextSpan(
             children: [
               TextSpan(text: "Ítems en la fila: ", style: robotoStyle(18, FontWeight.bold, Colors.black)),
-              TextSpan(text: "${widget.etiquetas.length}", style: robotoStyle(18, FontWeight.normal, Colors.black))
+              TextSpan(text: "$countItems", style: robotoStyle(18, FontWeight.normal, Colors.black))
+            ],
+          ),
+        ),
+        Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(text: "Productos en la fila: ", style: robotoStyle(18, FontWeight.bold, Colors.black)),
+              TextSpan(text: "$countProducts", style: robotoStyle(18, FontWeight.normal, Colors.black))
             ],
           ),
         )

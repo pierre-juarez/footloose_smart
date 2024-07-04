@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:barcode/barcode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,12 +22,13 @@ import 'package:go_router/go_router.dart';
 
 class PreviewPrintScreen extends ConsumerStatefulWidget {
   static const name = "preview-print-screen";
+
   const PreviewPrintScreen({
     super.key,
-    required this.etiqueta,
+    required this.etiquetas,
   });
 
-  final EtiquetaModel etiqueta;
+  final List<EtiquetaModel> etiquetas;
 
   @override
   PreviewPrintScreenState createState() => PreviewPrintScreenState();
@@ -34,15 +36,56 @@ class PreviewPrintScreen extends ConsumerStatefulWidget {
 
 class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
   final GlobalKey _globalKey = GlobalKey();
+  List<GlobalKey> _globalKeys = [];
   bool loadingPrint = false;
   bool addingQueue = false;
   bool cancelProcess = false;
+  int count = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _globalKeys = List.generate(widget.etiquetas.length, (index) => GlobalKey());
+  }
 
   Future<Uint8List> _capturePng() async {
     try {
-      RenderRepaintBoundary boundary = _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
-      ui.Image image = await boundary.toImage();
-      ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png) ?? ByteData(0);
+      List<Uint8List> pngBytesList = [];
+
+      for (GlobalKey key in _globalKeys) {
+        RenderRepaintBoundary? boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+        if (boundary != null) {
+          ui.Image image = await boundary.toImage();
+          ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png) ?? ByteData(0);
+          pngBytesList.add(byteData.buffer.asUint8List());
+        } else {
+          print("No se encontró RenderRepaintBoundary para una de las etiquetas.");
+        }
+      }
+
+      if (pngBytesList.isEmpty) {
+        print("No se capturaron imágenes válidas.");
+        return Uint8List(0);
+      }
+
+      // Combinar las imágenes en una sola con espacio entre ellas
+      ui.PictureRecorder recorder = ui.PictureRecorder();
+      Canvas canvas = Canvas(recorder);
+      double yOffset = 0.0;
+      const double separation = 20.0; // Espacio entre imágenes
+
+      for (Uint8List pngBytes in pngBytesList) {
+        ui.Image image = await decodeImageFromList(pngBytes);
+        canvas.drawImage(image, Offset(0, yOffset), Paint());
+        yOffset += image.height.toDouble() + separation;
+      }
+
+      ui.Image finalImage = await recorder.endRecording().toImage(
+            400, // Ajustar el ancho total
+            yOffset.toInt(),
+          );
+      ByteData byteData = await finalImage.toByteData(format: ui.ImageByteFormat.png) ?? ByteData(0);
+
       return byteData.buffer.asUint8List();
     } catch (e) {
       print("Error al capturar la imagen: $e");
@@ -96,9 +139,12 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
       });
       final list = ref.watch(listProductProvider)['products'] ?? [];
       bool exists = list.any((p) => p.sku == product.sku);
+      int countItems = widget.etiquetas.length;
 
       if (!exists) {
-        ref.read(listProductProvider.notifier).saveProduct(product);
+        for (var i = 0; i < countItems; i++) {
+          ref.read(listProductProvider.notifier).saveProduct(product);
+        }
         showErrorTwo(
           context,
           title: "Ítem agregado",
@@ -134,9 +180,19 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final barcode = Barcode.code128();
-    final svg = barcode.toSvg(widget.etiqueta.sku, width: 400, height: 150);
     final list = ref.watch(listProductProvider);
+    final barcode = Barcode.code128();
+    List<String> svgs = [];
+    for (var etiqueta in widget.etiquetas) {
+      final svg = barcode.toSvg(etiqueta.sku, width: 400, height: 150);
+      svgs.add(svg);
+    }
+    // final svg = barcode.toSvg(widget.etiqueta.sku, width: 400, height: 150);
+    List<EtiquetaModel> listProducts = list['products'] ?? [];
+    int countItems = listProducts.length;
+
+    Set<String> skusUnicos = listProducts.map((etiqueta) => etiqueta.sku).toSet();
+    int countProducts = skusUnicos.length;
 
     return SafeArea(
       child: Scaffold(
@@ -145,136 +201,181 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
           child: const Icon(FontAwesomeIcons.camera),
         ),
         appBar: const AppBarCustom(title: "Previsualización de etiqueta"),
-        body: Column(
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    RepaintBoundary(
-                      key: _globalKey,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 40),
-                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                        decoration: BoxDecoration(border: Border.all(color: AppTheme.colorPrimary, width: 2)),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextDescription(description: widget.etiqueta.marcaAbrev),
-                                    TextDescription(description: widget.etiqueta.tipoArticulo),
-                                    TextDescription(description: widget.etiqueta.modelo),
-                                    TextDescription(description: widget.etiqueta.color),
-                                    TextDescription(description: widget.etiqueta.material),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      widget.etiqueta.precio,
-                                      style: robotoStyle(19, FontWeight.w500, Colors.black),
-                                    ),
-                                    TextDescription(description: widget.etiqueta.talla),
-                                    Row(
-                                      children: [
-                                        Text("SKU:", style: robotoStyle(15, FontWeight.w900, Colors.black)),
-                                        Text(
-                                          widget.etiqueta.sku,
-                                          style: robotoStyle(18, FontWeight.w500, Colors.black),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SvgPicture.string(
-                              svg,
-                              fit: BoxFit.contain,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextDescription(description: widget.etiqueta.fechaCreacion),
-                                TextDescription(description: widget.etiqueta.temporada),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: _navigateToPrintScreen,
-                      child: ButtonPrimary(validator: loadingPrint, title: "Imprimir solo este ítem"),
-                    ),
-                    Visibility(
-                      visible: list['products']?.isNotEmpty ?? false,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 10),
-                          InkWell(
-                            onTap: () async => _redirectToScan(),
-                            child: const ButtonBasic(state: true, title: "Agregar otro producto"),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    InkWell(
-                      onTap: () async => _addQueue(widget.etiqueta),
-                      child: ButtonPrimary(validator: addingQueue, title: "Agregar a la fila"),
-                    ),
-                    Visibility(
-                      visible: list['products']?.isNotEmpty ?? false,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 10),
-                          InkWell(
-                            onTap: () async => _handleReviewQueue(),
-                            child: const ButtonBasic(state: true, title: "Revisar fila"),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Visibility(
-                        visible: list['products']?.isNotEmpty ?? false,
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 10),
-                            InkWell(
-                              onTap: () async => _cancelProcess(),
-                              child: ButtonPrimary(validator: cancelProcess, title: "Cancelar proceso"),
-                            ),
-                          ],
-                        )),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+        body: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              const SizedBox(height: 15),
+              Text(
+                  "1.- SKU: ${widget.etiquetas[0].sku} - ${widget.etiquetas[0].modelo} - ${widget.etiquetas.length} etiqueta${widget.etiquetas.isNotEmpty ? "s" : ""}"),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.etiquetas.length,
+                  itemBuilder: (context, index) {
+                    final etiqueta = widget.etiquetas[index];
+                    final svg = svgs[index];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(text: "Ítems en la fila: ", style: robotoStyle(16, FontWeight.bold, Colors.black)),
-                              TextSpan(
-                                  text: "${list['products']?.length ?? 0}",
-                                  style: robotoStyle(16, FontWeight.normal, Colors.black))
-                            ],
-                          ),
-                        )
+                        RepaintBoundary(
+                          key: _globalKeys[index],
+                          child: _TicketDetail(etiqueta: etiqueta, svg: svg),
+                        ),
                       ],
-                    )
-                  ],
+                    );
+                  },
                 ),
               ),
-            )
-          ],
+              Column(
+                children: [
+                  const SizedBox(height: 10),
+                  InkWell(
+                    onTap: _navigateToPrintScreen,
+                    child: ButtonPrimary(validator: loadingPrint, title: "Imprimir solo este ítem"),
+                  ),
+                  Visibility(
+                    visible: list['products']?.isNotEmpty ?? false,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        InkWell(
+                          onTap: () async => _redirectToScan(),
+                          child: const ButtonBasic(state: true, title: "Agregar otro producto"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  InkWell(
+                    onTap: () async => _addQueue(widget.etiquetas[0]),
+                    child: ButtonPrimary(validator: addingQueue, title: "Agregar a la fila"),
+                  ),
+                  Visibility(
+                    visible: list['products']?.isNotEmpty ?? false,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        InkWell(
+                          onTap: () async => _handleReviewQueue(),
+                          child: const ButtonBasic(state: true, title: "Revisar fila"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                      visible: list['products']?.isNotEmpty ?? false,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 10),
+                          InkWell(
+                            onTap: () async => _cancelProcess(),
+                            child: ButtonPrimary(validator: cancelProcess, title: "Cancelar proceso"),
+                          ),
+                        ],
+                      )),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(text: "Ítems en la fila: ", style: robotoStyle(16, FontWeight.bold, Colors.black)),
+                            TextSpan(text: "$countItems", style: robotoStyle(16, FontWeight.normal, Colors.black))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(text: "Productos en la fila: ", style: robotoStyle(16, FontWeight.bold, Colors.black)),
+                            TextSpan(text: "$countProducts", style: robotoStyle(16, FontWeight.normal, Colors.black))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 100),
+                ],
+              )
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _TicketDetail extends StatelessWidget {
+  const _TicketDetail({
+    required this.etiqueta,
+    required this.svg,
+  });
+
+  final EtiquetaModel etiqueta;
+  final String svg;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10, top: 5),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppTheme.colorPrimary, width: 2),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextDescription(description: etiqueta.marcaAbrev),
+                  TextDescription(description: etiqueta.tipoArticulo),
+                  TextDescription(description: etiqueta.modelo),
+                  TextDescription(description: etiqueta.color),
+                  TextDescription(description: etiqueta.material),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    etiqueta.precio,
+                    style: robotoStyle(19, FontWeight.w500, Colors.black),
+                  ),
+                  TextDescription(description: etiqueta.talla),
+                  Row(
+                    children: [
+                      Text("SKU:", style: robotoStyle(15, FontWeight.w900, Colors.black)),
+                      Text(
+                        etiqueta.sku,
+                        style: robotoStyle(18, FontWeight.w500, Colors.black),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SvgPicture.string(
+            svg,
+            fit: BoxFit.contain,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextDescription(description: etiqueta.fechaCreacion),
+              TextDescription(description: etiqueta.temporada),
+            ],
+          )
+        ],
       ),
     );
   }

@@ -7,6 +7,7 @@ import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/product_provider.dart';
@@ -74,9 +75,8 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
     final product = ref.watch(productProvider);
     final list = ref.watch(listProductProvider)['products'] ?? [];
 
-    print("🚀 ~ file: scan_product_screen.dart ~ line: 28 ~ TM_FUNCTION: ${list.length}");
+    List<EtiquetaModel> skusUnicos = list.toSet().toList();
 
-    // print("🚀 ~ file: scan_product_screen.dart ~ line: 37 ~ TM_FUNCTION: ${camera.mobileScannerController.value.isRunning}");
     print("🚀 ~ file: scan_product_screen.dart ~ line: 38 ~ TM_FUNCTION: ${mobileScannerController.value.isRunning}");
 
     Future<void> viewPrint() async {
@@ -224,7 +224,7 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
                           child: Column(
                             children: [
                               Text(
-                                "Productos en cola: ${list.length}",
+                                "Productos en cola: ${skusUnicos.length}",
                                 style:
                                     robotoStyle(18, FontWeight.bold, Colors.black).copyWith(decoration: TextDecoration.underline),
                               ),
@@ -246,11 +246,11 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
                               SizedBox(
                                 height: 200,
                                 child: ListView.builder(
-                                  itemCount: list.length,
+                                  itemCount: skusUnicos.length,
                                   itemBuilder: (context, index) {
-                                    final product = list[index];
+                                    final product = skusUnicos[index];
                                     return Dismissible(
-                                      key: Key(list[index].sku),
+                                      key: Key(product.sku),
                                       direction: DismissDirection.endToStart,
                                       confirmDismiss: (DismissDirection direction) async {
                                         bool deleteConfirmed = await showDialog(
@@ -264,7 +264,7 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
                                                 textAlign: TextAlign.center,
                                               ),
                                               content: Text(
-                                                '¿Estás seguro de que quieres eliminar el producto con SKU: ${product.sku}?',
+                                                '¿Estás seguro de que quieres eliminar un producto del SKU: ${product.sku}?',
                                                 style: robotoStyle(15, FontWeight.normal, Colors.black),
                                                 textAlign: TextAlign.center,
                                               ),
@@ -308,7 +308,7 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
 
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
-                                              content: Text('Producto con SKU: ${product.sku} eliminado'),
+                                              content: Text('Producto del SKU: ${product.sku} eliminado'),
                                               duration: const Duration(milliseconds: 1000),
                                             ),
                                           );

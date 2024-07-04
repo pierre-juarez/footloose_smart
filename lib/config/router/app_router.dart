@@ -49,10 +49,10 @@ final appRouter = GoRouter(
       path: '/preview',
       name: PreviewPrintScreen.name,
       builder: (context, state) {
-        final etiquetaJson = state.uri.queryParameters['etiqueta']!;
-        final decodedJson = jsonDecode(etiquetaJson);
-        final etiqueta = EtiquetaModel.fromJson(decodedJson);
-        return PreviewPrintScreen(etiqueta: etiqueta);
+        final etiquetasJson = state.uri.queryParameters['etiquetas']!;
+        final decodedJson = jsonDecode(etiquetasJson) as List<dynamic>;
+        final etiquetas = decodedJson.map((json) => EtiquetaModel.fromJson(json as Map<String, dynamic>)).toList();
+        return PreviewPrintScreen(etiquetas: etiquetas);
       },
     ),
     GoRoute(

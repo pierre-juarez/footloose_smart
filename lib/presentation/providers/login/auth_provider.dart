@@ -162,11 +162,9 @@ class AuthProvider with ChangeNotifier {
     return user!;
   }
 
-  static Future<void> deleteToken() async {
+  Future<void> logout() async {
     const storage = FlutterSecureStorage();
     await storage.delete(key: "token");
-    await storage.delete(key: "configOption");
-    await storage.delete(key: "configOptionId");
   }
 
   void clearInputs() {
@@ -175,9 +173,9 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future logOut() async {
-    await _storage.delete(key: "token");
-  }
+  // Future logOut() async {
+  //   await _storage.delete(key: "token");
+  // }
 
   //peticiones a la base de datos LOGIN
   Future<bool> login(String usuario, String clave, String mobileid) async {

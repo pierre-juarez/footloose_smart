@@ -39,7 +39,7 @@ class SplashScreen extends ConsumerWidget {
   }
 
   Future checkLogin(BuildContext context, WidgetRef ref) async {
-    final auth = ref.read(authProvider);
+    final auth = ref.watch(authProvider);
     final config = ref.watch(configurationProvider);
 
     final String configId = await config.getConfigId();
@@ -50,18 +50,11 @@ class SplashScreen extends ConsumerWidget {
     if (configId.isEmpty) {
       await redirectToPage("/configuration");
     } else {
-      if (!auth.isConnect) {
-        auth.clearInputs();
-        AuthProvider.deleteToken();
-        await redirectToPage("/");
+      if (logeado) {
+        await redirectToPage("/home");
       } else {
-        if (logeado) {
-          await redirectToPage("/home");
-        } else {
-          auth.clearInputs();
-          AuthProvider.deleteToken();
-          await redirectToPage("/");
-        }
+        auth.clearInputs();
+        await redirectToPage("/login");
       }
     }
   }

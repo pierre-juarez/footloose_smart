@@ -141,10 +141,10 @@ Future<void> showOptions(BuildContext context, AuthProvider auth) async {
           children: [
             Expanded(
               child: InkWell(
-                onTap: () {
+                onTap: () async {
                   auth.clearInputs();
-                  AuthProvider.deleteToken();
-                  redirectToPage("/configuration");
+                  await auth.logout();
+                  redirectToPage("/");
                 },
                 child: const ButtonPrimary(
                   validator: false,
