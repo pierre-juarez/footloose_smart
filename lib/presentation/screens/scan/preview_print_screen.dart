@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:barcode/barcode.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,7 +16,6 @@ import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/queue_active_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
-import 'package:footloose_tickets/presentation/widgets/button_basic.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,7 +36,6 @@ class PreviewPrintScreen extends ConsumerStatefulWidget {
 }
 
 class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
-  final GlobalKey _globalKey = GlobalKey();
   List<GlobalKey> _globalKeys = [];
   bool loadingPrint = false;
   bool addingQueue = false;
@@ -364,34 +360,40 @@ class _TicketDetail extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextDescription(description: etiqueta.marcaAbrev),
-                  TextDescription(description: etiqueta.tipoArticulo),
-                  TextDescription(description: etiqueta.modelo),
-                  TextDescription(description: etiqueta.color),
-                  TextDescription(description: etiqueta.material),
-                ],
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextDescription(description: etiqueta.marcaAbrev),
+                    TextDescription(description: etiqueta.tipoArticulo),
+                    TextDescription(description: etiqueta.modelo),
+                    TextDescription(description: etiqueta.color),
+                    TextDescription(description: etiqueta.material),
+                  ],
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    etiqueta.precio,
-                    style: robotoStyle(19, FontWeight.w500, Colors.black),
-                  ),
-                  TextDescription(description: etiqueta.talla),
-                  Row(
-                    children: [
-                      Text("SKU:", style: robotoStyle(15, FontWeight.w900, Colors.black)),
-                      Text(
-                        etiqueta.sku,
-                        style: robotoStyle(18, FontWeight.w500, Colors.black),
-                      )
-                    ],
-                  ),
-                ],
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      etiqueta.precio,
+                      style: robotoStyle(19, FontWeight.w500, Colors.black),
+                    ),
+                    TextDescription(description: etiqueta.talla),
+                    Row(
+                      children: [
+                        Text("SKU:", style: robotoStyle(15, FontWeight.w900, Colors.black)),
+                        Text(
+                          etiqueta.sku,
+                          style: robotoStyle(18, FontWeight.w500, Colors.black),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

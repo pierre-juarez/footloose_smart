@@ -8,7 +8,6 @@ import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
-import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/queue_active_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
@@ -52,7 +51,7 @@ class DetailProductPageState extends ConsumerState<DetailProductPage> {
     List<String> splitNombre = nombre.split(" ");
 
     final String abrev = (splitNombre.isNotEmpty) ? splitNombre[4] : "-";
-    final String color = (splitNombre.isNotEmpty) ? splitNombre[7].split("-")[0] : "-";
+    final String color = "${widget.product.data?[0].color1}"; // REVIEW
 
     Future<void> navigateToPreview() async {
       setState(() {
