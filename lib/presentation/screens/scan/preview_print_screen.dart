@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/delete_all_items.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
@@ -143,10 +144,6 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
     });
   }
 
-  Future<void> _redirectToScan() async {
-    await redirectToPage("/scan");
-  }
-
   Future<void> _addQueue(EtiquetaModel product) async {
     try {
       setState(() {
@@ -180,9 +177,7 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
       context,
       title: "Ítem agregado",
       errorMessage: "El producto ha sido agregado a la fila",
-      onTap: () async {
-        await _redirectToScan();
-      },
+      onTap: () async => await redirectToScan(context),
       buttonText: "Agregar +",
       icon: Icon(
         FontAwesomeIcons.checkToSlot,
@@ -197,9 +192,7 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
       context,
       title: "Ítem agregado",
       errorMessage: "El producto ha sido agregado a la fila",
-      onTap: () async {
-        await _redirectToScan();
-      },
+      onTap: () async => await redirectToScan(context),
       buttonText: "Agregar +",
       buttonText2: "Continuar",
       icon: Icon(
@@ -235,7 +228,7 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
     return SafeArea(
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () async => await redirectToPage("/scan"),
+          onPressed: () async => await redirectToScan(context),
           child: const Icon(FontAwesomeIcons.camera),
         ),
         appBar: const AppBarCustom(title: "Previsualización de etiqueta"),

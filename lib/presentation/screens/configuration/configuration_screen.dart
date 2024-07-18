@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
@@ -23,16 +24,20 @@ class ConfigurationScreen extends ConsumerWidget {
       final config = ref.watch(configurationProvider);
       final auth = ref.watch(authProvider);
 
-      final bool logeado = await auth.isLoggedIn();
+      // final bool logeado = await auth.isLoggedIn();
+      final bool logeado = await isLoggedIn(context, auth);
 
       if (selectedOption.option.isEmpty || selectedOption.optionId.isEmpty) {
         showError(context, title: "Error", errorMessage: "Seleccione un país válido");
         return;
       }
 
-      config.saveConfiguration(selectedOption.option, selectedOption.optionId);
+      await config.saveConfiguration(selectedOption.option, selectedOption.optionId);
+
       print("🚀 ~ file: configuration_screen.dart ~ line: 20 ~ TM_FUNCTION: ${selectedOption.option}");
       print("🚀 ~ file: configuration_screen.dart ~ line: 21 ~ TM_FUNCTION: ${selectedOption.optionId}");
+
+      await config.getConfigs(selectedOption.optionId);
 
       if (logeado) {
         await redirectToPage("/home");

@@ -33,7 +33,11 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/scan',
       name: ScanerPage.name,
-      builder: (context, state) => const ScanerPage(),
+      builder: (context, state) {
+        final urlScan = state.uri.queryParameters['urlScan']!;
+        final requestScan = state.uri.queryParameters['typeRequest']!;
+        return ScanerPage(urlScan: urlScan, typeRequest: requestScan);
+      },
     ),
     GoRoute(
       path: '/product',

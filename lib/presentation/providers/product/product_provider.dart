@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footloose_tickets/config/constants/environment.dart';
 import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_model.dart';
 
@@ -16,21 +15,11 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<ProductDetailModel> getProduct(String sku) async {
+  Future<ProductDetailModel> getProduct(String sku, String urlParam, String typeRequest) async {
     try {
-      Options options = Options(
-        method: "GET",
-        // headers: {
-        //   "Authorization": "Bearer ${Environment.tokenSISCONTI}",
-        //   "Content-Type": "application/json",
-        // },
-      );
+      Options options = Options(method: typeRequest);
 
-      // final data = {
-      //   "sku": [sku]
-      // };
-
-      final String url = "${Environment.baseSISCONTI}/$sku";
+      final String url = "$urlParam/$sku";
 
       Response resp = await dio.request(url, options: options).timeout(
         const Duration(seconds: 20),

@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/delete_all_items.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
@@ -15,24 +17,19 @@ import 'package:footloose_tickets/presentation/providers/product/list_product_pr
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   static const name = "home-screen";
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const SafeArea(
-      child: _PageHome(),
-    );
-  }
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _PageHome extends ConsumerWidget {
-  const _PageHome();
-
+class HomeScreenState extends ConsumerState<HomeScreen> {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.watch(authProvider);
+  Widget build(BuildContext context) {
+    final auth = ref.read(authProvider);
+    final config = ref.watch(configurationProvider);
     final list = ref.watch(listProductProvider)['products'] ?? [];
 
     Future<void> viewPrint() async {
@@ -45,8 +42,9 @@ class _PageHome extends ConsumerWidget {
     }
 
     Future<void> deleteConfiguration(BuildContext context) async {
-      final config = ref.watch(configurationProvider);
       await config.deleteConfig();
+      await config.deleteTablesIsar();
+
       showError(
         context,
         title: "Cónfiguración reseteada",
@@ -153,9 +151,13 @@ class _PageHome extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Row(
                 children: [
-                  InkWell(
-                    onTap: () async => await showModalDeleteConfiguration(context),
-                    child: const Icon(FontAwesomeIcons.gears),
+                  GestureDetector(
+                    onTap: () async => config.idOption.isNotEmpty ? await showModalDeleteConfiguration(context) : null,
+                    child: Ink(
+                        child: Icon(
+                      FontAwesomeIcons.gears,
+                      color: config.idOption.isEmpty ? Colors.grey : Colors.white,
+                    )),
                   ),
                   const SizedBox(width: 25),
                   InkWell(
@@ -193,12 +195,14 @@ class _ConsultPageState extends State<_ConsultPage> {
   bool loadingScan = false;
 
   Future<void> navigateToScan() async {
-    setState(() {
-      loadingScan = true;
-    });
-    await Future.delayed(const Duration(milliseconds: 500));
     try {
-      await redirectToPage("/scan");
+      setState(() {
+        loadingScan = true;
+      });
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      await redirectToScan(context);
+
       setState(() {
         loadingScan = false;
       });

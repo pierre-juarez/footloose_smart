@@ -1,15 +1,11 @@
 import 'dart:convert';
 
-//nuevo login model response esto nos brinda token de seguridad para as demas peticiones
-
 class LoginModelResponse {
-  LoginModelResponse({
-    required this.data,
-  });
+  final Data data;
 
-  Data data;
+  LoginModelResponse({required this.data});
 
-  factory LoginModelResponse.fromJson(String str) => LoginModelResponse.fromMap(json.decode(str));
+  factory LoginModelResponse.fromJson(Map<String, dynamic> json) => LoginModelResponse.fromMap(json);
 
   String toJson() => json.encode(toMap());
 
@@ -23,13 +19,11 @@ class LoginModelResponse {
 }
 
 class Data {
-  Data({
-    required this.tk,
-  });
+  final String tk;
 
-  String tk;
+  Data({required this.tk});
 
-  factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
+  factory Data.fromJson(Map<String, dynamic> json) => Data.fromMap(json);
 
   String toJson() => json.encode(toMap());
 

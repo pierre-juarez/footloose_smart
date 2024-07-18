@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footloose_tickets/config/helpers/get_errors.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/presentation/widgets/alert_error.dart';
 import 'package:footloose_tickets/presentation/widgets/alert_two_options.dart';
@@ -75,4 +76,18 @@ String formatToTwoDecimalPlaces(double value) {
 
 String formatDate(DateTime dateTime) {
   return "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+}
+
+void handleError(BuildContext context, int statusCode) async {
+  switch (statusCode) {
+    case 408:
+      showError(context, title: "Error", errorMessage: await getErrorJSON("E004"));
+      break;
+    case 500:
+      showError(context, title: "Error", errorMessage: await getErrorJSON("E009"));
+      break;
+    default:
+      showError(context, title: "Error", errorMessage: await getErrorJSON("E010"));
+      break;
+  }
 }

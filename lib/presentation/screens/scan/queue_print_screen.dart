@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:footloose_tickets/config/helpers/delete_all_items.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
@@ -176,7 +177,7 @@ class QueuePrintScreenState extends ConsumerState<QueuePrintScreen> {
                   ),
                   const SizedBox(height: 10),
                   InkWell(
-                    onTap: () async => await redirectToPage("/scan"),
+                    onTap: () async => await redirectToScan(context),
                     child: const ButtonBasic(state: true, title: "Editar ítems"),
                   ),
                   const SizedBox(height: 10),

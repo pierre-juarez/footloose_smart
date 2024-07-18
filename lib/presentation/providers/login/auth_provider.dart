@@ -1,21 +1,15 @@
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:footloose_tickets/config/constants/environment.dart';
 import 'package:footloose_tickets/infraestructure/models/login_model.dart';
 import 'package:footloose_tickets/infraestructure/models/user_with_token_model.dart';
-import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:logging/logging.dart';
 
-//Servicios
-
-//Serivio de login nuevo basado en la nueva API
-
-// TODO - Cambiar a DIO
-
 class AuthProvider with ChangeNotifier {
+  Dio dio = Dio();
   final Logger logger = Logger('MyApp');
 
   late UserWithTokenModel userModelWithToken = UserWithTokenModel();
@@ -173,41 +167,44 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future logOut() async {
-  //   await _storage.delete(key: "token");
-  // }
-
-  //peticiones a la base de datos LOGIN
-  Future<bool> login(String usuario, String clave, String mobileid) async {
-    autenticando = true;
-
-    final data = {"username": usuario, "password": clave, "mobileid": mobileid};
-
+  Future<bool> login(String usuario, String clave, String mobileid, String urlParam, String typeRequest) async {
     try {
-      final url = Uri.https("apis.footloose.pe", "/pdv/api/auth/login", {
-        'env': Environment.development,
-      });
+      autenticando = true;
 
-      print("🚀 ~ file: auth_provider.dart ~ line: 173 ~ TM_FUNCTION: $url");
-      print("🚀 ~ file: auth_provider.dart ~ line: 174 ~ TM_FUNCTION: $data");
+      Options options = Options(
+        method: typeRequest,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
 
-      final resp = await http.post(
-        url,
-        body: jsonEncode(data),
-        headers: {"Content-Type": "application/json"},
-      ).timeout(const Duration(seconds: 15), onTimeout: () {
-        statusCodeLogin = 408;
-        return http.Response("Error", 408);
-      });
+      final data = {"username": usuario, "password": clave, "mobileid": mobileid};
 
-      print("🚀 ~ file: auth_provider.dart ~ line: 184 ~ TM_FUNCTION: ${resp.body}");
+      Response resp = await dio.request(
+        urlParam,
+        options: options,
+        data: data,
+        queryParameters: {'env': Environment.development},
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          print("🚀 ~ file: configuration_provider.dart ~ line: 45 ~ TM_FUNCTION: ");
+          return Response(
+            requestOptions: RequestOptions(path: urlParam),
+            statusCode: 408,
+            statusMessage: "Error",
+          );
+        },
+      );
+
+      print("🚀 ~ file: auth_provider.dart ~ line: 184 ~ TM_FUNCTION: ${resp.data}");
       print("🚀 ~ file: auth_provider.dart ~ line: 185 ~ TM_FUNCTION: ${resp.statusCode}");
 
       autenticando = false;
-      _statusCodeLogin = resp.statusCode;
+      _statusCodeLogin = resp.statusCode ?? 400;
 
       if (resp.statusCode == 200) {
-        final loginresponse = LoginModelResponse.fromJson(resp.body);
+        final loginresponse = LoginModelResponse.fromJson(resp.data);
         Map<String, dynamic> payload = Jwt.parseJwt(loginresponse.data.tk);
         final subject = UserWithTokenModel.fromMap(payload);
         userModelWithToken = subject;
@@ -222,13 +219,13 @@ class AuthProvider with ChangeNotifier {
       }
     } catch (e) {
       _statusCodeLogin = 404;
-      logger.severe("Error al intentar logearse: ", e);
+      print("Error al intentar logearse: $e");
       return false;
     }
   }
 
   //* PARA VALIDAR SI EL USUARIO SE ENCUENTRA LOGEADO
-  Future<bool> isLoggedIn() async {
+  Future<bool> isLoggedIn(String urlParam, String typeRequest) async {
     String? token = "";
     try {
       token = await _storage.read(key: "token");
@@ -239,18 +236,33 @@ class AuthProvider with ChangeNotifier {
     bool isLoged = false;
 
     try {
-      final resp = await http.post(Uri.parse("${Environment.urlBase}/api/auth/renew"), headers: {
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json"
-      }).timeout(const Duration(seconds: 15), onTimeout: () {
-        statusCodeLoggedIn = 408;
-        print("🚀 ~ file: auth_service.dart ~ line: 204 ~ Timeout en el Renew Auth");
-        return http.Response("Error", 408);
-      });
+      Options options = Options(
+        method: typeRequest,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
+
+      Response resp = await dio.request(
+        urlParam,
+        options: options,
+        queryParameters: {'env': Environment.development},
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          statusCodeLoggedIn = 408;
+          return Response(
+            requestOptions: RequestOptions(path: urlParam),
+            statusCode: 408,
+            statusMessage: "Error",
+          );
+        },
+      );
 
       if (resp.statusCode == 200) {
         //* VALIDACION CORRECTA DEL TOKEN
-        final loginresponse = LoginModelResponse.fromJson(resp.body);
+        final loginresponse = LoginModelResponse.fromJson(resp.data);
         await _saveToken(loginresponse.data.tk);
         Map<String, dynamic> payload = Jwt.parseJwt(loginresponse.data.tk);
         final subject = UserWithTokenModel.fromMap(payload);
@@ -270,25 +282,8 @@ class AuthProvider with ChangeNotifier {
       }
     } catch (e) {
       //* ESTADO DE SIN CONEXION
+      print("🚀 ~ Error al intentar validar sesión: $e");
       isConnect = false;
-      return false;
-    }
-  }
-
-  ///REVISAR ESTA INFORMACION DE LA API POR QUE NO ME ESTA SIENDO UTIL
-  ///TENGO SUBS IGUALES
-  //peticiones a la base de datos GET PROFILE
-  Future getProfile(String token, String sub) async {
-    final resp = await http.get(Uri.parse("${Environment.urlBase}/api/auth/profile?sub=$sub"),
-        headers: {"Authorization": "Bearer $token", "Content-Type": "application/json"});
-
-    if (resp.statusCode == 200) {
-      final userResponse = UserModelResponse.fromJson(resp.body);
-      userModelWithToken = userResponse.user;
-      print(userResponse.user.persona);
-      return true;
-    } else {
-      print("enviar bien parametros");
       return false;
     }
   }

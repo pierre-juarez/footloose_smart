@@ -18,7 +18,13 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanerPage extends ConsumerStatefulWidget {
   static const name = "scaner-page";
-  const ScanerPage({super.key});
+  const ScanerPage({
+    super.key,
+    required this.urlScan,
+    required this.typeRequest,
+  });
+  final String urlScan;
+  final String typeRequest;
 
   @override
   ScannerPageState createState() => ScannerPageState();
@@ -132,7 +138,7 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
                 }
               }
 
-              ProductDetailModel productDetail = await product.getProduct(codeProduct);
+              ProductDetailModel productDetail = await product.getProduct(codeProduct, widget.urlScan, widget.typeRequest);
 
               if (productDetail.data == null) {
                 showError(
