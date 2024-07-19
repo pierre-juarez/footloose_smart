@@ -80,12 +80,10 @@ class ConfigurationProvider extends ChangeNotifier {
         "ambiente": Environment.development,
       };
 
-      // FIXME - Apuntar a localhost y ver porqué se repite (O simular un error de API)
       final String url = "${Environment.backSmart}/api-configuration/$idOptionSelected";
       Response resp = await dio.request(url, options: options, data: data).timeout(
         const Duration(seconds: 20),
         onTimeout: () {
-          print("🚀 ~ file: configuration_provider.dart ~ line: 45 ~ TM_FUNCTION: ");
           return Response(
             requestOptions: RequestOptions(path: url),
             statusCode: 408,

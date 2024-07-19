@@ -34,13 +34,11 @@ class ClientProvider extends ChangeNotifier {
         method: "GET",
       );
 
-      // FIXME - Apuntar a localhost y ver porqué se repite (O simular un error de API)
       final String url = "${Environment.backSmart}/api-client";
 
       Response resp = await dio.request(url, options: options).timeout(
         const Duration(seconds: 20),
         onTimeout: () {
-          print("🚀 ~ file: client_provider.dart ~ line: 45 ~ TM_FUNCTION: ");
           return Response(
             requestOptions: RequestOptions(path: url),
             statusCode: 408,
@@ -56,8 +54,9 @@ class ClientProvider extends ChangeNotifier {
         await addClientIsar(clients);
       }
     } catch (e) {
-      print("🚀 ~ Error al obtener el cliente: $e");
+      // TODO - Crear sistema de logs en file.txt
       _statusGetClient = 404;
+      throw ErrorDescription("$e");
     }
   }
 

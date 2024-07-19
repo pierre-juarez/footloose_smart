@@ -188,7 +188,6 @@ class AuthProvider with ChangeNotifier {
       ).timeout(
         const Duration(seconds: 15),
         onTimeout: () {
-          print("🚀 ~ file: configuration_provider.dart ~ line: 45 ~ TM_FUNCTION: ");
           return Response(
             requestOptions: RequestOptions(path: urlParam),
             statusCode: 408,
@@ -197,8 +196,8 @@ class AuthProvider with ChangeNotifier {
         },
       );
 
-      print("🚀 ~ file: auth_provider.dart ~ line: 184 ~ TM_FUNCTION: ${resp.data}");
-      print("🚀 ~ file: auth_provider.dart ~ line: 185 ~ TM_FUNCTION: ${resp.statusCode}");
+      print("🚀 ~ file: auth_provider.dart ~ line: 184 ~  ${resp.data}");
+      print("🚀 ~ file: auth_provider.dart ~ line: 185 ~  ${resp.statusCode}");
 
       autenticando = false;
       _statusCodeLogin = resp.statusCode ?? 400;
@@ -219,8 +218,7 @@ class AuthProvider with ChangeNotifier {
       }
     } catch (e) {
       _statusCodeLogin = 404;
-      print("Error al intentar logearse: $e");
-      return false;
+      throw ErrorDescription("Error al iniciar sesión - $e");
     }
   }
 
@@ -282,9 +280,8 @@ class AuthProvider with ChangeNotifier {
       }
     } catch (e) {
       //* ESTADO DE SIN CONEXION
-      print("🚀 ~ Error al intentar validar sesión: $e");
       isConnect = false;
-      return false;
+      return isConnect;
     }
   }
 }

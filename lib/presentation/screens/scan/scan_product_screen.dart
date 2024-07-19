@@ -119,8 +119,6 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
                   return const _AlertSearchingProduct();
                 });
 
-            debugPrint("🚀 ~ file: scanner_page.dart ~ line: 102 ~ value search: $codeProduct");
-
             if (codeProduct.length >= 11 && codeProduct.length <= 12) {
               if (listUpd.isNotEmpty) {
                 bool exists = listUpd.any((p) => p.sku == codeProduct);

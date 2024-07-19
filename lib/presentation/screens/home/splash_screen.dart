@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footloose_tickets/config/helpers/delete_config.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
@@ -41,31 +43,43 @@ class SplashScreen extends ConsumerWidget {
   }
 
   Future checkLogin(BuildContext context, WidgetRef ref) async {
-    final auth = ref.read(authProvider);
     final config = ref.read(configurationProvider);
-    final clients = ref.read(clientProvider);
 
-    final String configId = await config.getConfigId();
-    // final bool logeado = await auth.isLoggedIn();
-    final bool logeado = await isLoggedIn(context, auth);
+    try {
+      // STUB - Realiza un diagrama de flujo de la app
 
-    // STUB - Realiza un diagrama de flujo de la app
-    final existClients = await config.existClients();
-    print("🚀 ~ file: splash_screen.dart ~ line: 48 ~ TM_FUNCTION: $configId");
-    // TODO O no hay ningún cliente en BD en ISAR
-    if (!existClients || configId.isEmpty) {
-      print("🚀 ~ file: splash_screen.dart ~ line: 53 ~ TM_FUNCTION: ");
-      await clients.getClients();
-      print("🚀 ~ file: splash_screen.dart ~ line: 55 ~ TM_FUNCTION: ");
-      // TODO - Muestreo de icons según lo que tiene en la BD
-      await redirectToPage("/configuration");
-    } else {
-      if (logeado) {
-        await redirectToPage("/home");
+      final auth = ref.read(authProvider);
+      final clients = ref.read(clientProvider);
+
+      final String configId = await config.getConfigId();
+      final existClients = await config.existClients();
+
+      if (!existClients || configId.isEmpty) {
+        // TODO - Muestreo de icons según lo que tiene en la BD
+        await clients.getClients();
+        await redirectToPage("/configuration");
       } else {
-        auth.clearInputs();
-        await redirectToPage("/login");
+        final bool logeado = await isLoggedIn(context, auth);
+
+        if (logeado) {
+          await redirectToPage("/home");
+        } else {
+          auth.clearInputs();
+          await redirectToPage("/login");
+        }
       }
+    } catch (e) {
+      await showError(
+        context,
+        title: "Error",
+        errorMessage: "$e \n Inicie nuevamente el app.",
+        buttonText: "Cerrar",
+        onTap: () async {
+          await deleteConfigAll(config);
+          await SystemNavigator.pop();
+        },
+      );
+      return;
     }
   }
 }

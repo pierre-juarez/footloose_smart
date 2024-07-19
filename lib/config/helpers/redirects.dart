@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:footloose_tickets/config/helpers/delete_config.dart';
 import 'package:footloose_tickets/config/helpers/find_url_config.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/isar/config.schema.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
+import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
 
 Future<Configuration> getConfigOrThrow(String key) async {
   Configuration? config = await configurationWithKey(key);
@@ -36,7 +39,12 @@ Future<void> redirectToScan(BuildContext context) async {
   }
 }
 
-Future<void> redirectToHome(BuildContext context, AuthProvider auth, String passwordEncrypted) async {
+Future<void> redirectToHome(
+  BuildContext context,
+  AuthProvider auth,
+  String passwordEncrypted,
+  ConfigurationProvider config,
+) async {
   try {
     final config = await getConfigOrThrow("LOGIN");
 
@@ -70,6 +78,17 @@ Future<void> redirectToHome(BuildContext context, AuthProvider auth, String pass
     }
   } catch (e) {
     showError(context, title: "Error", errorMessage: "$e \n Cierra y abre el app.");
+    await showError(
+      context,
+      title: "Error",
+      errorMessage: "$e \n Inicie nuevamente el app.",
+      buttonText: "Cerrar",
+      onTap: () async {
+        await deleteConfigAll(config);
+        await SystemNavigator.pop();
+      },
+    );
+    return;
   }
 }
 
@@ -83,7 +102,6 @@ Future<bool> isLoggedIn(BuildContext context, AuthProvider auth) async {
     final bool logeado = await auth.isLoggedIn(urlEncode, typeRequestEncode);
     return logeado;
   } catch (e) {
-    showError(context, title: "Error", errorMessage: "$e \n Cierra y abre el app.");
-    return false;
+    throw ErrorDescription("$e");
   }
 }

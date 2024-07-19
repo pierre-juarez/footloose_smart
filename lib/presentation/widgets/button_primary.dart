@@ -24,8 +24,6 @@ class ButtonPrimary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("🚀 ~ file: buttonPrimary.dart ~ line: 27 ~ TM_FUNCTION: $loading");
-    print("🚀 ~ file: buttonPrimary.dart ~ line: 28 ~ TM_FUNCTION: $validator");
     Color colorButton;
 
     if (validator) {

@@ -138,7 +138,7 @@ class QueuePrintScreenState extends ConsumerState<QueuePrintScreen> {
       final svg = barcode.toSvg(etiqueta.sku, width: 400, height: 150);
       svgs.add(svg);
     }
-    print("🚀 ~ file: queue_print_screen.dart ~ line: 89 ~ TM_FUNCTION: ${widget.etiquetas.length}");
+    print("🚀 ~ file: queue_print_screen.dart ~ line: 89 ~ ${widget.etiquetas.length}");
 
     return SafeArea(
       child: Scaffold(
