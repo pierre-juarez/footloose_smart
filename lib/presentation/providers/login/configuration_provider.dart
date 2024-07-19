@@ -70,7 +70,7 @@ class ConfigurationProvider extends ChangeNotifier {
       await _initIsar();
 
       Options options = Options(
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -80,7 +80,7 @@ class ConfigurationProvider extends ChangeNotifier {
         "ambiente": Environment.development,
       };
 
-      final String url = "${Environment.backSmart}/api-configuration/$idOptionSelected";
+      final String url = "${Environment.backSmart}/api-configuration/$idOptionSelected/get-config";
       Response resp = await dio.request(url, options: options, data: data).timeout(
         const Duration(seconds: 20),
         onTimeout: () {
@@ -94,7 +94,7 @@ class ConfigurationProvider extends ChangeNotifier {
 
       _statusGetClient = resp.statusCode ?? 400;
 
-      if (resp.statusCode == 200) {
+      if (resp.statusCode == 201) {
         final List<Configuration> configs =
             (resp.data as List).map((json) => Configuration.fromJson(json as Map<String, dynamic>)).toList();
         await addConfigIsar(configs);
