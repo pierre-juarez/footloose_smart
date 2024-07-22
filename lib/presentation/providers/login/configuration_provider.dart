@@ -65,9 +65,14 @@ class ConfigurationProvider extends ChangeNotifier {
     isar = await IsarService().getIsarInstance();
   }
 
+  void setupDio() {
+    dio.options.headers['Authorization'] = 'Basic ${Environment.tokenSmart}';
+  }
+
   Future<void> getConfigs(String idOptionSelected) async {
     try {
       await _initIsar();
+      setupDio();
 
       Options options = Options(
         method: "POST",

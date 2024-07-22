@@ -26,9 +26,14 @@ class ClientProvider extends ChangeNotifier {
     isar = await IsarService().getIsarInstance();
   }
 
+  void setupDio() {
+    dio.options.headers['Authorization'] = 'Basic ${Environment.tokenSmart}';
+  }
+
   Future<void> getClients() async {
     try {
       await _initIsar();
+      setupDio();
 
       Options options = Options(
         method: "GET",
