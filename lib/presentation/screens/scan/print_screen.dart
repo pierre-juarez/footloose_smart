@@ -9,6 +9,7 @@ import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PrintScreen extends StatefulWidget {
   static const name = 'print-screen';
@@ -60,8 +61,10 @@ class _PrintPageProductState extends State<PrintScreen> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                            setState(() {
-                              selectedDevice = _devices[index];
+                            bluetooth.connect(_devices[index]).then((value) {
+                              setState(() {
+                                selectedDevice = _devices[index];
+                              });
                             });
                           },
                           child: _CardPrint(
@@ -93,9 +96,36 @@ class _PrintPageProductState extends State<PrintScreen> {
     try {
       setState(() {
         loadingDevices = true;
+        selectedDevice = null;
       });
+      List<BluetoothDevice> devices = [];
       await Future.delayed(const Duration(milliseconds: 500));
-      List<BluetoothDevice> devices = await bluetooth.getBondedDevices();
+
+      // Verifica y solicita permisos de Bluetooth
+      if (await Permission.bluetooth.isGranted &&
+          await Permission.bluetoothScan.isGranted &&
+          await Permission.bluetoothConnect.isGranted) {
+        // Permisos concedidos, procede a obtener dispositivos Bluetooth
+
+        devices = await bluetooth.getBondedDevices();
+      } else {
+        // Solicita los permisos necesarios
+        Map<Permission, PermissionStatus> statuses = await [
+          Permission.bluetooth,
+          Permission.bluetoothScan,
+          Permission.bluetoothConnect,
+        ].request();
+
+        // Verifica si los permisos fueron concedidos después de la solicitud
+        if ((statuses[Permission.bluetooth]?.isGranted ?? false) &&
+            (statuses[Permission.bluetoothScan]?.isGranted ?? false) &&
+            (statuses[Permission.bluetoothConnect]?.isGranted ?? false)) {
+          devices = await bluetooth.getBondedDevices();
+        } else {
+          // Maneja la situación en que los permisos no fueron otorgados
+          print("Permisos de Bluetooth no concedidos");
+        }
+      }
 
       bool isVerify = await verifyBluetooth();
 
@@ -128,18 +158,57 @@ class _PrintPageProductState extends State<PrintScreen> {
         setState(() {
           loadingPrint = true;
         });
-        await bluetooth.connect(selectedDevice!);
-        await bluetooth.printImageBytes(widget.imageBytes);
-        await bluetooth.disconnect();
+
+        // Verificar si ya existe una conexión y desconectar si es necesario
+        // if (await bluetooth.isConnected ?? false) {
+        //   print("Desconectando la conexión Bluetooth existente...");
+        //   await bluetooth.disconnect();
+        // }
+
+        // print("Conectando al dispositivo Bluetooth...");
+        // bool connected = await bluetooth.connect(selectedDevice!);
+
+        // // Usar el valor devuelto por el Future
+        // print("Conectado: $connected");
+
+        // Añadir un pequeño retraso para permitir que la conexión se estabilice
+        await Future.delayed(const Duration(seconds: 2));
+
+        // Verificar el tamaño de los datos de imagen
+        if (widget.imageBytes.isNotEmpty) {
+          print("Enviando imagen para imprimir... Tamaño de datos: ${widget.imageBytes.length} bytes");
+          bool printed = await bluetooth.printImageBytes(widget.imageBytes);
+
+          // Usar el valor devuelto por el Future
+          print("Imagen impresa: $printed");
+        } else {
+          print("Error: Los datos de la imagen están vacíos.");
+          showError(context, title: "Error", errorMessage: "No hay datos de imagen para imprimir.");
+        }
+
+        await Future.delayed(const Duration(seconds: 5));
+
+        print("Desconectando del dispositivo Bluetooth...");
+        bool disconnected = await bluetooth.disconnect();
+        print("Desconectado: $disconnected");
+
         setState(() {
           loadingPrint = false;
+          selectedDevice = null;
         });
       } catch (e) {
+        // Captura cualquier excepción
+        print("🚀 ~ Error durante la impresión: $e");
         setState(() {
           loadingPrint = false;
         });
-        print("🚀 ~ Error al imprimir la etiqueta: $e");
         showError(context, title: "Error", errorMessage: "Error al imprimir, comuníquese con soporte");
+      } finally {
+        // Asegúrate de intentar desconectar siempre en el bloque `finally`
+        // if (await bluetooth.isConnected ?? false) {
+        //   print("Desconectando el dispositivo al finalizar...");
+        //   await bluetooth.disconnect();
+        // }
       }
     } else {
       setState(() {
@@ -148,6 +217,35 @@ class _PrintPageProductState extends State<PrintScreen> {
       showError(context, title: "Error", errorMessage: "Seleccione al menos una impresora");
     }
   }
+
+  // void _print() async {
+  //   if (selectedDevice != null) {
+  //     try {
+  //       setState(() {
+  //         loadingPrint = true;
+  //       });
+  //       await bluetooth.connect(selectedDevice!);
+  //       await Future.delayed(const Duration(milliseconds: 500));
+  //       await bluetooth.printImageBytes(widget.imageBytes);
+  //       await Future.delayed(const Duration(milliseconds: 500));
+  //       await bluetooth.disconnect();
+  //       setState(() {
+  //         loadingPrint = false;
+  //       });
+  //     } catch (e) {
+  //       setState(() {
+  //         loadingPrint = false;
+  //       });
+  //       print("🚀 ~ Error al imprimir la etiqueta: $e");
+  //       showError(context, title: "Error", errorMessage: "Error al imprimir, comuníquese con soporte");
+  //     }
+  //   } else {
+  //     setState(() {
+  //       loadingPrint = false;
+  //     });
+  //     showError(context, title: "Error", errorMessage: "Seleccione al menos una impresora");
+  //   }
+  // }
 }
 
 class _CardPrint extends StatelessWidget {
