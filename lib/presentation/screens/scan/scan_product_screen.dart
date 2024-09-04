@@ -319,23 +319,24 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
                                         }
                                       },
                                       background: Container(
-                                          color: Colors.red,
-                                          alignment: Alignment.centerRight,
-                                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                                          child: const Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              Icon(Icons.delete, color: Colors.white),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                'Eliminar',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                        color: Colors.red,
+                                        alignment: Alignment.centerRight,
+                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                        child: const Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Icon(Icons.delete, color: Colors.white),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              'Eliminar',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                            ],
-                                          )),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                       child: Column(
                                         children: [
                                           Container(

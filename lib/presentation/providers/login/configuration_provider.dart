@@ -75,17 +75,17 @@ class ConfigurationProvider extends ChangeNotifier {
       setupDio();
 
       Options options = Options(
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        method: "GET",
+        // headers: {
+        //   "Content-Type": "application/json",
+        // },
       );
 
       final data = {
         "ambiente": Environment.development,
       };
 
-      final String url = "${Environment.backSmart}/api-configuration/$idOptionSelected/get-config";
+      final String url = "${Environment.backSmart}/api-configuration/$idOptionSelected";
       Response resp = await dio.request(url, options: options, data: data).timeout(
         const Duration(seconds: 20),
         onTimeout: () {
@@ -99,14 +99,14 @@ class ConfigurationProvider extends ChangeNotifier {
 
       _statusGetClient = resp.statusCode ?? 400;
 
-      if (resp.statusCode == 201) {
+      if (resp.statusCode == 200) {
         final List<Configuration> configs =
             (resp.data as List).map((json) => Configuration.fromJson(json as Map<String, dynamic>)).toList();
         await addConfigIsar(configs);
       }
     } catch (e) {
-      print("🚀 ~ Error al obtener las configuraciones: $e");
       _statusGetClient = 404;
+      throw Exception(" Error al obtener las configuraciones: $e");
     }
   }
 
