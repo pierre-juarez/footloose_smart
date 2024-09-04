@@ -1,5 +1,6 @@
 import 'dart:typed_data';
-import 'package:blue_thermal_printer/blue_thermal_printer.dart';
+import 'package:esc_pos_utils/esc_pos_utils.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
@@ -10,6 +11,7 @@ import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:image/image.dart' as img; // Alias 'img' para evitar conflictos
 
 class PrintScreen extends StatefulWidget {
   static const name = 'print-screen';
@@ -27,10 +29,11 @@ class PrintScreen extends StatefulWidget {
 
 class _PrintPageProductState extends State<PrintScreen> {
   String messageOfPrinters = "";
-  BlueThermalPrinter bluetooth = BlueThermalPrinter.instance;
+  // BlueThermalPrinter bluetooth = BlueThermalPrinter.instance;
+
   bool loadingDevices = false;
-  List<BluetoothDevice> _devices = [];
-  BluetoothDevice? selectedDevice;
+  List<BluetoothInfo> _devices = [];
+  BluetoothInfo? selectedDevice;
   bool loadingPrint = false;
 
   @override
@@ -61,7 +64,7 @@ class _PrintPageProductState extends State<PrintScreen> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                            bluetooth.connect(_devices[index]).then((value) {
+                            PrintBluetoothThermal.connect(macPrinterAddress: _devices[index].macAdress).then((_) {
                               setState(() {
                                 selectedDevice = _devices[index];
                               });
@@ -96,9 +99,10 @@ class _PrintPageProductState extends State<PrintScreen> {
     try {
       setState(() {
         loadingDevices = true;
-        selectedDevice = null;
+        // selectedDevice = null;
       });
-      List<BluetoothDevice> devices = [];
+      List<BluetoothInfo> devices = [];
+
       await Future.delayed(const Duration(milliseconds: 500));
 
       // Verifica y solicita permisos de Bluetooth
@@ -107,7 +111,7 @@ class _PrintPageProductState extends State<PrintScreen> {
           await Permission.bluetoothConnect.isGranted) {
         // Permisos concedidos, procede a obtener dispositivos Bluetooth
 
-        devices = await bluetooth.getBondedDevices();
+        devices = await PrintBluetoothThermal.pairedBluetooths;
       } else {
         // Solicita los permisos necesarios
         Map<Permission, PermissionStatus> statuses = await [
@@ -120,7 +124,7 @@ class _PrintPageProductState extends State<PrintScreen> {
         if ((statuses[Permission.bluetooth]?.isGranted ?? false) &&
             (statuses[Permission.bluetoothScan]?.isGranted ?? false) &&
             (statuses[Permission.bluetoothConnect]?.isGranted ?? false)) {
-          devices = await bluetooth.getBondedDevices();
+          devices = await PrintBluetoothThermal.pairedBluetooths;
         } else {
           // Maneja la situación en que los permisos no fueron otorgados
           print("Permisos de Bluetooth no concedidos");
@@ -159,6 +163,31 @@ class _PrintPageProductState extends State<PrintScreen> {
           loadingPrint = true;
         });
 
+        CapabilityProfile profile = await CapabilityProfile.load();
+        Generator generator = Generator(PaperSize.mm80, profile);
+        List<int> bytes = [];
+        img.Image? image = img.decodeImage(widget.imageBytes);
+        // if (image != null) {
+        //   bytes += generator.image(image);
+        //   print("🚀 ~ file: print_screen.dart ~ line: 172 ~ TM_FUNCTION: ");
+        // }
+
+        bytes += generator.text("Test de impresión", styles: const PosStyles(bold: true, underline: true));
+
+        bytes += generator.row([
+          PosColumn(text: "Header 1", width: 4, styles: const PosStyles(bold: true, underline: false)),
+          PosColumn(text: "Header 2", width: 4, styles: const PosStyles(bold: true, underline: false)),
+          PosColumn(text: "Header 3", width: 4, styles: const PosStyles(bold: true, underline: false)),
+        ]);
+
+        print("🚀 ~ file: print_screen.dart ~ line: 176 ~ TM_FUNCTION: ");
+        await PrintBluetoothThermal.writeBytes(bytes);
+        print("🚀 ~ file: print_screen.dart ~ line: 178 ~ TM_FUNCTION: ");
+
+        await Future.delayed(const Duration(seconds: 5));
+
+        PrintBluetoothThermal.disconnect;
+
         // Verificar si ya existe una conexión y desconectar si es necesario
         // if (await bluetooth.isConnected ?? false) {
         //   print("Desconectando la conexión Bluetooth existente...");
@@ -170,27 +199,6 @@ class _PrintPageProductState extends State<PrintScreen> {
 
         // // Usar el valor devuelto por el Future
         // print("Conectado: $connected");
-
-        // Añadir un pequeño retraso para permitir que la conexión se estabilice
-        await Future.delayed(const Duration(seconds: 2));
-
-        // Verificar el tamaño de los datos de imagen
-        if (widget.imageBytes.isNotEmpty) {
-          print("Enviando imagen para imprimir... Tamaño de datos: ${widget.imageBytes.length} bytes");
-          bool printed = await bluetooth.printImageBytes(widget.imageBytes);
-
-          // Usar el valor devuelto por el Future
-          print("Imagen impresa: $printed");
-        } else {
-          print("Error: Los datos de la imagen están vacíos.");
-          showError(context, title: "Error", errorMessage: "No hay datos de imagen para imprimir.");
-        }
-
-        await Future.delayed(const Duration(seconds: 5));
-
-        print("Desconectando del dispositivo Bluetooth...");
-        bool disconnected = await bluetooth.disconnect();
-        print("Desconectado: $disconnected");
 
         setState(() {
           loadingPrint = false;
@@ -251,12 +259,12 @@ class _PrintPageProductState extends State<PrintScreen> {
 class _CardPrint extends StatelessWidget {
   const _CardPrint({
     required this.selectedDevice,
-    required List<BluetoothDevice> devices,
+    required List<BluetoothInfo> devices,
     required this.index,
   }) : _devices = devices;
 
-  final BluetoothDevice? selectedDevice;
-  final List<BluetoothDevice> _devices;
+  final BluetoothInfo? selectedDevice;
+  final List<BluetoothInfo> _devices;
   final int index;
 
   @override
@@ -282,14 +290,14 @@ class _CardPrint extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextWidgetInput(
-                text: "${index + 1}.- ${_devices[index].name} ${(selectedDevice == _devices[index]) ? "(Seleccionado)" : ""}",
+                text: "${index + 1}.- ${_devices[index].name} ${(selectedDevice == _devices[index]) ? "(Conectado)" : ""}",
                 fontSize: 14.0,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
                 textAlign: TextAlign.start,
               ),
               TextWidgetInput(
-                text: "MAC: ${_devices[index].address} - ${_devices[index].connected}",
+                text: "MAC: ${_devices[index].macAdress} }",
                 fontSize: 14.0,
                 fontWeight: FontWeight.normal,
                 color: Colors.black87,

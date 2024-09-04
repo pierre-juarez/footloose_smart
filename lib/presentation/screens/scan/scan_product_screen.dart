@@ -119,39 +119,37 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
                   return const _AlertSearchingProduct();
                 });
 
-            if (codeProduct.length >= 11 && codeProduct.length <= 12) {
-              if (listUpd.isNotEmpty) {
-                bool exists = listUpd.any((p) => p.sku == codeProduct);
-                if (exists) {
-                  showError(
-                    context,
-                    title: "Error",
-                    errorMessage: "El producto ya ha sido agregado a la fila",
-                    onTap: () async {
-                      await mobileScannerController.start();
-                      Navigator.of(context).pop();
-                    },
-                  );
-                  return;
-                }
-              }
-
-              ProductDetailModel productDetail = await product.getProduct(codeProduct, widget.urlScan, widget.typeRequest);
-
-              if (productDetail.data == null) {
+            if (listUpd.isNotEmpty) {
+              bool exists = listUpd.any((p) => p.sku == codeProduct);
+              if (exists) {
                 showError(
                   context,
-                  errorMessage: "Error al obtener detalle del producto, inténtalo nuevamente",
                   title: "Error",
+                  errorMessage: "El producto ya ha sido agregado a la fila",
                   onTap: () async {
-                    await redirectToPage("/home");
+                    await mobileScannerController.start();
+                    Navigator.of(context).pop();
                   },
                 );
                 return;
               }
-              final productJson = jsonEncode(productDetail.toJson());
-              await appRouter.pushReplacement('/product?productJson=$productJson');
             }
+
+            ProductDetailModel productDetail = await product.getProduct(codeProduct, widget.urlScan, widget.typeRequest);
+
+            if (productDetail.data == null) {
+              showError(
+                context,
+                errorMessage: "Error al obtener detalle del producto, inténtalo nuevamente",
+                title: "Error",
+                onTap: () async {
+                  await redirectToPage("/home");
+                },
+              );
+              return;
+            }
+            final productJson = jsonEncode(productDetail.toJson());
+            await appRouter.pushReplacement('/product?productJson=$productJson');
           },
         );
       }
