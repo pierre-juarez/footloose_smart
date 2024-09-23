@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 
+// TODO - Organize correct theme
 class AppTheme {
   static Color backgroundColor = Colors.black;
   static Color inputBgColor = const Color.fromRGBO(240, 240, 240, 0.2);

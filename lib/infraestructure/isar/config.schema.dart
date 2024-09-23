@@ -36,15 +36,4 @@ class Configuration {
       'idCliente': idOption,
     };
   }
-
-  // {
-  //   "idConfig": 1,
-  //   "clave": "URL API LOGINx",
-  //   "valor": "https://apicomercialdev.sisconti.com/api/v1/producto/obtener",
-  //   "ambiente": "PROD",
-  //   "type_request": "GET",
-  //   "created_at": "2024-07-15T14:44:34.000Z",
-  //   "updated_at": "2024-06-27T20:53:16.407Z",
-  //   "idCliente": 1
-  // }
 }

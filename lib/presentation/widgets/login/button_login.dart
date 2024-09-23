@@ -26,11 +26,8 @@ class ButtonInitLogin extends ConsumerWidget {
     Future<void> login(AuthProvider auth) async {
       auth.outLoadingLogin = true;
       auth.androidId = "d8717c823081b284";
-
       final String encryptPass = encriptPassword(auth.password);
-
       await redirectToHome(context, auth, encryptPass, config);
-
       auth.outLoadingLogin = false;
     }
 

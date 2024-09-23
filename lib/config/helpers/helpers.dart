@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:footloose_tickets/config/helpers/get_errors.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/presentation/widgets/alert_error.dart';
-import 'package:footloose_tickets/presentation/widgets/alert_two_options.dart';
 
 bool isNumeric(String str) {
   final RegExp regex = RegExp(r'^[0-9]+$');
@@ -32,40 +31,6 @@ Future<void> showError(
   );
 }
 
-Future<void> showErrorTwo(
-  BuildContext context, {
-  String? title,
-  String? errorMessage,
-  String? buttonText,
-  String? buttonText2,
-  VoidCallback? onTap,
-  VoidCallback? onCancel,
-  Widget? icon,
-  String? type,
-}) async {
-  return await showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => AlertTwoOptions(
-      title: title,
-      errorMessage: errorMessage,
-      buttonText: buttonText,
-      buttonText2: buttonText2,
-      onTap: onTap,
-      onCancel: onCancel,
-      icon: icon,
-      type: type,
-    ),
-  );
-}
-
-void navigateToPushReplacement(BuildContext context, Widget page) {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => page),
-  );
-}
-
 Future<void> redirectToPage(String routeName) async {
   await appRouter.pushReplacement(routeName);
 }
@@ -79,15 +44,21 @@ String formatDate(DateTime dateTime) {
 }
 
 void handleError(BuildContext context, int statusCode) async {
+  String errorCode;
+
   switch (statusCode) {
     case 408:
-      showError(context, title: "Error", errorMessage: await getErrorJSON("E004"));
+      errorCode = "E004";
       break;
     case 500:
-      showError(context, title: "Error", errorMessage: await getErrorJSON("E009"));
+      errorCode = "E009";
       break;
     default:
-      showError(context, title: "Error", errorMessage: await getErrorJSON("E010"));
+      errorCode = "E010";
       break;
   }
+
+  final errorMessage = await getErrorJSON(errorCode);
+  if (!context.mounted) return;
+  showError(context, title: "Error", errorMessage: errorMessage);
 }

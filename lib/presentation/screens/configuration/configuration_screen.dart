@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/delete_config.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
@@ -24,21 +25,22 @@ class ConfigurationScreen extends ConsumerWidget {
 
     void handleContinue() async {
       final config = ref.read(configurationProvider);
+      final auth = ref.read(authProvider);
+
+      if (selectedOption.option.isEmpty || selectedOption.optionId.isEmpty) {
+        showError(context, title: "Error", errorMessage: "Seleccione un país válido");
+        return;
+      }
+
       try {
-        final auth = ref.read(authProvider);
-
-        if (selectedOption.option.isEmpty || selectedOption.optionId.isEmpty) {
-          showError(context, title: "Error", errorMessage: "Seleccione un país válido");
-          return;
-        }
-
         await config.saveConfiguration(selectedOption.option, selectedOption.optionId);
 
-        print("🚀 ~ file: configuration_screen.dart ~ line: 20 ~  ${selectedOption.option}");
-        print("🚀 ~ file: configuration_screen.dart ~ line: 21 ~  ${selectedOption.optionId}");
+        infoLog("🚀 ~ file: configuration_screen.dart ~ selectedOption.option ~  ${selectedOption.option}");
+        infoLog("🚀 ~ file: configuration_screen.dart ~ selectedOption.optionId ~  ${selectedOption.optionId}");
 
         await config.getConfigs(selectedOption.optionId);
 
+        if (!context.mounted) return;
         final bool logeado = await isLoggedIn(context, auth);
 
         if (logeado) {
@@ -48,6 +50,7 @@ class ConfigurationScreen extends ConsumerWidget {
           await redirectToPage("/login");
         }
       } catch (e) {
+        if (!context.mounted) return;
         await showError(
           context,
           title: "Error",

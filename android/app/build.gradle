@@ -67,4 +67,7 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+   implementation(name: 'printer-lib-3.2.0', ext: 'aar')
+     //implementation('libs/printer-lib-3.2.0.aar')
+}

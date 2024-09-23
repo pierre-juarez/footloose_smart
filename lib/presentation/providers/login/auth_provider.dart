@@ -3,14 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:footloose_tickets/config/constants/environment.dart';
+import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/infraestructure/models/login_model.dart';
 import 'package:footloose_tickets/infraestructure/models/user_with_token_model.dart';
 import 'package:jwt_decode/jwt_decode.dart';
-import 'package:logging/logging.dart';
+
+// TODO - Migrate changeNotifier to riverpod
 
 class AuthProvider with ChangeNotifier {
   Dio dio = Dio();
-  final Logger logger = Logger('MyApp');
 
   late UserWithTokenModel userModelWithToken = UserWithTokenModel();
   bool _outLoadingLogin = false;
@@ -196,8 +197,8 @@ class AuthProvider with ChangeNotifier {
         },
       );
 
-      print("🚀 ~ file: auth_provider.dart ~ line: 184 ~  ${resp.data}");
-      print("🚀 ~ file: auth_provider.dart ~ line: 185 ~  ${resp.statusCode}");
+      infoLog("🚀 ~ file: auth_provider.dart ~ resp.data ~  ${resp.data}");
+      infoLog("🚀 ~ file: auth_provider.dart ~ resp.statusCode ~  ${resp.statusCode}");
 
       autenticando = false;
       _statusCodeLogin = resp.statusCode ?? 400;

@@ -19,6 +19,18 @@ class ListProductProvider extends StateNotifier<Map<String, List<EtiquetaModel>>
   void deleteAllProducts() {
     state = {...state, "products": []};
   }
+
+  Future<void> updateProduct(String id, int numberOfPrints) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    List<EtiquetaModel> products = state["products"] ?? [];
+    products = products.map((product) {
+      if (product.id == id) {
+        return product.copyWith(numberOfPrints: numberOfPrints);
+      }
+      return product;
+    }).toList();
+    state = {...state, "products": products};
+  }
 }
 
 final listProductProvider = StateNotifierProvider<ListProductProvider, Map<String, List<EtiquetaModel>>>(

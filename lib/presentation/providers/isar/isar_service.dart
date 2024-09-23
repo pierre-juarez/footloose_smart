@@ -1,3 +1,4 @@
+import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/infraestructure/isar/client.schema.dart';
 import 'package:footloose_tickets/infraestructure/isar/config.schema.dart';
 import 'package:isar/isar.dart';
@@ -19,7 +20,7 @@ class IsarService {
         final dir = await getApplicationDocumentsDirectory();
         _isar = await Isar.open([ConfigurationSchema, ClientSchema], directory: dir.path);
       } catch (e) {
-        print("🚀 ~ file: isar_service.dart ~ line: 22 ~ Error al inicializar ISAR: $e");
+        errorLog(e.toString());
       }
     }
     return _isar!;

@@ -41,7 +41,7 @@ Future<void> showModal(BuildContext context, VoidCallback onTap, String title, S
                   validator: false,
                   title: "Cancelar",
                   type: "small",
-                  color: AppTheme.colorSecondary,
+                  color: AppTheme.colorSecondary.withOpacity(0.8),
                 ),
               ),
             ),

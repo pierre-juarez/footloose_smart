@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// TODO - Migrate changeNotifier to riverpod
+
 class CredencialesProvider extends ChangeNotifier {
   String _usuario = "";
   String _clave = "";

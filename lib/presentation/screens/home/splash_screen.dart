@@ -21,44 +21,43 @@ class SplashScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: FutureBuilder(
-          future: checkLogin(context, ref),
-          builder: (context, snapshot) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const ImageLogoFootloose(),
-                  TextWidgetInput(
-                    text: "Validando configuración...",
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.colorStyleText,
-                    textAlign: TextAlign.start,
-                  ),
-                ],
-              ),
-            );
-          }),
+        future: checkLogin(context, ref),
+        builder: (context, snapshot) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const ImageLogoFootloose(),
+                TextWidgetInput(
+                  text: "Validando configuración...",
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.colorStyleText,
+                  textAlign: TextAlign.start,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
   Future checkLogin(BuildContext context, WidgetRef ref) async {
     final config = ref.read(configurationProvider);
+    final auth = ref.read(authProvider);
+    final clients = ref.read(clientProvider);
 
     try {
-      // STUB - Realiza un diagrama de flujo de la app
-
-      final auth = ref.read(authProvider);
-      final clients = ref.read(clientProvider);
-
       final String configId = await config.getConfigId();
-      final existClients = await config.existClients();
+      final bool existClients = await config.existClients();
 
       if (!existClients || configId.isEmpty) {
         // TODO - Muestreo de icons según lo que tiene en la BD
         await clients.getClients();
         await redirectToPage("/configuration");
       } else {
+        if (!context.mounted) return;
         final bool logeado = await isLoggedIn(context, auth);
 
         if (logeado) {
@@ -69,6 +68,7 @@ class SplashScreen extends ConsumerWidget {
         }
       }
     } catch (e) {
+      if (!context.mounted) return;
       await showError(
         context,
         title: "Error",

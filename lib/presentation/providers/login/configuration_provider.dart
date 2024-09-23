@@ -8,6 +8,8 @@ import 'package:footloose_tickets/infraestructure/isar/config.schema.dart';
 import 'package:footloose_tickets/presentation/providers/isar/isar_service.dart';
 import 'package:isar/isar.dart';
 
+// TODO - Migrate changeNotifier to riverpod
+
 class ConfigurationProvider extends ChangeNotifier {
   final _storage = const FlutterSecureStorage();
   Dio dio = Dio();
@@ -123,7 +125,6 @@ class ConfigurationProvider extends ChangeNotifier {
         }
       },
     );
-    print("🚀 ~ file: configuration_provider.dart ~ line: 100 ~ TM_FUNCTION: $list");
   }
 
   Future<void> deleteTablesIsar() async {

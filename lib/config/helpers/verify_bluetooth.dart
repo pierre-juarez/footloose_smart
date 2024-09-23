@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
@@ -20,16 +21,10 @@ Future<bool> requestPermissions() async {
     Permission.location,
   ].request();
 
-  if (status[Permission.bluetooth]!.isGranted &&
+  return (status[Permission.bluetooth]!.isGranted &&
       status[Permission.bluetoothConnect]!.isGranted &&
       status[Permission.bluetoothScan]!.isGranted &&
-      status[Permission.location]!.isGranted) {
-    print("All permissions granted");
-    return true;
-  } else {
-    print("Permissions not granted");
-    return false;
-  }
+      status[Permission.location]!.isGranted);
 }
 
 Future<bool> verifyBluetooth() async {
@@ -44,38 +39,38 @@ Future<bool> verifyBluetooth() async {
         switch (state) {
           case BlueThermalPrinter.CONNECTED:
             connected = true;
-            print("bluetooth device state: connected");
+            infoLog("Bluetooth device state: connected");
             break;
           case BlueThermalPrinter.DISCONNECTED:
             connected = false;
-            print("bluetooth device state: disconnected");
+            infoLog("Bluetooth device state: disconnected");
             break;
           case BlueThermalPrinter.DISCONNECT_REQUESTED:
             connected = false;
-            print("bluetooth device state: disconnect requested");
+            infoLog("Bluetooth device state: disconnect requested");
             break;
           case BlueThermalPrinter.STATE_TURNING_OFF:
             connected = false;
-            print("bluetooth device state: bluetooth turning off");
+            infoLog("Bluetooth device state: bluetooth turning off");
             break;
           case BlueThermalPrinter.STATE_OFF:
             connected = false;
-            print("bluetooth device state: bluetooth off");
+            infoLog("Bluetooth device state: bluetooth off");
             break;
           case BlueThermalPrinter.STATE_ON:
             connected = true;
-            print("bluetooth device state: bluetooth on");
+            infoLog("Bluetooth device state: bluetooth on");
             break;
           case BlueThermalPrinter.STATE_TURNING_ON:
             connected = false;
-            print("bluetooth device state: bluetooth turning on");
+            infoLog("Bluetooth device state: bluetooth turning on");
             break;
           case BlueThermalPrinter.ERROR:
             connected = false;
-            print("bluetooth device state: error");
+            infoLog("Bluetooth device state: error");
             break;
           default:
-            print(state);
+            infoLog(state.toString());
             break;
         }
         if (!completer.isCompleted) {
