@@ -59,16 +59,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         persistentFooterButtons: buttonsFooter(context, ref, list),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            ProductDetailModel productDetail = await product.getProduct("", "", "");
-            if (!context.mounted) return;
-            final etiqueta = await convertDataProduct(productDetail, context, ref);
-            final etiquetaJson = jsonEncode(etiqueta);
-            await appRouter.pushReplacement('/product?etiqueta=$etiquetaJson');
-          },
-          child: const Icon(Icons.wallet_rounded),
-        ),
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: AppTheme.backgroundColor,

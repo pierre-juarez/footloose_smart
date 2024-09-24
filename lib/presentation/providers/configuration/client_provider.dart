@@ -59,9 +59,8 @@ class ClientProvider extends ChangeNotifier {
         await addClientIsar(clients);
       }
     } catch (e) {
-      // TODO - Crear sistema de logs en file.txt
       _statusGetClient = 404;
-      throw ErrorDescription("$e");
+      throw ErrorDescription("Error al obtener configuración de api-client - $e");
     }
   }
 

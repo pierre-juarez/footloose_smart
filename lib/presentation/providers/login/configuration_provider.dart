@@ -108,7 +108,7 @@ class ConfigurationProvider extends ChangeNotifier {
       }
     } catch (e) {
       _statusGetClient = 404;
-      throw Exception(" Error al obtener las configuraciones: $e");
+      throw ErrorDescription("Error al obtener las configuraciones - $e");
     }
   }
 
