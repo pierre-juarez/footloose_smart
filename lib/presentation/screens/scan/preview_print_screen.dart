@@ -37,6 +37,7 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
     List<EtiquetaModel> listProducts = ref.read(listProductProvider)['products'] ?? [];
     createGlobalsKeys(listProducts);
     svgs = createSvgList(listProducts);
+   
   }
 
   void createGlobalsKeys(List<EtiquetaModel> listProducts) {
@@ -57,6 +58,7 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
   @override
   Widget build(BuildContext context) {
     final List<EtiquetaModel> listProducts = ref.watch(listProductProvider)['products'] ?? [];
+    final ScrollController scrollController = ScrollController();
 
     int countItems = listProducts.fold(0, (previousValue, element) => previousValue + (element.numberOfPrints));
     Set<String> skusUnicos = listProducts.map((etiqueta) => etiqueta.sku).toSet();
@@ -70,8 +72,13 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
           child: Column(
             children: [
               InfoTitlePreviewPrint(countItems: countItems, countProducts: countProducts),
-              ListProductsPreview(listProducts: listProducts, globalKeys: _globalKeys, svgs: svgs),
-              ButtonsFooterPreview(globalKeys: _globalKeys)
+              ListProductsPreview(
+                listProducts: listProducts,
+                globalKeys: _globalKeys,
+                svgs: svgs,
+                scrollController: scrollController,
+              ),
+              ButtonsFooterPreview(globalKeys: _globalKeys, scrollController: scrollController)
             ],
           ),
         ),

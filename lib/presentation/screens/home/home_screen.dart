@@ -1,20 +1,15 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:footloose_tickets/config/helpers/convert_data_product.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
-import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
-import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
-import 'package:footloose_tickets/presentation/providers/product/product_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/home/appbar_options.dart';
 import 'package:footloose_tickets/presentation/widgets/home/buttons_footer.dart';
@@ -36,7 +31,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     final auth = ref.read(authProvider);
     final config = ref.watch(configurationProvider);
     final List<EtiquetaModel> list = ref.watch(listProductProvider)['products'] ?? [];
-    final product = ref.watch(productProvider);
 
     int countItems = list.length;
     Set<String> skusUnicos = list.map((etiqueta) => etiqueta.sku).toSet();

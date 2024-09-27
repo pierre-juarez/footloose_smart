@@ -42,7 +42,7 @@ class ClientProvider extends ChangeNotifier {
       final String url = "${Environment.backSmart}/api-client";
 
       Response resp = await dio.request(url, options: options).timeout(
-        const Duration(seconds: 20),
+        const Duration(seconds: 5),
         onTimeout: () {
           return Response(
             requestOptions: RequestOptions(path: url),
@@ -79,7 +79,6 @@ class ClientProvider extends ChangeNotifier {
         }
       },
     );
-    print("🚀 ~ file: client_provider.dart ~ line: 94 ~ TM_FUNCTION: $list");
   }
 }
 

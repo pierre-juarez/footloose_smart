@@ -1,19 +1,20 @@
-
 import 'package:flutter/material.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/widgets/preview_scan/ticket_detail.dart';
 
 class ListProductsPreview extends StatelessWidget {
-  const ListProductsPreview({
-    super.key,
-    required this.listProducts,
-    required List<GlobalKey<State<StatefulWidget>>> globalKeys,
-    required this.svgs,
-  }) : _globalKeys = globalKeys;
+  const ListProductsPreview(
+      {super.key,
+      required this.listProducts,
+      required List<GlobalKey<State<StatefulWidget>>> globalKeys,
+      required this.svgs,
+      required this.scrollController})
+      : _globalKeys = globalKeys;
 
   final List<EtiquetaModel> listProducts;
   final List<GlobalKey<State<StatefulWidget>>> _globalKeys;
   final List<String> svgs;
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,10 @@ class ListProductsPreview extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Scrollbar(
           thumbVisibility: true,
+          controller: scrollController,
           child: ListView.builder(
+            shrinkWrap: true,
+            controller: scrollController,
             itemCount: listProducts.length,
             itemBuilder: (context, indexList) {
               if (_globalKeys.isNotEmpty) {
@@ -52,5 +56,3 @@ class ListProductsPreview extends StatelessWidget {
     );
   }
 }
-
-

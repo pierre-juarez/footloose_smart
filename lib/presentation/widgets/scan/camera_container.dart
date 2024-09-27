@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/convert_data_product.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/product_provider.dart';
@@ -31,82 +29,84 @@ class CameraContainer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    void handleError(BuildContext context, String error) {
+      VoidCallback? onTap;
+
+      if (error.contains('El producto ya ha sido agregado a la fila')) {
+        onTap = () async {
+          await mobileScannerController.start();
+          if (!context.mounted) return;
+          context.pop();
+        };
+      } else if (error.contains('Error al obtener detalle del producto, inténtalo nuevamente')) {
+        onTap = () async {
+          await redirectToPage("/home");
+        };
+      }
+
+      showError(
+        context,
+        errorMessage: error.replaceAll("Exception: ", ""),
+        title: "Error",
+        onTap: onTap,
+      );
+    }
+
     Future<void> scanProduct(
       BuildContext context,
       BarcodeCapture capture,
     ) async {
-      final listUpd = ref.watch(listProductProvider)['products'] ?? [];
-      final product = ref.watch(productProvider);
+      try {
+        final listUpd = ref.watch(listProductProvider)['products'] ?? [];
+        final product = ref.watch(productProvider);
 
-      await mobileScannerController.stop();
-      if (capture.barcodes.isNotEmpty) {
-        final Barcode barcode = capture.barcodes[0];
-        String codeProduct = barcode.rawValue ?? "";
+        await mobileScannerController.stop();
+        if (capture.barcodes.isNotEmpty) {
+          final Barcode barcode = capture.barcodes[0];
+          String codeProduct = barcode.rawValue ?? "";
+          codeProduct = codeProduct.replaceAll(RegExp(r'[^0-9]'), '');
 
-        // Soporte para etiqueta unificada
-        if (codeProduct.isNotEmpty && codeProduct.length == 23) {
-          codeProduct = codeProduct.substring(0, 11);
+          // Soporte para etiqueta unificada
+          if (codeProduct.isNotEmpty && codeProduct.length == 23) {
+            codeProduct = codeProduct.substring(0, 11);
+          }
+
+          if (!context.mounted) return;
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const PopScope(
+              canPop: false,
+              child: ModalProcessProduct(message: "Obteniendo información del producto..."),
+            ),
+          );
+
+          if (listUpd.isNotEmpty) {
+            bool exists = listUpd.any((p) => p.sku == codeProduct);
+            if (exists) {
+              throw Exception("El producto ya ha sido agregado a la fila");
+            }
+          }
+
+          ProductDetailModel productDetail = await product.getProduct(codeProduct, urlScan, typeRequest);
+
+          if (productDetail.data == null) {
+            throw Exception("Error al obtener detalle del producto, inténtalo nuevamente");
+          }
+          if (!context.mounted) return;
+
+          context.pop();
+
+          final etiqueta = await convertDataProduct(productDetail, context, ref);
+          final etiquetaJson = jsonEncode(etiqueta.toJson());
+          appRouter.go('/product?etiqueta=$etiquetaJson', extra: {'replace': true});
         }
-
+      } catch (e) {
         if (!context.mounted) return;
-
-        showError(
-          context,
-          icon: Icon(
-            FontAwesomeIcons.check,
-            size: 30,
-            color: AppTheme.colorPrimary,
-          ),
-          title: "Código escaneado",
-          errorMessage: "El código $codeProduct ha sido escaneado",
-          onTap: () async {
-            if (!context.mounted) return;
-            showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) {
-                  return const ModalSearchingProduct();
-                });
-
-            if (listUpd.isNotEmpty) {
-              bool exists = listUpd.any((p) => p.sku == codeProduct);
-              if (exists) {
-                showError(
-                  context,
-                  title: "Error",
-                  errorMessage: "El producto ya ha sido agregado a la fila",
-                  onTap: () async {
-                    await mobileScannerController.start();
-                    if (!context.mounted) return;
-                    Navigator.of(context).pop();
-                  },
-                );
-                return;
-              }
-            }
-
-            ProductDetailModel productDetail = await product.getProduct(codeProduct, urlScan, typeRequest);
-            if (!context.mounted) return;
-
-            if (productDetail.data == null) {
-              showError(
-                context,
-                errorMessage: "Error al obtener detalle del producto, inténtalo nuevamente",
-                title: "Error",
-                onTap: () async {
-                  await redirectToPage("/home");
-                },
-              );
-              return;
-            }
-            context.pop();
-            final etiqueta = await convertDataProduct(productDetail, context, ref);
-            final etiquetaJson = jsonEncode(etiqueta.toJson());
-            appRouter.go('/product?etiqueta=$etiquetaJson', extra: {'replace': true});
-          },
-        );
+        handleError(context, e.toString());
+      } finally {
+        capture.barcodes.clear();
       }
-      capture.barcodes.clear();
     }
 
     return Container(

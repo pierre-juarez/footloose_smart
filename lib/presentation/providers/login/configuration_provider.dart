@@ -89,7 +89,7 @@ class ConfigurationProvider extends ChangeNotifier {
 
       final String url = "${Environment.backSmart}/api-configuration/$idOptionSelected";
       Response resp = await dio.request(url, options: options, data: data).timeout(
-        const Duration(seconds: 20),
+        const Duration(seconds: 5),
         onTimeout: () {
           return Response(
             requestOptions: RequestOptions(path: url),

@@ -23,7 +23,7 @@ class ProductProvider extends ChangeNotifier {
       final String url = "$urlParam/$sku";
 
       Response resp = await dio.request(url, options: options).timeout(
-        const Duration(seconds: 20),
+        const Duration(seconds: 5),
         onTimeout: () {
           return Response(
             requestOptions: RequestOptions(path: url),
@@ -34,6 +34,7 @@ class ProductProvider extends ChangeNotifier {
       );
 
       _statusGetProduct = resp.statusCode ?? 400;
+      infoLog("getProduct statusCode: ${resp.statusCode}");
 
       if (resp.statusCode == 200) {
         return ProductDetailModel.fromJson(resp.data);
