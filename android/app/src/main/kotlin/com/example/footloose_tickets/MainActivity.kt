@@ -3,6 +3,8 @@ package com.example.footloose_tickets
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
@@ -123,12 +125,20 @@ class MainActivity : FlutterActivity() {
             }
 
             // Utiliza el objeto TSPLPrinter para imprimir la imagen
+
             tsplPrinter!!.sizeMm(76.0, 50.0).cls()
                     .bitmap(0, 0, TSPLConst.BMP_MODE_OVERWRITE, 600, bitmap, AlgorithmType.Threshold)
                     .print(numberPrints)
 
+            // Calcular el tiempo total de espera
+            val estimatedPrintTime = 800L // 800 milisegundos
+            val totalWaitTime = estimatedPrintTime * numberPrints // Tiempo total en milisegundos
 
-            result.success("Impresión finalizada")
+            // Esperar el tiempo total estimado
+            Handler(Looper.getMainLooper()).postDelayed({
+                result.success("Impresión finalizada")
+            }, totalWaitTime);
+
         } catch (e: Exception) {
             Log.e("Bluetooth", "Error al imprimir la imagen: ${e.message}")
             result.error("PRINT_ERROR", e.message, null)

@@ -5,7 +5,7 @@ Future<void> showTopSnackBar(
   BuildContext context,
   String message,
   IconData icon, {
-  Duration duration = const Duration(seconds: 4),
+  Duration duration = const Duration(milliseconds: 1500),
   VoidCallback? function,
 }) async {
   final overlay = Overlay.of(context);

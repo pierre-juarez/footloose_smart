@@ -1,4 +1,4 @@
-# footloose_tickets
+# Smart Footloose
 
 A new Flutter project.
 

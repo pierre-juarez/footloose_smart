@@ -116,12 +116,25 @@ class PrintPageProductState extends ConsumerState<PrintScreen> {
       appRouter.go('/home', extra: {'replace': true});
     }
 
-    void print() async {
+    Future<void> showMessageSuccess() async {
+      Future.delayed(const Duration(milliseconds: 1000));
+      if (!context.mounted) return;
+      await showTopSnackBar(
+        context,
+        "Las impresiones han sido realizadas correctamente",
+        Icons.check_circle_rounded,
+        duration: const Duration(seconds: 5),
+        function: () async => await resetProcess(),
+      );
+    }
+
+    void printImage() async {
       BluetoothInfo? selectedDevice = ref.watch(selectedDeviceProvider);
+      bool success = true; // Variable de control para verificar si todas las impresiones fueron exitosas
 
       setState(() => loadingPrint = true);
       try {
-        if ((selectedDevice == null)) {
+        if (selectedDevice == null) {
           throw ErrorDescription("No se ha seleccionado ninguna impresora");
         }
 
@@ -135,22 +148,13 @@ class PrintPageProductState extends ConsumerState<PrintScreen> {
           }
         }
       } catch (e) {
-        errorLog("🚀 ~ Error al imprimir: $e");
+        success = false;
         if (!context.mounted) return;
         showError(context, title: "Error", errorMessage: e.toString());
       } finally {
         setState(() => loadingPrint = false);
+        if (success) showMessageSuccess();
       }
-
-      Future.delayed(const Duration(milliseconds: 500));
-      if (!context.mounted) return;
-      await showTopSnackBar(
-        context,
-        "Las impresiones han sido realizadas correctamente",
-        Icons.check_circle_rounded,
-        duration: const Duration(seconds: 5),
-        function: () async => await resetProcess(),
-      );
     }
 
     return Scaffold(
@@ -169,7 +173,7 @@ class PrintPageProductState extends ConsumerState<PrintScreen> {
                   const SizedBox(height: 8),
                   ListDevicesBluetooth(devices: _devices),
                   const SizedBox(height: 20),
-                  InkWell(onTap: print, child: ButtonPrimary(validator: loadingPrint, title: "Imprimir")),
+                  InkWell(onTap: printImage, child: ButtonPrimary(validator: loadingPrint, title: "Imprimir")),
                   const SizedBox(height: 50)
                 ],
               )

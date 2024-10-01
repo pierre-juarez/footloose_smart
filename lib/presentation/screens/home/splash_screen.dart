@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/delete_config.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
-import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/configuration/client_provider.dart';
@@ -70,7 +69,6 @@ class SplashScreen extends ConsumerWidget {
       }
     } catch (e) {
       if (!context.mounted) return;
-      errorLog(e.toString());
       await showError(
         context,
         title: "Error",

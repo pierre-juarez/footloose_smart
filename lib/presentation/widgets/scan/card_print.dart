@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
+import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/helpers/overlay_top.dart';
 import 'package:footloose_tickets/native/platform_channel.dart';
 import 'package:footloose_tickets/presentation/providers/product/print_provider.dart';
@@ -42,9 +43,11 @@ class CardPrintState extends ConsumerState<CardPrint> {
       try {
         await PlatformChannel().connectToDevice(device.macAdress);
         ref.read(selectedDeviceProvider.notifier).selectedDevice(device);
+        if (!context.mounted) return;
         showTopSnackBar(context, "Impresora conectada", Icons.info_outline_rounded);
       } catch (e) {
-        showError(context, title: "Error", errorMessage: "Error al conectar la impresora - ${e.toString()}");
+        errorLog(e.toString());
+        showError(context, title: "Error", errorMessage: "Error al conectar la impresora");
         ref.read(selectedDeviceProvider.notifier).resetDevice();
       } finally {
         ref.read(printProvider.notifier).stopLoading();

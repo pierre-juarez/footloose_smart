@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/delete_config.dart';
 import 'package:footloose_tickets/config/helpers/find_url_config.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
-import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/isar/config.schema.dart';
@@ -64,7 +63,6 @@ Future<void> redirectToHome(
     }
   } catch (e) {
     if (!context.mounted) return;
-    errorLog(e.toString());
     await showError(
       context,
       title: "Error",

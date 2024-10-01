@@ -127,7 +127,6 @@ class ButtonsFooterPreviewState extends ConsumerState<ButtonsFooterPreview> {
         }
       } catch (e) {
         String error = e.toString().replaceAll("Exception: ", "");
-        errorLog(e.toString());
         showError(context, title: "Error", errorMessage: "Error al capturar las imágenes. $error");
       }
     }

@@ -50,7 +50,6 @@ class ConfigurationScreen extends ConsumerWidget {
           await redirectToPage("/login");
         }
       } catch (e) {
-        errorLog(e.toString());
         if (!context.mounted) return;
         await showError(
           context,
