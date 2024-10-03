@@ -11,10 +11,10 @@ class InputPassword extends ConsumerStatefulWidget {
   });
 
   @override
-  _InputPasswordState createState() => _InputPasswordState();
+  InputPasswordState createState() => InputPasswordState();
 }
 
-class _InputPasswordState extends ConsumerState<InputPassword> {
+class InputPasswordState extends ConsumerState<InputPassword> {
   bool _isHidden = true;
 
   @override

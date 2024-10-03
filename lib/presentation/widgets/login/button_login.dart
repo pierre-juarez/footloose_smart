@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footloose_tickets/config/helpers/get_errors.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
@@ -33,7 +32,7 @@ class ButtonInitLogin extends ConsumerWidget {
 
     Future<void> handleTap(AuthProvider auth) async {
       if (auth.usuario.length < 6 || auth.password.isEmpty) {
-        showError(context, title: "Error", errorMessage: await getErrorJSON("E002"));
+        showError(context, title: "Error", errorMessage: "Ingresa un usuario o contraseña válidos");
         return;
       }
 
