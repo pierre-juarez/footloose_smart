@@ -5,14 +5,17 @@ import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
+import 'package:footloose_tickets/presentation/providers/pais/pais_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:go_router/go_router.dart';
 
 Future<void> deleteConfiguration(BuildContext context, WidgetRef ref) async {
   final config = ref.watch(configurationProvider);
+  final selectedOption = ref.read(selectedOptionProvider.notifier);
 
   await config.deleteConfig();
   await config.deleteTablesIsar();
+  selectedOption.resetSelection();
 
   if (!context.mounted) return;
 
@@ -31,6 +34,7 @@ Future<void> deleteConfiguration(BuildContext context, WidgetRef ref) async {
 Future<void> resetConfiguration(BuildContext context, WidgetRef ref) async {
   context.pop();
   await deleteConfiguration(context, ref);
+  redirectToPage("/");
 }
 
 Future<void> showModalDeleteConfiguration(BuildContext context, WidgetRef ref) async {
