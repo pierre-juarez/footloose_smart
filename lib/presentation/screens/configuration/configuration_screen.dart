@@ -50,16 +50,15 @@ class ConfigurationScreen extends ConsumerWidget {
           await redirectToPage("/login");
         }
       } catch (e) {
+        ref.read(selectedOptionProvider.notifier).resetSelection();
+        await deleteConfigAll(config);
+        await SystemNavigator.pop();
         if (!context.mounted) return;
         await showError(
           context,
           title: "Error",
           errorMessage: "$e \n Inicie nuevamente el app. - ECS",
           buttonText: "Cerrar",
-          onTap: () async {
-            await deleteConfigAll(config);
-            await SystemNavigator.pop();
-          },
         );
         return;
       }

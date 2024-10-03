@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/delete_config.dart';
 import 'package:footloose_tickets/config/helpers/find_url_config.dart';
@@ -9,6 +10,7 @@ import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/isar/config.schema.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
+import 'package:footloose_tickets/presentation/providers/pais/pais_provider.dart';
 
 Future<Configuration> getConfigOrThrow(String key) async {
   Configuration? config = await configurationWithKey(key);
@@ -47,6 +49,7 @@ Future<void> redirectToHome(
   AuthProvider auth,
   String passwordEncrypted,
   ConfigurationProvider config,
+  WidgetRef ref,
 ) async {
   try {
     final config = await getConfigOrThrow("LOGIN");
@@ -62,16 +65,15 @@ Future<void> redirectToHome(
       handleError(context, auth.statusCodeLogin);
     }
   } catch (e) {
+    ref.read(selectedOptionProvider.notifier).resetSelection();
+    await deleteConfigAll(config);
+    await SystemNavigator.pop();
     if (!context.mounted) return;
     await showError(
       context,
       title: "Error",
       errorMessage: "$e \n Inicie nuevamente el app. - ERH",
       buttonText: "Cerrar",
-      onTap: () async {
-        await deleteConfigAll(config);
-        await SystemNavigator.pop();
-      },
     );
     return;
   }

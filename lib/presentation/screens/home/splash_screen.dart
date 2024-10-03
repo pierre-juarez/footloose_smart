@@ -8,6 +8,7 @@ import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/configuration/client_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
+import 'package:footloose_tickets/presentation/providers/pais/pais_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/logo_widget.dart';
 import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
 
@@ -68,16 +69,15 @@ class SplashScreen extends ConsumerWidget {
         }
       }
     } catch (e) {
+      ref.read(selectedOptionProvider.notifier).resetSelection();
+      await deleteConfigAll(config);
+      await SystemNavigator.pop();
       if (!context.mounted) return;
       await showError(
         context,
         title: "Error",
         errorMessage: "$e \n Inicie nuevamente el app. - ESS",
         buttonText: "Cerrar",
-        onTap: () async {
-          await deleteConfigAll(config);
-          await SystemNavigator.pop();
-        },
       );
       return;
     }

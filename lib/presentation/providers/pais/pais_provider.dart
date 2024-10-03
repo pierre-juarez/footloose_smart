@@ -7,6 +7,10 @@ class SelectedOptionNotifier extends StateNotifier<SelectedPais> {
   void selectOption(String option, String optionId) {
     state = SelectedPais(option: option, optionId: optionId);
   }
+
+  void resetSelection() {
+    state = SelectedPais(option: "", optionId: "");
+  }
 }
 
 final selectedOptionProvider = StateNotifierProvider<SelectedOptionNotifier, SelectedPais>((ref) {

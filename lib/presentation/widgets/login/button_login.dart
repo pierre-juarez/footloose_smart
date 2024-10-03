@@ -27,7 +27,7 @@ class ButtonInitLogin extends ConsumerWidget {
       auth.outLoadingLogin = true;
       auth.androidId = "d8717c823081b284";
       final String encryptPass = encriptPassword(auth.password);
-      await redirectToHome(context, auth, encryptPass, config);
+      await redirectToHome(context, auth, encryptPass, config, ref);
       auth.outLoadingLogin = false;
     }
 
