@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
-import 'package:footloose_tickets/presentation/widgets/input_title.dart';
+import 'package:footloose_tickets/presentation/theme/input_default.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/label_error_input.dart';
 
 class InputCodLogin extends ConsumerWidget {
@@ -18,8 +19,6 @@ class InputCodLogin extends ConsumerWidget {
 
     return Column(
       children: [
-        const InputTitle(title: "Código de colaborador"),
-        const SizedBox(height: 5),
         const _InputCodeColaborador(),
         const SizedBox(height: 12),
         LabelErrorInput(
@@ -38,6 +37,7 @@ class _InputCodeColaborador extends ConsumerStatefulWidget {
   _InputCodeColaboradorState createState() => _InputCodeColaboradorState();
 }
 
+// FIXME - Cuando valores están completos, se genera un padding y el texto sube mucho
 class _InputCodeColaboradorState extends ConsumerState<_InputCodeColaborador> {
   @override
   Widget build(BuildContext context) {
@@ -45,24 +45,26 @@ class _InputCodeColaboradorState extends ConsumerState<_InputCodeColaborador> {
     return Container(
       height: 60.0,
       width: double.infinity,
-      decoration: AppTheme.inputCustomDecoration,
+      decoration: InputDefault.decoration,
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Center(
         child: TextFormField(
-          style: AppTheme.styleInput,
+          style: AppTextStyles.displayInput,
           onChanged: (value) {
             setState(() {});
-            // credenciales.usuario = value;
-            // credenciales.codeColaboradorValid = (value.length == 6 && isNumeric(value));
+
             auth.usuario = value;
             auth.codeColaboradorValid = (value.length == 6 && isNumeric(value));
           },
           textAlign: TextAlign.start,
           autocorrect: false,
           keyboardType: TextInputType.number,
-          cursorColor: AppTheme.colorStyleText,
+          cursorColor: AppColors.textDark,
           inputFormatters: [LengthLimitingTextInputFormatter(8)],
-          decoration: AppTheme.getCustomDecorationInput(auth.codeColaboradorValid ?? false),
+          decoration: AppTheme.getCustomDecorationInput(auth.codeColaboradorValid ?? false).copyWith(
+            hintText: "Código de colaborador",
+            hintStyle: AppTextStyles.displayInputPlaceholder,
+          ),
         ),
       ),
     );

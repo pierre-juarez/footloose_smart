@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/delete_config.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/redirects.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/configuration/client_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
 import 'package:footloose_tickets/presentation/providers/pais/pais_provider.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/logo_widget.dart';
 import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
 
@@ -20,20 +20,21 @@ class SplashScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: AppColors.bodyGray,
       body: FutureBuilder(
         future: checkLogin(context, ref),
         builder: (context, snapshot) {
-          return Center(
+          return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const ImageLogoFootloose(),
+                ImageLogoFootloose(),
+                SizedBox(height: 15),
                 TextWidgetInput(
                   text: "Validando configuración...",
                   fontSize: 14.0,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.colorStyleText,
+                  color: AppColors.primaryMain,
                   textAlign: TextAlign.start,
                 ),
               ],

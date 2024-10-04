@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 
 // TODO - Organize correct theme
 class AppTheme {
@@ -19,26 +20,17 @@ class AppTheme {
   );
 
   static InputDecoration customDecorationCollapsed = InputDecoration.collapsed(
-    focusColor: Colors.white.withOpacity(0.8),
-    hintText: "",
-    hintStyle: AppTheme.styleInput,
+    focusColor: AppColors.textDark.withOpacity(0.8),
+    hintText: "Contraseña",
+    hintStyle: AppTextStyles.displayInputPlaceholder,
+    
   );
 
   static Icon? getCheckCircle(bool param) {
     return param
         ? Icon(
             FontAwesomeIcons.solidCircleCheck,
-            color: Colors.white.withOpacity(0.5),
-            size: 23,
-          )
-        : null;
-  }
-
-  static Icon? getCheckCircleGreen(bool param) {
-    return param
-        ? const Icon(
-            FontAwesomeIcons.solidCircleCheck,
-            color: Color(0xff2AC957),
+            color: AppColors.secondaryMain.withOpacity(0.5),
             size: 23,
           )
         : null;
@@ -49,9 +41,7 @@ class AppTheme {
       isCollapsed: false,
       focusedBorder: InputBorder.none,
       border: InputBorder.none,
-      focusColor: Colors.white.withOpacity(0.8),
-      hintText: "",
-      hintStyle: AppTheme.styleInput,
+      focusColor: AppColors.textDark,
       suffixIcon: AppTheme.getCheckCircle(eval),
     );
   }

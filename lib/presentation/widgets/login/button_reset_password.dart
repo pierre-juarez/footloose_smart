@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:footloose_tickets/config/helpers/roboto_style.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 // import 'package:provider/provider.dart';
 // import 'package:footloose_puntodeventa/src/data/api/sendEmail_service.dart';
 // import 'package:footloose_puntodeventa/src/data/api/verify_service.dart';
@@ -55,7 +54,7 @@ class ButtonResetPassword extends StatelessWidget {
         children: [
           Text(
             "¿Olvidaste tu contraseña?",
-            style: robotoStyle(15, FontWeight.normal, AppTheme.colorStyleText),
+            style: AppTextStyles.displayInputRecoveryPassword,
           ),
           const SizedBox(width: 5),
           InkWell(
@@ -63,7 +62,10 @@ class ButtonResetPassword extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   "Restablécela acá",
-                  style: robotoStyle(15, FontWeight.bold, AppTheme.colorTerciary),
+                  style: AppTextStyles.displayInputRecoveryPassword.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.secondaryMain,
+                  ),
                 ),
               ),
               onTap: () async => ()

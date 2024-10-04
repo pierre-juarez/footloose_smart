@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
-import 'package:footloose_tickets/presentation/widgets/input_title.dart';
+import 'package:footloose_tickets/presentation/theme/input_default.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 
 class InputPassword extends ConsumerStatefulWidget {
   const InputPassword({
@@ -23,26 +24,24 @@ class InputPasswordState extends ConsumerState<InputPassword> {
 
     return Column(
       children: [
-        const InputTitle(title: "Contraseña"),
-        const SizedBox(height: 5),
         Container(
           height: 60.0,
           width: double.infinity,
-          decoration: AppTheme.inputCustomDecoration,
+          decoration: InputDefault.decoration,
           padding: const EdgeInsets.symmetric(horizontal: 18),
           child: Center(
             child: Row(
               children: [
                 Expanded(
                   child: TextFormField(
-                    style: AppTheme.styleInput,
+                    style: AppTextStyles.displayInput,
                     onChanged: (value) => auth.password = value,
                     textAlign: TextAlign.start,
                     obscureText: _isHidden,
                     autocorrect: false,
                     keyboardType: TextInputType.name,
-                    cursorColor: Colors.white,
-                    decoration: AppTheme.customDecorationCollapsed,
+                    cursorColor: AppColors.textDark,
+                    decoration: AppTheme.getCustomDecorationInput(false).copyWith(hintText: "Contraseña", suffix: null),
                     inputFormatters: [LengthLimitingTextInputFormatter(20)],
                   ),
                 ),
@@ -56,7 +55,7 @@ class InputPasswordState extends ConsumerState<InputPassword> {
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Icon(
                       _isHidden ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.white,
+                      color: AppColors.textDark,
                       size: 25,
                     ),
                   ),

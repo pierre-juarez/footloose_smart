@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 
 class LabelErrorInput extends StatelessWidget {
   const LabelErrorInput({
@@ -21,15 +21,15 @@ class LabelErrorInput extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             FontAwesomeIcons.circleExclamation,
-            color: AppTheme.colorTerciary,
+            color: AppColors.secondaryMain,
             size: 14,
           ),
           const SizedBox(width: 8),
           Text(
             customError,
-            style: robotoStyle(13, FontWeight.w500, AppTheme.colorTerciary),
+            style: robotoStyle(13, FontWeight.w500, AppColors.secondaryMain),
           )
         ],
       ),

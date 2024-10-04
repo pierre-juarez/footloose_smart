@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
 // import 'package:footloose_puntodeventa/src/ui/common/textStyle.dart';
@@ -12,12 +13,9 @@ class ImageLogoFootloose extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Align(
+        Align(
           alignment: Alignment.bottomCenter,
-          child: Image(
-            image: AssetImage("lib/assets/logo_shopper.png"),
-            height: 100,
-          ),
+          child: SvgPicture.asset('lib/assets/logo.svg', height: 25),
         ),
         Positioned(
           top: 5.0,

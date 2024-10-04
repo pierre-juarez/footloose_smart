@@ -1,6 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/login/button_login.dart';
 import 'package:footloose_tickets/presentation/widgets/login/button_reset_password.dart';
 import 'package:footloose_tickets/presentation/widgets/login/input_cod_login.dart';
@@ -16,7 +16,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
+        backgroundColor: AppColors.bodyGray,
         body: Stack(
           children: [
             const SizedBox(
@@ -32,13 +32,20 @@ class LoginScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 80.0),
                     ElasticIn(child: const ImageLogoFootloose()),
-                    const SizedBox(height: 20.0),
+                    const SizedBox(height: 45.0),
+                    Container(
+                      height: 120,
+                      width: 120,
+                      decoration: BoxDecoration(color: AppColors.textLight, borderRadius: BorderRadius.circular(30)),
+                      child: const Icon(Icons.print, color: AppColors.textDark, size: 80),
+                    ),
+                    const SizedBox(height: 45.0),
                     const InputCodLogin(),
-                    const SizedBox(height: 13.0),
+                    const SizedBox(height: 15.0),
                     const InputPassword(),
                     const SizedBox(height: 30.0),
                     const ButtonInitLogin(),
-                    const SizedBox(height: 35.0),
+                    const SizedBox(height: 32.0),
                     const ButtonResetPassword(),
                     const SizedBox(height: 70.0),
                   ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 
 class ButtonPrimary extends StatelessWidget {
   final bool validator;
@@ -30,7 +30,7 @@ class ButtonPrimary extends StatelessWidget {
       // Cambiar a !validator
       colorButton = Colors.grey;
     } else {
-      colorButton = color != null ? color! : AppTheme.colorPrimary;
+      colorButton = color != null ? color! : AppColors.primaryMain;
     }
 
     return Container(
@@ -52,20 +52,20 @@ class ButtonPrimary extends StatelessWidget {
                       icon != null && (orientation == null || orientation != "right")
                           ? Icon(
                               icon,
-                              color: Colors.white,
+                              color: AppColors.textLight,
                               size: 25,
                             )
                           : Container(),
                       icon != null && (orientation == null || orientation != "right") ? const SizedBox(width: 15) : Container(),
                       Text(
                         title,
-                        style: robotoStyle(type != null ? 16 : 17, FontWeight.w600, Colors.white),
+                        style: robotoStyle(type != null ? 16 : 17, FontWeight.w600, AppColors.textLight),
                       ),
                       icon != null && (orientation != null && orientation == "right") ? const SizedBox(width: 15) : Container(),
                       icon != null && (orientation != null && orientation == "right")
                           ? Icon(
                               icon,
-                              color: Colors.white,
+                              color: AppColors.textLight,
                               size: 25,
                             )
                           : Container(),

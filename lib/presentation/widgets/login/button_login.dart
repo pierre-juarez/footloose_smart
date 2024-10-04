@@ -43,7 +43,7 @@ class ButtonInitLogin extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () => handleTap(auth),
-      child: ButtonPrimary(validator: auth.outLoadingLogin, title: "Iniciar sesión"), //  auth.outLoadingLogin
+      child: ButtonPrimary(validator: auth.outLoadingLogin, title: "Iniciar Sesión"), //  auth.outLoadingLogin
     );
   }
 }
