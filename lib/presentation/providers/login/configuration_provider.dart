@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:footloose_tickets/config/constants/environment.dart';
+import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/infraestructure/isar/client.schema.dart';
 import 'package:footloose_tickets/infraestructure/isar/config.schema.dart';
 import 'package:footloose_tickets/presentation/providers/isar/isar_service.dart';
@@ -113,15 +114,19 @@ class ConfigurationProvider extends ChangeNotifier {
   }
 
   Future<void> addConfigIsar(List<Configuration> configs) async {
-    List<int> list = [];
+    // TODO - VALIDAR PORQUÉ NO SE MANTIENEN EN 6 LAS CONFIGURACIONES
+    // TODO - SOLICITAR - CARGAR LAS CONFIGURACIONES AL INICIAR LA APP
+    // TODO - SI NO HAY NINGUNA CONFIGURACION, DEBE MOSTRAR UN DIALOGO DE CONFIGURACION, Y SOLICITAR TODAS LAS CONFIGURACIONES
+    //
     await isar.writeTxn(
       () async {
         for (var config in configs) {
-          final existingConfig = await isar.configurations.filter().idConfigEqualTo(config.idConfig).findFirst();
-          if (existingConfig == null) {
-            int insertId = await isar.configurations.put(config);
-            list.add(insertId);
-          }
+          // Buscar el registro por su idConfig
+          await isar.configurations.filter().idConfigEqualTo(config.idOption).deleteAll();
+
+          // Insertar la nueva configuración (esto reemplaza o añade si no existía)
+          int insertId = await isar.configurations.put(config);
+          infoLog("Registro con ID: $insertId agregado/modificado en ISAR");
         }
       },
     );

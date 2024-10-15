@@ -11,6 +11,11 @@ class SelectedOptionNotifier extends StateNotifier<SelectedPais> {
   void resetSelection() {
     state = SelectedPais(option: "", optionId: "");
   }
+
+  void reasignateOption(String configId) {
+    String option = (configId == "1") ? "Perú" : "Ecuador";
+    state = SelectedPais(option: option, optionId: configId);
+  }
 }
 
 final selectedOptionProvider = StateNotifierProvider<SelectedOptionNotifier, SelectedPais>((ref) {

@@ -24,10 +24,12 @@ final appRouter = GoRouter(
       builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
-      path: '/login',
-      name: LoginScreen.name,
-      builder: (context, state) => const LoginScreen(),
-    ),
+        path: '/login',
+        name: LoginScreen.name,
+        builder: (context, state) {
+          final bool showModal = state.extra as bool? ?? false;
+          return LoginScreen(showModal: showModal);
+        }),
     GoRoute(
       path: '/scan',
       name: ScanerPage.name,

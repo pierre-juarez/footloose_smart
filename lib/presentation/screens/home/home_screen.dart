@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/helpers/redirects.dart';
-import 'package:footloose_tickets/config/helpers/roboto_style.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/home/appbar_options.dart';
 import 'package:footloose_tickets/presentation/widgets/home/buttons_footer.dart';
@@ -51,16 +49,21 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.bodyGray,
         persistentFooterButtons: buttonsFooter(context, ref, list),
         appBar: AppBar(
-          iconTheme: const IconThemeData(color: Colors.white),
-          backgroundColor: AppTheme.backgroundColor,
-          title: Text(
-            "Impresión de etiquetas",
-            style: robotoStyle(19, FontWeight.w400, Colors.white),
+          iconTheme: const IconThemeData(color: AppColors.textLight),
+          backgroundColor: AppColors.primaryDarken,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 0),
+            child: Text(
+              "Impresión de Etiquetas",
+              style: AppTextStyles.displayTitleAppBar,
+            ),
           ),
           actions: [AppBarOptions(config: config, ref: ref, auth: auth)],
+          toolbarHeight: 64,
+          titleSpacing: 24,
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -71,23 +74,22 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   Text(
                     "Consultar Producto",
-                    style: robotoStyle(28, FontWeight.w500, AppTheme.backgroundColor),
+                    style: AppTextStyles.displayTitle2Bold,
                   ),
                   const SizedBox(height: 19),
                   Text(
                     "Pulsa 'Escanear' para empezar a escanear el código de barras del producto.",
-                    style: robotoStyle(14, FontWeight.w400, const Color(0xff7C7979).withOpacity(0.8)),
+                    style: AppTextStyles.displaySubtitle,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30),
                   InfoQueue(listProducts: list, countItems: countItems, countProducts: countProducts),
-                  const SizedBox(height: 35),
+                  const SizedBox(height: 75),
                   InkWell(
                     onTap: () async => navigateToScan(),
                     child: ButtonPrimary(
                       validator: loadingScan,
-                      title: "Escanear producto",
-                      icon: FontAwesomeIcons.qrcode,
+                      title: "Escanear Producto",
                     ),
                   )
                 ],

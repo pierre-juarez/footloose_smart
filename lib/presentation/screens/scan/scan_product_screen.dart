@@ -77,7 +77,7 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: const AppBarCustom(title: "Impresión de etiquetas"),
+        appBar: const AppBarCustom(title: "Impresión de Etiquetas"),
         backgroundColor: Colors.white,
         floatingActionButton: floatingOption,
         body: Column(

@@ -31,8 +31,8 @@ Future<void> showError(
   );
 }
 
-Future<void> redirectToPage(String routeName) async {
-  await appRouter.pushReplacement(routeName);
+Future<void> redirectToPage(String routeName, {bool? extra}) async {
+  await appRouter.pushReplacement(routeName, extra: extra);
 }
 
 String formatToTwoDecimalPlaces(double value) {

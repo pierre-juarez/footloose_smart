@@ -119,7 +119,7 @@ Future<void> showBluetoothDialog(BuildContext context, VoidCallback? onTap) {
   );
 }
 
-Future<void> showOptions(BuildContext context, AuthProvider auth) async {
+Future<void> dialogLogOut(BuildContext context, AuthProvider auth) async {
   return showDialog(
     context: context,
     builder: (context) => AlertDialog(

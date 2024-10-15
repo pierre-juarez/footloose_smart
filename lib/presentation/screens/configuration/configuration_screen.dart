@@ -12,7 +12,7 @@ import 'package:footloose_tickets/presentation/providers/login/auth_provider.dar
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
 import 'package:footloose_tickets/presentation/providers/pais/pais_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_basic.dart';
-import 'package:footloose_tickets/presentation/widgets/configuration/option_pais.dart';
+import 'package:footloose_tickets/presentation/widgets/home/option_pais.dart';
 
 class ConfigurationScreen extends ConsumerWidget {
   const ConfigurationScreen({super.key});
@@ -89,11 +89,17 @@ class ConfigurationScreen extends ConsumerWidget {
                 children: [
                   GestureDetector(
                     onTap: () => ref.read(selectedOptionProvider.notifier).selectOption("Perú", "1"),
-                    child: OptionPais(stringAsset: "lib/assets/peru.png", select: selectedOption.option == "Perú"),
+                    child: const OptionPais(
+                      stringAsset: "lib/assets/peru.png",
+                      // select: selectedOption.option == "Perú",
+                    ),
                   ),
                   GestureDetector(
                     onTap: () => ref.read(selectedOptionProvider.notifier).selectOption("Ecuador", "2"),
-                    child: OptionPais(stringAsset: "lib/assets/ecuador.png", select: selectedOption.option == "Ecuador"),
+                    child: const OptionPais(
+                      stringAsset: "lib/assets/ecuador.png",
+                      // select: selectedOption.option == "Ecuador",
+                    ),
                   ),
                 ],
               ),

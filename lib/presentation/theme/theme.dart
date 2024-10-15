@@ -100,8 +100,8 @@ class AppTextStyles {
 
   static var displaySubtitle = GoogleFonts.roboto(
     fontWeight: FontWeight.w400,
-    fontSize: 14.22 * 1.1,
-    letterSpacing: 1.5,
+    fontSize: 15,
+    letterSpacing: 0.15,
     // height: 0.21, // line-height 110%
     color: AppColors.textSubtitle,
   );
@@ -131,7 +131,7 @@ class AppTextStyles {
   static var displayTitleAppBar = GoogleFonts.roboto(
     fontWeight: FontWeight.w600,
     fontSize: 18 * 1.1,
-    letterSpacing: 1.5,
+    letterSpacing: 0.15,
     // height: 1.19, // line-height 119%
     color: AppColors.textLight,
   );
@@ -203,7 +203,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     fontSize: 12.64 * 1.1,
     letterSpacing: 0.15,
-    height: 0.21, // line-height 119%
+    //height: 0.21, // line-height 119%
     color: AppColors.textSubtitleModalPais,
   );
 
@@ -211,7 +211,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     fontSize: 16 * 1.1,
     letterSpacing: 0,
-    height: 0.23, // line-height 119%
+    //height: 0.23, // line-height 119%
     color: AppColors.textDark,
   );
   static var displayInputPlaceholder = displayInput.copyWith(color: AppColors.textDark.withOpacity(0.8));

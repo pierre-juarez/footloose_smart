@@ -10,7 +10,12 @@ import 'package:footloose_tickets/presentation/widgets/logo_widget.dart';
 class LoginScreen extends StatelessWidget {
   static const name = 'login-screen';
 
-  const LoginScreen({super.key});
+  const LoginScreen({
+    super.key,
+    required this.showModal,
+  });
+
+  final bool showModal;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +49,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(height: 15.0),
                     const InputPassword(),
                     const SizedBox(height: 30.0),
-                    const ButtonInitLogin(),
+                    ButtonInitLogin(showModal: showModal),
                     const SizedBox(height: 32.0),
                     const ButtonResetPassword(),
                     const SizedBox(height: 70.0),

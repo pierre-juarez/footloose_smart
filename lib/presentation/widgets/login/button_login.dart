@@ -3,20 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/redirects.dart';
+import 'package:footloose_tickets/presentation/providers/configuration/client_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:crypto/crypto.dart';
+import 'package:footloose_tickets/presentation/widgets/home/dialog_select_pais.dart';
 
 class ButtonInitLogin extends ConsumerWidget {
   const ButtonInitLogin({
     super.key,
+    required this.showModal,
   });
+
+  final bool showModal;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
     final config = ref.read(configurationProvider);
+    final clients = ref.read(clientProvider);
 
     String encriptPassword(password) {
       return sha512.convert(utf8.encode(password)).toString().toUpperCase().substring(0, 100);
@@ -38,6 +44,14 @@ class ButtonInitLogin extends ConsumerWidget {
 
       if (!auth.outLoadingLogin) {
         await login(auth);
+      }
+
+      if (showModal) {
+        await clients.getClients();
+        print("🚀 ~ file: button_login.dart ~ line: 51 ~ TM_FUNCTION: ");
+        if (!context.mounted) return;
+        showModalSelectPais(context, ref, config);
+        // TODO - Revisar temita de configuración
       }
     }
 

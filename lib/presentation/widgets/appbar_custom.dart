@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:footloose_tickets/config/helpers/roboto_style.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 
 class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
   const AppBarCustom({
@@ -13,13 +12,13 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      iconTheme: const IconThemeData(color: Colors.white),
-      backgroundColor: AppTheme.backgroundColor,
+      iconTheme: const IconThemeData(color: AppColors.textLight),
+      backgroundColor: AppColors.primaryDarken,
       title: Text(
         title,
-        style: robotoStyle(19, FontWeight.w400, Colors.white),
+        style: AppTextStyles.displayTitleAppBar,
       ),
-      toolbarHeight: 62,
+      toolbarHeight: 64,
     );
   }
 

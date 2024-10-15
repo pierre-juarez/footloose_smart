@@ -54,21 +54,24 @@ class SplashScreen extends ConsumerWidget {
       final String configId = await config.getConfigId();
       final bool existClients = await config.existClients();
 
-      if (!existClients || configId.isEmpty) {
-        // TODO - Muestreo de icons según lo que tiene en la BD
-        await clients.getClients();
-        await redirectToPage("/configuration");
-      } else {
-        if (!context.mounted) return;
-        final bool logeado = await isLoggedIn(context, auth);
+      // if (!existClients || configId.isEmpty) {
+      //   // TODO - Muestreo de icons según lo que tiene en la BD
+      //   await clients.getClients();
+      //   await redirectToPage("/configuration");
+      //   print("🚀 ~ file: splash_screen.dart ~ line: 61 ~ TM_FUNCTION: ");
+      // } else {
+      if (!context.mounted) return;
+      final bool logeado = await isLoggedIn(context, auth);
+      final bool validateClients = (!existClients || configId.isEmpty);
 
-        if (logeado) {
-          await redirectToPage("/home");
-        } else {
-          auth.clearInputs();
-          await redirectToPage("/login");
-        }
+      if (logeado) {
+        // TODO - Mostrar modal si no hay ninguna opción seleccionada
+        await redirectToPage("/home");
+      } else {
+        auth.clearInputs();
+        await redirectToPage("/login", extra: validateClients);
       }
+      // }
     } catch (e) {
       ref.read(selectedOptionProvider.notifier).resetSelection();
       await deleteConfigAll(config);
