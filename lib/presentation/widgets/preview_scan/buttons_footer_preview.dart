@@ -9,10 +9,10 @@ import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'dart:ui' as ui;
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/modal_searching_product.dart';
 import 'package:go_router/go_router.dart';
@@ -161,29 +161,6 @@ class ButtonsFooterPreviewState extends ConsumerState<ButtonsFooterPreview> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          const SizedBox(height: 10),
-          InkWell(
-            onTap: navigateToPrintScreen,
-            child: ButtonPrimary(validator: loadingPrint, title: "Imprimir", icon: Icons.print_outlined),
-          ),
-          Visibility(
-            visible: listProducts.isNotEmpty,
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                InkWell(
-                  onTap: () async => await cancelProcess(),
-                  child: ButtonPrimary(
-                    icon: Icons.cancel,
-                    validator: validCancelProcess,
-                    title: "Cancelar operación",
-                    color: AppTheme.colorSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
@@ -191,15 +168,43 @@ class ButtonsFooterPreviewState extends ConsumerState<ButtonsFooterPreview> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    FloatingActionButton(
-                      onPressed: () async => await redirectToScan(context),
-                      child: const Icon(FontAwesomeIcons.barcode),
+                    Container(
+                      decoration: BoxDecoration(color: AppColors.primaryLight, borderRadius: BorderRadius.circular(100)),
+                      height: 64,
+                      width: 64,
+                      child: InkWell(
+                        onTap: () async => await redirectToScan(context),
+                        child: const Icon(FontAwesomeIcons.plus, color: AppColors.primaryDarkButton),
+                      ),
                     )
                   ],
                 ),
               )
             ],
           ),
+          const SizedBox(height: 10),
+          InkWell(
+            onTap: navigateToPrintScreen,
+            child: ButtonPrimary(validator: loadingPrint, title: "Imprimir"),
+          ),
+          Visibility(
+            visible: listProducts.isNotEmpty,
+            child: Column(
+              children: [
+                const SizedBox(height: 15),
+                InkWell(
+                  onTap: () async => await cancelProcess(),
+                  child: ButtonPrimary(
+                    validator: validCancelProcess,
+                    title: "Cancelar",
+                    color: const Color(0xffC7C6C8),
+                    secondary: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 25),
         ],
       ),
     );

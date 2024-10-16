@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/preview_scan/title_print_review.dart';
 
 class InfoTitlePreviewPrint extends StatelessWidget {
@@ -13,20 +14,24 @@ class InfoTitlePreviewPrint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-      child: Column(
-        children: [
-          Row(
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TitlePrintReview(title: "N° etiquetas: ", subtitle: "$countItems"),
-              TitlePrintReview(title: "N° Productos: ", subtitle: "$countProducts"),
+              TitlePrintReview(title: "N° de Etiquetas: ", subtitle: "$countItems"),
+              TitlePrintReview(title: "N° de Productos: ", subtitle: "$countProducts"),
             ],
           ),
-          const Divider(thickness: 1.5)
-        ],
-      ),
+        ),
+        // const SizedBox(height: 8),
+        const Divider(
+          thickness: 1,
+          color: AppColors.textDark,
+        )
+      ],
     );
   }
 }

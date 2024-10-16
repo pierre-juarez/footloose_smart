@@ -10,6 +10,7 @@ class ButtonPrimary extends StatelessWidget {
   final Color? color;
   final String? orientation;
   final bool? loading;
+  final bool? secondary;
 
   const ButtonPrimary({
     super.key,
@@ -20,14 +21,17 @@ class ButtonPrimary extends StatelessWidget {
     this.color,
     this.orientation,
     this.loading,
+    this.secondary, // Ahora es opcional
   });
 
   @override
   Widget build(BuildContext context) {
     Color colorButton;
 
-    if (validator) {
-      // Cambiar a !validator
+    if (secondary != null && secondary!) {
+      // Si secondary está presente y es true
+      colorButton = const Color(0xffC7C6C8).withOpacity(0.4); // Gris claro con 40% de opacidad
+    } else if (validator) {
       colorButton = Colors.grey;
     } else {
       colorButton = color != null ? color! : AppColors.primaryMain;
@@ -43,34 +47,33 @@ class ButtonPrimary extends StatelessWidget {
       child: Center(
         child: (loading != null && loading!)
             ? const CircularProgressIndicator()
-            : (validator)
-                ? const CircularProgressIndicator()
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      icon != null && (orientation == null || orientation != "right")
-                          ? Icon(
-                              icon,
-                              color: AppColors.textLight,
-                              size: 25,
-                            )
-                          : Container(),
-                      icon != null && (orientation == null || orientation != "right") ? const SizedBox(width: 15) : Container(),
-                      Text(
-                        title,
-                        style: robotoStyle(type != null ? 16 : 17, FontWeight.w600, AppColors.textLight),
-                      ),
-                      icon != null && (orientation != null && orientation == "right") ? const SizedBox(width: 15) : Container(),
-                      icon != null && (orientation != null && orientation == "right")
-                          ? Icon(
-                              icon,
-                              color: AppColors.textLight,
-                              size: 25,
-                            )
-                          : Container(),
-                    ],
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  icon != null && (orientation == null || orientation != "right")
+                      ? Icon(
+                          icon,
+                          color: secondary != null && secondary! ? AppColors.textDark : AppColors.textLight,
+                          size: 25,
+                        )
+                      : Container(),
+                  icon != null && (orientation == null || orientation != "right") ? const SizedBox(width: 15) : Container(),
+                  Text(
+                    title,
+                    style: robotoStyle(type != null ? 16 : 17, FontWeight.w600,
+                        secondary != null && secondary! ? AppColors.textDark : AppColors.textLight),
                   ),
+                  icon != null && (orientation != null && orientation == "right") ? const SizedBox(width: 15) : Container(),
+                  icon != null && (orientation != null && orientation == "right")
+                      ? Icon(
+                          icon,
+                          color: secondary != null && secondary! ? AppColors.textDark : AppColors.textLight,
+                          size: 25,
+                        )
+                      : Container(),
+                ],
+              ),
       ),
     );
   }

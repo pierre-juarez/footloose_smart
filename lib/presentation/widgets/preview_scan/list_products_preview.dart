@@ -34,18 +34,15 @@ class ListProductsPreview extends StatelessWidget {
                 final svg = svgs[indexList];
                 final titleText =
                     "${indexList + 1}.- SKU: ${etiqueta.sku} - ${etiqueta.modelo} - ${etiqueta.numberOfPrints} etiqueta${(etiqueta.numberOfPrints) > 1 ? "s" : ""}";
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(titleText),
-                      RepaintBoundary(
-                        key: _globalKeys[indexList],
-                        child: TicketDetail(etiqueta: etiqueta, svg: svg),
-                      )
-                    ],
-                  ),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(titleText),
+                    RepaintBoundary(
+                      key: _globalKeys[indexList],
+                      child: TicketDetail(etiqueta: etiqueta, svg: svg),
+                    )
+                  ],
                 );
               }
               return null;

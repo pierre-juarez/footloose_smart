@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/preview_scan/buttons_footer_preview.dart';
 import 'package:footloose_tickets/presentation/widgets/preview_scan/info_title_preview_print.dart';
@@ -37,7 +38,6 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
     List<EtiquetaModel> listProducts = ref.read(listProductProvider)['products'] ?? [];
     createGlobalsKeys(listProducts);
     svgs = createSvgList(listProducts);
-   
   }
 
   void createGlobalsKeys(List<EtiquetaModel> listProducts) {
@@ -66,21 +66,35 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: const AppBarCustom(title: "Previsualización de etiqueta"),
-        body: Container(
-          padding: const EdgeInsets.only(top: 15, bottom: 20),
-          child: Column(
-            children: [
-              InfoTitlePreviewPrint(countItems: countItems, countProducts: countProducts),
-              ListProductsPreview(
-                listProducts: listProducts,
-                globalKeys: _globalKeys,
-                svgs: svgs,
-                scrollController: scrollController,
+        appBar: const AppBarCustom(title: "Previsualización de Etiqueta"),
+        backgroundColor: AppColors.bodyGray,
+        body: Column(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: AppStyles.shadowCard,
+                ),
+                padding: const EdgeInsets.only(top: 20, bottom: 20, left: 8, right: 8),
+                margin: const EdgeInsets.only(left: 26, right: 26, top: 32, bottom: 15),
+                child: Column(
+                  children: [
+                    InfoTitlePreviewPrint(countItems: countItems, countProducts: countProducts),
+                    const SizedBox(height: 10),
+                    ListProductsPreview(
+                      listProducts: listProducts,
+                      globalKeys: _globalKeys,
+                      svgs: svgs,
+                      scrollController: scrollController,
+                    ),
+                  ],
+                ),
               ),
-              ButtonsFooterPreview(globalKeys: _globalKeys, scrollController: scrollController)
-            ],
-          ),
+            ),
+            ButtonsFooterPreview(globalKeys: _globalKeys, scrollController: scrollController)
+          ],
         ),
       ),
     );

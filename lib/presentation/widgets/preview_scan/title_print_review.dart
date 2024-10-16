@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:footloose_tickets/config/helpers/roboto_style.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 
 class TitlePrintReview extends StatelessWidget {
   const TitlePrintReview({
@@ -16,8 +16,8 @@ class TitlePrintReview extends StatelessWidget {
     return Text.rich(
       TextSpan(
         children: [
-          TextSpan(text: title, style: robotoStyle(16, FontWeight.bold, Colors.black)),
-          TextSpan(text: subtitle, style: robotoStyle(16, FontWeight.normal, Colors.black))
+          TextSpan(text: title, style: AppTextStyles.displayTextBasicCardLigth),
+          TextSpan(text: subtitle, style: AppTextStyles.displayTextBasicCardLigth)
         ],
       ),
     );
