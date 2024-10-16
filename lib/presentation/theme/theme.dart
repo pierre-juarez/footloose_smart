@@ -187,7 +187,7 @@ class AppTextStyles {
   );
 
   static var displayTextButtonOutlineWhite = AppTextStyles.displayTextBasicCardLigth.copyWith(
-    fontSize: 18 * 1.1,
+    fontSize: 18,
     color: AppColors.textGray,
   );
 
@@ -217,4 +217,15 @@ class AppTextStyles {
   static var displayInputPlaceholder = displayInput.copyWith(color: AppColors.textDark.withOpacity(0.8));
 
   static var displayInputRecoveryPassword = displayInput.copyWith(fontSize: 14);
+}
+
+class AppStyles {
+  static List<BoxShadow>? shadowCard = [
+    const BoxShadow(
+      color: Color.fromRGBO(0, 0, 0, 0.07), // Color #000000 con 25% de opacidad
+      offset: Offset(0, 4), // Desplazamiento x 0 y y 0
+      blurRadius: 20, // Radio de desenfoque 4
+      spreadRadius: 0, // Radio de propagación 0
+    ),
+  ];
 }

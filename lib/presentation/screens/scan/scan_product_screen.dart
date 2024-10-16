@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/camera_container.dart';
-import 'package:footloose_tickets/presentation/widgets/scan/row_info_scan.dart';
-import 'package:footloose_tickets/presentation/widgets/textwidget.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/list_product_queue.dart';
 
@@ -78,7 +76,7 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
     return SafeArea(
       child: Scaffold(
         appBar: const AppBarCustom(title: "Impresión de Etiquetas"),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.bodyGray,
         floatingActionButton: floatingOption,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -91,21 +89,6 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
               typeRequest: widget.typeRequest,
             ),
             const SizedBox(height: 10.0),
-            TextWidgetInput(
-              text: "¿Qué tengo que hacer?",
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.backgroundColor,
-              textAlign: TextAlign.center,
-            ),
-            const RowInfoScan(
-              pathIcon: "lib/assets/scan.png",
-              textInfo: "Identifica el código de barras que se encuentra en la caja",
-            ),
-            const RowInfoScan(
-              pathIcon: "lib/assets/phone.png",
-              textInfo: "Acerca la cámara al sticker del código, listo",
-            ),
             ListProductsQueue(list: list, skusUnicos: skusUnicos, ref: ref)
           ],
         ),

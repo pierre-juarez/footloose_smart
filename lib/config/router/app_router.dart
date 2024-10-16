@@ -8,7 +8,9 @@ import 'package:footloose_tickets/presentation/screens/login/login_screen.dart';
 import 'package:footloose_tickets/presentation/screens/scan/preview_print_screen.dart';
 import 'package:footloose_tickets/presentation/screens/scan/print_screen.dart';
 import 'package:footloose_tickets/presentation/screens/scan/scan_product_screen.dart';
+import 'package:footloose_tickets/presentation/widgets/scan/onscreen_keyboard/onscreen_keyboard.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -77,6 +79,30 @@ final appRouter = GoRouter(
       path: '/configuration',
       name: ConfigurationScreen.name,
       builder: (context, state) => const ConfigurationScreen(),
+    ),
+    GoRoute(
+      path: '/keyboard-screen',
+      name: OnscreenKeyboard.name,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+
+        if (extra == null ||
+            !extra.containsKey('mobileScannerController') ||
+            !extra.containsKey('urlScan') ||
+            !extra.containsKey('typeRequest')) {
+          return throw Exception("Missing parameters");
+        }
+
+        final mobileScannerController = extra['mobileScannerController'] as MobileScannerController;
+        final urlScan = extra['urlScan'] as String;
+        final typeRequest = extra['typeRequest'] as String;
+
+        return OnscreenKeyboard(
+          mobileScannerController: mobileScannerController,
+          urlScan: urlScan,
+          typeRequest: typeRequest,
+        );
+      },
     ),
   ],
 );
