@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footloose_tickets/config/constants/environment.dart';
 import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_model.dart';
@@ -21,6 +22,10 @@ class ProductProvider extends ChangeNotifier {
       Options options = Options(method: typeRequest);
 
       final String url = "$urlParam/$sku";
+
+      if (!Environment.withAPIProduct) {
+        return ProductDetailModel.fromDatum(ProductDetailModel.getDummyData());
+      }
 
       Response resp = await dio.request(url, options: options).timeout(
         const Duration(seconds: 5),

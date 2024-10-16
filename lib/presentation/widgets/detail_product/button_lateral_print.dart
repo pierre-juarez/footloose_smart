@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 
 class ButtonLateralPrint extends StatelessWidget {
   const ButtonLateralPrint({
@@ -13,10 +13,19 @@ class ButtonLateralPrint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: () => function(),
-        child: ButtonPrimary(validator: false, title: title),
+    return InkWell(
+      onTap: () => function(),
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.primaryMain, width: 1),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(title, style: const TextStyle(fontSize: 35, color: AppColors.primaryMain)),
+        ),
       ),
     );
   }

@@ -62,3 +62,11 @@ void handleError(BuildContext context, int statusCode) async {
   if (!context.mounted) return;
   showError(context, title: "Error", errorMessage: errorMessage);
 }
+
+String formatDateString(String date) {
+  DateTime parsedDate = DateTime.parse(date);
+
+  String formattedDate =
+      "${parsedDate.day.toString().padLeft(2, '0')}/${parsedDate.month.toString().padLeft(2, '0')}/${parsedDate.year}";
+  return formattedDate;
+}

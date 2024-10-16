@@ -90,7 +90,11 @@ class ButtonCenterState extends ConsumerState<ButtonCenter> {
 
           final etiqueta = await convertDataProduct(productDetail, context, ref);
           final etiquetaJson = jsonEncode(etiqueta.toJson());
-          appRouter.go('/product?etiqueta=$etiquetaJson', extra: {'replace': true});
+          // TODO - Activar back después de pushear vista
+          appRouter.go(
+            '/product?etiqueta=$etiquetaJson',
+            // extra: {'replace': true}
+          );
         }
       } catch (e) {
         if (!context.mounted) return;

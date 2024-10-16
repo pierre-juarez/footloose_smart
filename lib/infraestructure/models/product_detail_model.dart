@@ -9,6 +9,61 @@ class ProductDetailModel {
     this.message,
   });
 
+  static Datum getDummyData() {
+    return Datum(
+      producto: "Producto 1",
+      nombre: "Nombre del producto 1",
+      preciocostoSiva: 100 + 0.toDouble(),
+      preciobancoCiva: 150 + 0.toDouble(),
+      fechacompra: DateTime.now().subtract(const Duration(days: 0)),
+      fechaing: DateTime.now().add(const Duration(days: 0)),
+      fechaIngCd: "CD${1}",
+      fechaIngTd: "TD${1}",
+      proveedor: "Proveedor ${1 % 5}",
+      procedencia: "Procedencia ${1 % 3}",
+      tallas: "40",
+      material1: 0 % 2 == 0 ? 1 : 2,
+      presentacionAccesorio: "Presentación ${1 % 2}",
+      detalleArticulo: "Detalles del artículo ${1}",
+      modelo: "Modelo ${1}",
+      color1: 0 % 5,
+      categoria: "Categoria ${1 % 6}",
+      colorForro: "Color forro ${1 % 7}",
+      tipoConstruccion: "Tipo de construcción ${1 % 8}",
+      categoriaWeb: "Categoria web ${1 % 9}",
+      generoWeb: "Genero web ${1 % 10}",
+      colorPlantilla: "Color plantilla ${1 % 11}",
+      alturaCana: "Altura cana ${1 % 12}",
+      acabadoCapellada: "Acabado capellada ${1 % 13}",
+      uso: "Uso ${1 % 14}",
+      materialForro: "Material forro ${1 % 15}",
+      estiloTaco: "Estilo taco ${1 % 16}",
+      detallePlanta: "Detalles planta ${1 % 17}",
+      unidadDeMedida: 0 % 18 == 0 ? "Unidad" : null,
+      material2: 0 % 19,
+      material3: 0 % 20,
+      grupoDeArticulos: "Grupo de artículos ${1 % 21}",
+      tipoDeArticulo: "Tipo de artículo ${1 % 22}",
+      marca: "Marca ${1 % 23}",
+      color2: 0 % 24,
+      materialHuella: "Material huella ${1 % 25}",
+      materialPlantilla: "Material plantilla ${1 % 26}",
+      construccion: "Construcción ${1 % 27}",
+      tipoHorma: "Tipo horma ${1 % 28}",
+      genero: "Genero ${1 % 29}",
+      estiloWeb: "Estilo web ${1 % 30}",
+      ocasion: "Ocasión ${1 % 31}",
+      estiloPunta: "Estilo punta ${1 % 32}",
+      colorPlanta: "Color planta ${1 % 33}",
+      linea: "Linea ${1 % 34}",
+      temporada: "Temporada ${1 % 35}",
+      tipoHuella: "Tipo huella ${1 % 36}",
+      materialPlanta: "Material planta ${1 % 37}",
+      color3: 0 % 38,
+      urlimagen: "https://assets.footloose.pe/sip/_images/1x/585_111651_00030404_052_5_043_001.jpg",
+    );
+  }
+
   factory ProductDetailModel.fromJson(Map<String, dynamic> json) => ProductDetailModel(
         status: json["status"],
         data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
@@ -20,6 +75,12 @@ class ProductDetailModel {
         "data": (data != null) ? List<dynamic>.from(data!.map((x) => x.toJson())) : [],
         "message": message ?? "",
       };
+
+  ProductDetailModel.fromDatum(Datum datum) {
+    status = true; // Asumimos que el estado es verdadero por defecto
+    data = [datum];
+    message = "Datos procesados correctamente";
+  }
 }
 
 class Datum {

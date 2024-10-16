@@ -84,7 +84,7 @@ class AppTextStyles {
   // Display
   static var displayTitle1Bold = GoogleFonts.roboto(
     fontWeight: FontWeight.w600,
-    fontSize: 32 * 1.1,
+    fontSize: 32,
     letterSpacing: 1.5,
     // height: 0.24, // line-height 110%
     color: AppColors.textBasic,
@@ -138,7 +138,7 @@ class AppTextStyles {
 
   static var displayTextBasicCardLigth = GoogleFonts.roboto(
     fontWeight: FontWeight.w400,
-    fontSize: 16 * 1.1,
+    fontSize: 16,
     letterSpacing: 0.5,
     // height: 0.28, // line-height 119%
     color: AppColors.textBasic,
@@ -154,7 +154,7 @@ class AppTextStyles {
 
   static var displayTextBoldInfoProduct = GoogleFonts.roboto(
     fontWeight: FontWeight.w600,
-    fontSize: 16 * 1.1,
+    fontSize: 16,
     letterSpacing: 0.15,
     // height: 0.24, // line-height 119%
     color: AppColors.textBasic,
@@ -162,7 +162,7 @@ class AppTextStyles {
 
   static var displayTextCaptionInfoProduct = GoogleFonts.roboto(
     fontWeight: FontWeight.w400,
-    fontSize: 12.64 * 1.1,
+    fontSize: 13,
     letterSpacing: 0.15,
     // height: 0.21, // line-height 119%
     color: AppColors.textBasic,
