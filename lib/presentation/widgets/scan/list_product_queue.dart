@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/delete_all_items.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
+import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/dismissible_row_product.dart';
 
 class ListProductsQueue extends ConsumerStatefulWidget {
@@ -28,7 +29,6 @@ class ListProductsQueueState extends ConsumerState<ListProductsQueue> {
       deleteAllItemsQueue(ref, context, () => setState(() {}));
     }
 
-// FIXME - Error al visualizar productos en cola
     return Visibility(
       visible: widget.list.isNotEmpty,
       child: Expanded(
@@ -39,27 +39,27 @@ class ListProductsQueueState extends ConsumerState<ListProductsQueue> {
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
                 children: [
-                  Text(
-                    "Productos en cola: ${widget.skusUnicos.length}",
-                    style: robotoStyle(18, FontWeight.bold, Colors.black).copyWith(decoration: TextDecoration.underline),
-                  ),
-                  const SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("(Desliza a la izquierda para eliminar)"),
+                      Text(
+                        "Productos en Cola (${widget.skusUnicos.length})",
+                        style: AppTextStyles.displayTitleModalPais,
+                      ),
+                      const SizedBox(height: 5),
                       InkWell(
                         onTap: () async => deleteAllItems(),
                         child: Text(
-                          "Vaciar todo",
-                          style: robotoStyle(15, FontWeight.bold, Colors.red),
+                          "Eliminar todo",
+                          style: robotoStyle(16, FontWeight.bold, const Color(0xffE73743)),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 5),
-                  SizedBox(
-                    height: 200,
+                  const SizedBox(height: 16),
+                  Container(
+                    color: Colors.amber[200],
+                    height: 160,
                     child: ListView.builder(
                       itemCount: widget.skusUnicos.length,
                       itemBuilder: (context, index) {

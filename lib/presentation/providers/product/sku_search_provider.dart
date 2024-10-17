@@ -24,7 +24,7 @@ class SkuSearchProvider extends StateNotifier<String> {
   }
 
   void typeItem(item) {
-    if (state.length < 12 && item != "c") {
+    if (state.length < 11 && item != "c") {
       state = state + item;
     } else if (item == "c") {
       state = "";

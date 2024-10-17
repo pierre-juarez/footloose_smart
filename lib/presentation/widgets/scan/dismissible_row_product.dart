@@ -4,6 +4,8 @@ import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
+import 'package:footloose_tickets/presentation/widgets/detail_product/image_found.dart';
+import 'package:footloose_tickets/presentation/widgets/detail_product/image_not_found.dart';
 
 class DismissibleRowProduct extends StatelessWidget {
   const DismissibleRowProduct({
@@ -160,17 +162,27 @@ class DismissibleRowProduct extends StatelessWidget {
           ],
         ),
       ),
-      child: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1), borderRadius: BorderRadius.circular(15)),
-            child: ListTile(
-              title: Text("${index + 1}.- SKU ${product.sku} - ${product.modelo}"),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: AppColors.textLight,
+          boxShadow: AppStyles.shadowCard,
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                SizedBox(
+                  height: 50,
+                  child: (product.imageUrl.isNotEmpty) ? ImageFound(path: product.imageUrl) : const ImageNotFound(),
+                ),
+                Text(" SKU ${product.sku} - ${product.modelo}"),
+              ],
             ),
-          ),
-          const Divider()
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -31,7 +31,7 @@ class ListProductsPreview extends StatelessWidget {
             itemBuilder: (context, indexList) {
               if (_globalKeys.isNotEmpty) {
                 final etiqueta = listProducts[indexList];
-                final svg = svgs[indexList];
+                final svg = svgs[indexList]; // REVIEW - RangeError (length): Invalid value: Only valid value is 0: 1
                 final titleText =
                     "${indexList + 1}.- SKU: ${etiqueta.sku} - ${etiqueta.modelo} - ${etiqueta.numberOfPrints} etiqueta${(etiqueta.numberOfPrints) > 1 ? "s" : ""}";
                 return Column(

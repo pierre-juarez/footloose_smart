@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class ProductDetailModel {
   bool? status;
   List<Datum>? data;
@@ -11,7 +13,7 @@ class ProductDetailModel {
 
   static Datum getDummyData() {
     return Datum(
-      producto: "18805057204",
+      producto: generateRandom11DigitNumber(),
       nombre: "Nombre del producto 1",
       preciocostoSiva: 100 + 0.toDouble(),
       preciobancoCiva: 150 + 0.toDouble(),
@@ -293,4 +295,17 @@ class Datum {
         "COLOR 3": color3,
         "urlimagen": urlimagen,
       };
+}
+
+String generateRandom11DigitNumber() {
+  Random random = Random();
+
+  // Genera el primer dígito entre 1 y 9 para evitar que empiece con 0
+  String firstDigit = random.nextInt(9).toString();
+
+  // Genera los siguientes 10 dígitos entre 0 y 9
+  String otherDigits = List.generate(10, (_) => random.nextInt(10).toString()).join();
+
+  // Retorna el número completo como string
+  return firstDigit + otherDigits;
 }
