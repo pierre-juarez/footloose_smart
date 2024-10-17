@@ -3,16 +3,13 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/delete_all_items.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/logger.dart';
-import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'dart:ui' as ui;
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
-import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:footloose_tickets/presentation/widgets/custom_modal.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/modal_searching_product.dart';
@@ -167,28 +164,6 @@ class ButtonsFooterPreviewState extends ConsumerState<ButtonsFooterPreview> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(color: AppColors.primaryLight, borderRadius: BorderRadius.circular(100)),
-                      height: 64,
-                      width: 64,
-                      child: InkWell(
-                        onTap: () async => await redirectToScan(context),
-                        child: const Icon(FontAwesomeIcons.plus, color: AppColors.primaryDarkButton),
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-          const SizedBox(height: 10),
           InkWell(
             onTap: navigateToPrintScreen,
             child: ButtonPrimary(validator: loadingPrint, title: "Imprimir"),

@@ -1,6 +1,8 @@
 import 'package:barcode/barcode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:footloose_tickets/config/helpers/redirects.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/theme/theme.dart';
@@ -71,26 +73,49 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
         body: Column(
           children: [
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: AppStyles.shadowCard,
-                ),
-                padding: const EdgeInsets.only(top: 20, bottom: 20, left: 8, right: 8),
-                margin: const EdgeInsets.only(left: 26, right: 26, top: 32, bottom: 15),
-                child: Column(
-                  children: [
-                    InfoTitlePreviewPrint(countItems: countItems, countProducts: countProducts),
-                    const SizedBox(height: 10),
-                    ListProductsPreview(
-                      listProducts: listProducts,
-                      globalKeys: _globalKeys,
-                      svgs: svgs,
-                      scrollController: scrollController,
+              child: Stack(
+                children: [
+                  SizedBox(
+                    height: (400 * countProducts) + 50,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.textLight,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: AppStyles.shadowCard,
+                      ),
+                      padding: const EdgeInsets.only(top: 20, bottom: 20),
+                      margin: const EdgeInsets.only(left: 26, right: 26, top: 32, bottom: 15),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: InfoTitlePreviewPrint(countItems: countItems, countProducts: countProducts),
+                          ),
+                          const SizedBox(height: 10),
+                          ListProductsPreview(
+                            listProducts: listProducts,
+                            globalKeys: _globalKeys,
+                            svgs: svgs,
+                            scrollController: scrollController,
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    right: 26,
+                    child: Container(
+                      decoration: BoxDecoration(color: AppColors.primaryLight, borderRadius: BorderRadius.circular(100)),
+                      height: 64,
+                      width: 64,
+                      child: InkWell(
+                        onTap: () async => await redirectToScan(context),
+                        child: const Icon(FontAwesomeIcons.plus, color: AppColors.primaryDarkButton),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
             ButtonsFooterPreview(globalKeys: _globalKeys, scrollController: scrollController)

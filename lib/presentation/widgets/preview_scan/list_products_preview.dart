@@ -19,16 +19,17 @@ class ListProductsPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Scrollbar(
-          thumbVisibility: true,
-          controller: scrollController,
+      child: Scrollbar(
+        thumbVisibility: true,
+        controller: scrollController,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: ListView.builder(
             shrinkWrap: true,
             controller: scrollController,
             itemCount: listProducts.length,
             itemBuilder: (context, indexList) {
+              print("🚀 ~ file: list_products_preview.dart ~ line: 32 ~ TM_FUNCTION: SVG's: ${svgs.length} -  index: $indexList");
               if (_globalKeys.isNotEmpty) {
                 final etiqueta = listProducts[indexList];
                 final svg = svgs[indexList]; // REVIEW - RangeError (length): Invalid value: Only valid value is 0: 1

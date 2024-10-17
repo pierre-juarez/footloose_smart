@@ -147,6 +147,7 @@ class DismissibleRowProduct extends StatelessWidget {
         color: Colors.red,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
+        margin: const EdgeInsets.only(bottom: 8),
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -164,6 +165,7 @@ class DismissibleRowProduct extends StatelessWidget {
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 5),
+        margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: AppColors.textLight,

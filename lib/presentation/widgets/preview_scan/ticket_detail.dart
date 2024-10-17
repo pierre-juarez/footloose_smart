@@ -17,9 +17,7 @@ class TicketDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.blue,
       margin: const EdgeInsets.only(bottom: 10, top: 5),
-      // padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 5),
       child: Column(
         children: [
           Padding(
@@ -71,7 +69,6 @@ class TicketDetail extends StatelessWidget {
             ),
           ),
           Container(
-            color: Colors.orange,
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
             child: SvgPicture.string(svg, fit: BoxFit.contain),
           ),

@@ -57,8 +57,7 @@ class ListProductsQueueState extends ConsumerState<ListProductsQueue> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    color: Colors.amber[200],
+                  SizedBox(
                     height: 160,
                     child: ListView.builder(
                       itemCount: widget.skusUnicos.length,
