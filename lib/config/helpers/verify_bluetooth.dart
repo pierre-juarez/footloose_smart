@@ -1,13 +1,6 @@
 import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
-import 'package:flutter/material.dart';
-import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/logger.dart';
-import 'package:footloose_tickets/config/helpers/roboto_style.dart';
-import 'package:footloose_tickets/config/theme/app_theme.dart';
-import 'package:footloose_tickets/presentation/providers/login/auth_provider.dart';
-import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
-import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 BlueThermalPrinter bluetooth = BlueThermalPrinter.instance;
@@ -85,86 +78,4 @@ Future<bool> verifyBluetooth() async {
   } else {
     return false;
   }
-}
-
-Future<void> showBluetoothDialog(BuildContext context, VoidCallback? onTap) {
-  return showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(
-        'Encienda el Bluetooth',
-        style: robotoStyle(20, FontWeight.w600, Colors.black),
-      ),
-      content: Text(
-        'Por favor, active el Bluetooth para usar esta función.',
-        style: robotoStyle(16, FontWeight.normal, Colors.black),
-      ),
-      actions: <Widget>[
-        InkWell(
-          onTap: (onTap != null)
-              ? onTap
-              : () {
-                  Navigator.pop(context);
-                },
-          child: ButtonPrimary(
-            validator: false,
-            title: "OK",
-            type: "small",
-            color: AppTheme.colorPrimary,
-          ),
-        )
-      ],
-    ),
-  );
-}
-
-Future<void> dialogLogOut(BuildContext context, AuthProvider auth) async {
-  return showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(
-        'Cerrar sesión',
-        style: robotoStyle(20, FontWeight.w600, Colors.black),
-      ),
-      content: Text(
-        '¿Está seguro que desea cerrar sesión?',
-        style: robotoStyle(16, FontWeight.normal, Colors.black),
-      ),
-      actions: <Widget>[
-        Row(
-          children: [
-            Expanded(
-              child: InkWell(
-                onTap: () async {
-                  auth.clearInputs();
-                  await auth.logout();
-                  redirectToPage("/");
-                },
-                child: const ButtonPrimary(
-                  validator: false,
-                  title: "Cerrar sesión",
-                  type: "small",
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  context.pop();
-                },
-                child: ButtonPrimary(
-                  validator: false,
-                  title: "Cancelar",
-                  type: "small",
-                  color: AppTheme.colorSecondary,
-                ),
-              ),
-            ),
-          ],
-        )
-      ],
-    ),
-  );
 }

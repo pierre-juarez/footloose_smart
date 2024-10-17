@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footloose_tickets/config/helpers/delete_all_items.dart';
@@ -29,6 +28,7 @@ class ListProductsQueueState extends ConsumerState<ListProductsQueue> {
       deleteAllItemsQueue(ref, context, () => setState(() {}));
     }
 
+// FIXME - Error al visualizar productos en cola
     return Visibility(
       visible: widget.list.isNotEmpty,
       child: Expanded(

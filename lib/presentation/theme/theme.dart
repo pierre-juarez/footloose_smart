@@ -193,16 +193,14 @@ class AppTextStyles {
 
   static var displayTitleModalPais = GoogleFonts.roboto(
     fontWeight: FontWeight.w600,
-    fontSize: 16 * 1.1,
-    letterSpacing: 0.15,
+    fontSize: 17,
     // height: 0.24, // line-height 119%
     color: AppColors.textTitleModalPais,
   );
 
   static var displaySubtitleModalPais = GoogleFonts.roboto(
     fontWeight: FontWeight.w500,
-    fontSize: 12.64 * 1.1,
-    letterSpacing: 0.15,
+    fontSize: 14,
     //height: 0.21, // line-height 119%
     color: AppColors.textSubtitleModalPais,
   );

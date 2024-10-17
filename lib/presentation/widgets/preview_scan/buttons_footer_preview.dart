@@ -14,6 +14,7 @@ import 'dart:ui' as ui;
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
+import 'package:footloose_tickets/presentation/widgets/custom_modal.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/modal_searching_product.dart';
 import 'package:go_router/go_router.dart';
 
@@ -143,9 +144,14 @@ class ButtonsFooterPreviewState extends ConsumerState<ButtonsFooterPreview> {
       if (isVerify) {
         captureAndNavigate(context);
       } else {
-        showBluetoothDialog(context, () {
-          Navigator.pop(context);
-        });
+        await showCustomModal(
+          context,
+          "Encienda el Bluetooth",
+          "Por favor, active el Bluetooth para usar esta función.",
+          "Continuar",
+          () => Navigator.pop(context),
+          paddingHorizontal: 75,
+        );
       }
       setState(() => loadingPrint = false);
     }

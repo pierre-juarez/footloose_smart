@@ -11,7 +11,7 @@ class ProductDetailModel {
 
   static Datum getDummyData() {
     return Datum(
-      producto: "Producto 1",
+      producto: "18805057204",
       nombre: "Nombre del producto 1",
       preciocostoSiva: 100 + 0.toDouble(),
       preciobancoCiva: 150 + 0.toDouble(),

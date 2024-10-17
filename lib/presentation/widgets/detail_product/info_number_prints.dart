@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
+import 'package:footloose_tickets/presentation/widgets/custom_modal.dart';
 import 'package:footloose_tickets/presentation/widgets/detail_product/button_lateral_print.dart';
 
 class CardInfoNumberPrints extends ConsumerStatefulWidget {
@@ -40,7 +40,14 @@ class InfoNumberPrintsState extends ConsumerState<CardInfoNumberPrints> {
 
     void subtract() {
       if (count == 1) {
-        showError(context, title: "Error", errorMessage: "El número actual de impresiones no puede ser menor a 1");
+        showCustomModal(
+          context,
+          "Error",
+          "El número actual de impresiones no puede ser menor a 1",
+          "OK",
+          () => Navigator.pop(context),
+        );
+
         return;
       }
       setState(() => count--);

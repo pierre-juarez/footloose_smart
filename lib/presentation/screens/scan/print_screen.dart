@@ -6,6 +6,7 @@ import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/native/platform_channel.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/selected_device_provider.dart';
+import 'package:footloose_tickets/presentation/widgets/custom_modal.dart';
 import 'package:footloose_tickets/presentation/widgets/print/footer_options_print.dart';
 import 'package:footloose_tickets/presentation/widgets/print/list_devices_bluetooth.dart';
 import 'package:footloose_tickets/presentation/widgets/print/loading_print.dart';
@@ -100,7 +101,14 @@ class PrintPageProductState extends ConsumerState<PrintScreen> {
       } else {
         _devices = [];
         if (context == null && !context!.mounted) return;
-        showBluetoothDialog(context, () => Navigator.pop(context));
+        await showCustomModal(
+          context,
+          "Encienda el Bluetooth",
+          "Por favor, active el Bluetooth para usar esta función.",
+          "Continuar",
+          () => Navigator.pop(context),
+          paddingHorizontal: 75,
+        );
       }
     } catch (e) {
       throw ErrorDescription("Error al obtener dispositivos: $e");

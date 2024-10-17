@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/logger.dart';
+import 'package:footloose_tickets/config/helpers/modal_logout.dart';
 import 'package:footloose_tickets/config/helpers/reset_configuration.dart';
 import 'package:footloose_tickets/config/helpers/verify_bluetooth.dart';
 import 'package:footloose_tickets/infraestructure/models/selection_pais_model.dart';
@@ -170,7 +171,7 @@ class AppBarOptions extends StatelessWidget {
   Widget build(BuildContext context) {
     String assetName = (config.idOption == "1") ? "lib/assets/peru.png" : "lib/assets/ecuador.png";
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.only(right: 24),
       child: Row(
         children: [
           GestureDetector(
@@ -179,8 +180,14 @@ class AppBarOptions extends StatelessWidget {
           ),
           const SizedBox(width: 24),
           InkWell(
-            onTap: () async => await dialogLogOut(context, auth),
-            child: const Icon(FontAwesomeIcons.arrowRightToBracket),
+            onTap: () async => await showModalLogout(context, auth),
+            child: Container(
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(100)),
+              child: const Padding(
+                padding: EdgeInsets.all(10),
+                child: Icon(FontAwesomeIcons.arrowRightToBracket),
+              ),
+            ),
           )
         ],
       ),
