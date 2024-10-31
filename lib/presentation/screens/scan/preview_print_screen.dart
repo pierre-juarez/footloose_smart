@@ -7,6 +7,7 @@ import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
+import 'package:footloose_tickets/presentation/widgets/floating_button.dart';
 import 'package:footloose_tickets/presentation/widgets/preview_scan/buttons_footer_preview.dart';
 import 'package:footloose_tickets/presentation/widgets/preview_scan/info_title_preview_print.dart';
 import 'package:footloose_tickets/presentation/widgets/preview_scan/list_products_preview.dart';
@@ -105,14 +106,9 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
                   Positioned(
                     bottom: 10,
                     right: 26,
-                    child: Container(
-                      decoration: BoxDecoration(color: AppColors.primaryLight, borderRadius: BorderRadius.circular(100)),
-                      height: 64,
-                      width: 64,
-                      child: InkWell(
-                        onTap: () async => await redirectToScan(context),
-                        child: const Icon(FontAwesomeIcons.plus, color: AppColors.primaryDarkButton),
-                      ),
+                    child: FloatingButton(
+                      onPressed: () async => await redirectToScan(context),
+                      icon: FontAwesomeIcons.plus,
                     ),
                   )
                 ],

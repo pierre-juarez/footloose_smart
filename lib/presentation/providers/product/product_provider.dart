@@ -28,7 +28,7 @@ class ProductProvider extends ChangeNotifier {
       }
 
       Response resp = await dio.request(url, options: options).timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 25),
         onTimeout: () {
           return Response(
             requestOptions: RequestOptions(path: url),

@@ -16,4 +16,3 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 // TODO - Crear sistema de logs en file.txt
-// TODO - Aumentar el loader para que no termine hasta que finalice la impresión total? (view)

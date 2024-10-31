@@ -187,7 +187,7 @@ class AuthProvider with ChangeNotifier {
         data: data,
         queryParameters: {'env': Environment.development},
       ).timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 25),
         onTimeout: () {
           return Response(
             requestOptions: RequestOptions(path: urlParam),
@@ -248,7 +248,7 @@ class AuthProvider with ChangeNotifier {
         options: options,
         queryParameters: {'env': Environment.development},
       ).timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 25),
         onTimeout: () {
           statusCodeLoggedIn = 408;
           return Response(

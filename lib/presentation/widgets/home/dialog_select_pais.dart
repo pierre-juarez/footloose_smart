@@ -12,8 +12,9 @@ import 'package:footloose_tickets/presentation/widgets/home/option_pais_dialog.d
 Future<dynamic> showModalSelectPais(
   BuildContext context,
   WidgetRef ref,
-  ConfigurationProvider config,
-) {
+  ConfigurationProvider config, {
+  void Function()? callback,
+}) {
   bool loadingContinue = false;
 
   Future<void> continueSelection(BuildContext context, Function setState) async {
@@ -30,17 +31,20 @@ Future<dynamic> showModalSelectPais(
       try {
         setState(() => loadingContinue = true);
 
+        await config.deleteTablesConfigurationsIsar();
         // Lógica cuando el país ha cambiado
-        await config.getConfigs(optionSelected.optionId);
+        await config.getConfigById(optionSelected.optionId);
         config.saveConfiguration(optionSelected.option, optionSelected.optionId);
 
         print("🚀 ~ file: appbar_options.dart ~ line: 114 ~ TM_FUNCTION: Trayendo config de backend...");
       } catch (e) {
         errorLog(e.toString());
         showError(context, title: "Error", errorMessage: "Error en el servidor. Intente nuevamente.");
+        // TODO - Si hay un error, se debe mantener la selección anterior
         return;
       } finally {
         setState(() => loadingContinue = false);
+        callback?.call();
       }
     }
 

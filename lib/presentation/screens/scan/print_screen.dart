@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footloose_tickets/config/helpers/logger.dart';
 import 'package:footloose_tickets/config/helpers/overlay_top.dart';
 import 'package:footloose_tickets/config/router/app_router.dart';
@@ -7,7 +8,6 @@ import 'package:footloose_tickets/native/platform_channel.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/selected_device_provider.dart';
 import 'package:footloose_tickets/presentation/widgets/custom_modal.dart';
-import 'package:footloose_tickets/presentation/widgets/print/footer_options_print.dart';
 import 'package:footloose_tickets/presentation/widgets/print/list_devices_bluetooth.dart';
 import 'package:footloose_tickets/presentation/widgets/print/loading_print.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
@@ -19,6 +19,7 @@ import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
 import 'package:footloose_tickets/presentation/widgets/button_primary.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image/image.dart' as img; // Alias 'img' para evitar conflictos
+import 'package:footloose_tickets/presentation/widgets/floating_button.dart';
 
 class PrintScreen extends ConsumerStatefulWidget {
   static const name = 'print-screen';
@@ -166,7 +167,7 @@ class PrintPageProductState extends ConsumerState<PrintScreen> {
     }
 
     return Scaffold(
-      appBar: const AppBarCustom(title: "Busca y selecciona una impresora"),
+      appBar: const AppBarCustom(title: "Buscar impresora"),
       backgroundColor: Colors.white,
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -180,15 +181,18 @@ class PrintPageProductState extends ConsumerState<PrintScreen> {
                   ),
                   const SizedBox(height: 8),
                   ListDevicesBluetooth(devices: _devices),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      FloatingButton(onPressed: () async => await getDevices(context), icon: FontAwesomeIcons.rotateRight),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   InkWell(onTap: printImage, child: ButtonPrimary(validator: loadingPrint, title: "Imprimir")),
-                  const SizedBox(height: 50)
                 ],
               )
             : const LoadingPrint(),
       ),
-      floatingActionButton: FooterOptionsPrint(refresh: (context) async => await getDevices(context)),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

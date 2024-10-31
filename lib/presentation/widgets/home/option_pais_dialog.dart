@@ -22,31 +22,22 @@ class OptionPaisDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO - Revisar la reasignación de la opción seleccionada, si el optionselected esta vacío
-    // TODO - Revisar la page de configuración, si el optionSelected esta vacío
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   SelectedPais optionSelected = ref.read(selectedOptionProvider);
-    //   if (optionSelected.optionId.isEmpty) {
-    //     print("🚀 ~ file: appbar_options.dart ~ line: 188 ~ TM_FUNCTION: ${config.idOption}");
-    //     ref.read(selectedOptionProvider.notifier).reasignateOption(config.idOption);
-    //   }else{
-
-    //   }
-    // });
     SelectedPais optionSelected = ref.watch(selectedOptionProvider);
 
     bool stateCheck = false;
     if (optionSelected.option.isEmpty) {
-      String paisStr = config.idOption == "1" ? "Perú" : "Ecuador";
-      print("🚀 ~ file: appbar_options.dart ~ line: 186 ~ TM_FUNCTION: $paisStr");
+      String paisStr = "";
+      if (config.idOption == "1") {
+        paisStr = "Perú";
+      } else if (config.idOption == "2") {
+        paisStr = "Ecuador";
+      }
+
       stateCheck = paisStr == pais;
     } else {
       stateCheck = optionSelected.option == pais;
     }
-    //stateCheck = optionSelected.option == pais;
-    print("🚀 ~ file: appbar_options.dart ~ line: 179 ~ TM_FUNCTION: ${optionSelected.option}");
-    print("🚀 ~ file: appbar_options.dart ~ line: 190 ~ TM_FUNCTION: $stateCheck");
+
     String assetName = (pais == "Perú") ? "lib/assets/peru.png" : "lib/assets/ecuador.png";
     String paisID = (pais == "Perú") ? "1" : "2";
 

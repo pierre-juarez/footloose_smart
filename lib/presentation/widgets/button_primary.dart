@@ -26,15 +26,17 @@ class ButtonPrimary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determinar color del botón
     Color colorButton;
+    bool showLoader = false; // Nueva variable para el estado de carga
 
     if (secondary != null && secondary!) {
-      // Si secondary está presente y es true
       colorButton = const Color(0xffC7C6C8).withOpacity(0.4); // Gris claro con 40% de opacidad
     } else if (validator) {
       colorButton = Colors.grey;
+      showLoader = true; // Mostrar loader si validator es true
     } else {
-      colorButton = color != null ? color! : AppColors.primaryMain;
+      colorButton = color ?? AppColors.primaryMain;
     }
 
     return Container(
@@ -45,12 +47,15 @@ class ButtonPrimary extends StatelessWidget {
         borderRadius: BorderRadius.circular(100),
       ),
       child: Center(
-        child: (loading != null && loading!)
-            ? const CircularProgressIndicator()
+        child: showLoader || (loading != null && loading!) // Verifica si el loader debe mostrarse
+            ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white), // Cambia el color aquí si es necesario
+              )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Ícono a la izquierda, si corresponde
                   icon != null && (orientation == null || orientation != "right")
                       ? Icon(
                           icon,
@@ -59,11 +64,15 @@ class ButtonPrimary extends StatelessWidget {
                         )
                       : Container(),
                   icon != null && (orientation == null || orientation != "right") ? const SizedBox(width: 15) : Container(),
+
+                  // Texto del botón
                   Text(
                     title,
                     style: robotoStyle(type != null ? 16 : 17, FontWeight.w600,
                         secondary != null && secondary! ? AppColors.textDark : AppColors.textLight),
                   ),
+
+                  // Ícono a la derecha, si corresponde
                   icon != null && (orientation != null && orientation == "right") ? const SizedBox(width: 15) : Container(),
                   icon != null && (orientation != null && orientation == "right")
                       ? Icon(

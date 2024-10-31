@@ -12,10 +12,7 @@ class LoginScreen extends StatelessWidget {
 
   const LoginScreen({
     super.key,
-    required this.showModal,
   });
-
-  final bool showModal;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +46,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(height: 15.0),
                     const InputPassword(),
                     const SizedBox(height: 30.0),
-                    ButtonInitLogin(showModal: showModal),
+                    const ButtonInitLogin(),
                     const SizedBox(height: 32.0),
                     const ButtonResetPassword(),
                     const SizedBox(height: 70.0),

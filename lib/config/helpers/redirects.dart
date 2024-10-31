@@ -60,6 +60,10 @@ Future<void> redirectToHome(
     FocusScope.of(context).unfocus(); //quitar el teclado cuando se ya  se ingreso el los datos
 
     if (loginStatus) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        SystemChannels.textInput.invokeMethod('TextInput.hide');
+      });
+
       await welcomeSystem(context);
     } else {
       handleError(context, auth.statusCodeLogin);
@@ -96,14 +100,15 @@ Future<void> welcomeSystem(BuildContext context) async {
 }
 
 Future<bool> isLoggedIn(BuildContext context, AuthProvider auth) async {
-  try {
-    final config = await getConfigOrThrow("LOGGED");
-    final urlEncode = config.valor!;
-    final typeRequestEncode = config.typeRequest!;
+  final config = await getConfigOrThrow("LOGGED");
+  final urlEncode = config.valor!;
+  final typeRequestEncode = config.typeRequest!;
 
-    final bool logeado = await auth.isLoggedIn(urlEncode, typeRequestEncode);
-    return logeado;
-  } catch (e) {
-    throw ErrorDescription("Error en isLoggedIn - $e");
-  }
+  final bool logeado = await auth.isLoggedIn(urlEncode, typeRequestEncode);
+  return logeado;
+  // try {
+  // } catch (e) {
+  //   // throw ErrorDescription("Error en isLoggedIn - $e");
+  //   return null;
+  // }
 }

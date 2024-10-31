@@ -39,10 +39,10 @@ class ClientProvider extends ChangeNotifier {
         method: "GET",
       );
 
-      final String url = "${Environment.backSmart}/api-client";
+      final String url = "${Environment.development == "DEV" ? Environment.backSmartDEV : Environment.backSmartPROD}/api-client";
 
       Response resp = await dio.request(url, options: options).timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 25),
         onTimeout: () {
           return Response(
             requestOptions: RequestOptions(path: url),

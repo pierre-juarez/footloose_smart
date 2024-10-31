@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
-import 'package:footloose_tickets/presentation/screens/configuration/configuration_screen.dart';
 import 'package:footloose_tickets/presentation/screens/detail/detail_product_screen.dart';
 import 'package:footloose_tickets/presentation/screens/home/home_screen.dart';
 import 'package:footloose_tickets/presentation/screens/home/splash_screen.dart';
@@ -26,12 +25,10 @@ final appRouter = GoRouter(
       builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
-        path: '/login',
-        name: LoginScreen.name,
-        builder: (context, state) {
-          final bool showModal = state.extra as bool? ?? false;
-          return LoginScreen(showModal: showModal);
-        }),
+      path: '/login',
+      name: LoginScreen.name,
+      builder: (context, state) => const LoginScreen(),
+    ),
     GoRoute(
       path: '/scan',
       name: ScanerPage.name,
@@ -74,11 +71,6 @@ final appRouter = GoRouter(
 
         return PrintScreen(imagePrintsList: imagePrintsList);
       },
-    ),
-    GoRoute(
-      path: '/configuration',
-      name: ConfigurationScreen.name,
-      builder: (context, state) => const ConfigurationScreen(),
     ),
     GoRoute(
       path: '/keyboard-screen',

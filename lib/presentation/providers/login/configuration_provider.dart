@@ -72,25 +72,20 @@ class ConfigurationProvider extends ChangeNotifier {
     dio.options.headers['Authorization'] = 'Basic ${Environment.tokenSmart}';
   }
 
-  Future<void> getConfigs(String idOptionSelected) async {
+  Future<void> getConfigs() async {
     try {
       await _initIsar();
       setupDio();
 
-      Options options = Options(
-        method: "GET",
-        // headers: {
-        //   "Content-Type": "application/json",
-        // },
-      );
+      Options options = Options(method: "POST");
 
       final data = {
         "ambiente": Environment.development,
       };
 
-      final String url = "${Environment.backSmart}/api-configuration/$idOptionSelected";
+      final String url = "${Environment.backSmartURL}/api-configuration";
       Response resp = await dio.request(url, options: options, data: data).timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 25),
         onTimeout: () {
           return Response(
             requestOptions: RequestOptions(path: url),
@@ -113,6 +108,42 @@ class ConfigurationProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> getConfigById(String idOptionSelected) async {
+    try {
+      await _initIsar();
+      setupDio();
+
+      Options options = Options(method: "POST");
+
+      final data = {
+        "ambiente": Environment.development,
+      };
+
+      final String url = "${Environment.backSmartURL}/api-configuration/$idOptionSelected/get-config";
+      Response resp = await dio.request(url, options: options, data: data).timeout(
+        const Duration(seconds: 25),
+        onTimeout: () {
+          return Response(
+            requestOptions: RequestOptions(path: url),
+            statusCode: 408,
+            statusMessage: "Error",
+          );
+        },
+      );
+
+      _statusGetClient = resp.statusCode ?? 400;
+
+      if (resp.statusCode == 200) {
+        final List<Configuration> configs =
+            (resp.data as List).map((json) => Configuration.fromJson(json as Map<String, dynamic>)).toList();
+        await addConfigIsar(configs);
+      }
+    } catch (e) {
+      _statusGetClient = 404;
+      throw ErrorDescription("Error al obtener la configuración by ID - $e");
+    }
+  }
+
   Future<void> addConfigIsar(List<Configuration> configs) async {
     // TODO - VALIDAR PORQUÉ NO SE MANTIENEN EN 6 LAS CONFIGURACIONES
     // TODO - SOLICITAR - CARGAR LAS CONFIGURACIONES AL INICIAR LA APP
@@ -122,7 +153,7 @@ class ConfigurationProvider extends ChangeNotifier {
       () async {
         for (var config in configs) {
           // Buscar el registro por su idConfig
-          await isar.configurations.filter().idConfigEqualTo(config.idOption).deleteAll();
+          // await isar.configurations.filter().idConfigEqualTo(config.idOption).deleteAll();
 
           // Insertar la nueva configuración (esto reemplaza o añade si no existía)
           int insertId = await isar.configurations.put(config);
@@ -135,6 +166,12 @@ class ConfigurationProvider extends ChangeNotifier {
   Future<void> deleteTablesIsar() async {
     await isar.writeTxn(() async {
       await isar.clients.clear();
+      await isar.configurations.clear();
+    });
+  }
+
+  Future<void> deleteTablesConfigurationsIsar() async {
+    await isar.writeTxn(() async {
       await isar.configurations.clear();
     });
   }
