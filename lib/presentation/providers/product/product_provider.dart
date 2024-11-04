@@ -48,7 +48,6 @@ class ProductProvider extends ChangeNotifier {
       infoLog("getProduct statusCode: ${resp.statusCode}");
 
       if (resp.statusCode == 200) {
-        print(resp.data);
         return ProductDetailModel.fromJson(resp.data);
       } else {
         return ProductDetailModel();

@@ -87,7 +87,7 @@ class CameraContainer extends ConsumerWidget {
           );
 
           if (listUpd.isNotEmpty) {
-            bool exists = listUpd.any((p) => p.sku == codeProduct);
+            bool exists = listUpd.any((p) => (p.sku.length == 23) ? p.sku.substring(0, 11) == codeProduct : p.sku == codeProduct);
             if (exists) {
               throw Exception("El producto ya ha sido agregado a la fila");
             }
