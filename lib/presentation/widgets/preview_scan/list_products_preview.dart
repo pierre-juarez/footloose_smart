@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:footloose_tickets/config/helpers/convert_data_product.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/widgets/preview_scan/ticket_detail.dart';
 
 class ListProductsPreview extends StatelessWidget {
-  const ListProductsPreview(
-      {super.key,
-      required this.listProducts,
-      required List<GlobalKey<State<StatefulWidget>>> globalKeys,
-      required this.svgs,
-      required this.scrollController})
-      : _globalKeys = globalKeys;
+  const ListProductsPreview({
+    super.key,
+    required this.listProducts,
+    required List<GlobalKey<State<StatefulWidget>>> globalKeys,
+    required this.svgs,
+    required this.scrollController,
+  }) : _globalKeys = globalKeys;
 
   final List<EtiquetaModel> listProducts;
   final List<GlobalKey<State<StatefulWidget>>> _globalKeys;
@@ -34,7 +35,7 @@ class ListProductsPreview extends StatelessWidget {
                 final etiqueta = listProducts[indexList];
                 final svg = svgs[indexList]; // REVIEW - RangeError (length): Invalid value: Only valid value is 0: 1
                 final titleText =
-                    "${indexList + 1}.- SKU: ${etiqueta.sku} - ${etiqueta.modelo} - ${etiqueta.numberOfPrints} etiqueta${(etiqueta.numberOfPrints) > 1 ? "s" : ""}";
+                    "${indexList + 1}.- SKU: ${convertToUnifiedLabel(etiqueta.sku)} - ${etiqueta.modelo} - ${etiqueta.numberOfPrints} etiqueta${(etiqueta.numberOfPrints) > 1 ? "s" : ""}";
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

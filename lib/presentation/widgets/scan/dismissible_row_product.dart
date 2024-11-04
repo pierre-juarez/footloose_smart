@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footloose_tickets/config/helpers/convert_data_product.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/theme/theme.dart';
@@ -77,7 +78,7 @@ class DismissibleRowProduct extends StatelessWidget {
                                     child: Column(
                                       children: [
                                         Text(
-                                          '¿Estás seguro de que quieres eliminar un producto del SKU: ${product.sku}?',
+                                          '¿Estás seguro de que quieres eliminar un producto del SKU: ${convertToUnifiedLabel(product.sku)}?',
                                           style: AppTextStyles.displaySubtitleModalPais,
                                           textAlign: TextAlign.center,
                                         ),
@@ -137,7 +138,7 @@ class DismissibleRowProduct extends StatelessWidget {
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Producto del SKU: ${product.sku} eliminado'),
+              content: Text('Producto del SKU: ${convertToUnifiedLabel(product.sku)} eliminado'),
               duration: const Duration(milliseconds: 1000),
             ),
           );
@@ -180,7 +181,14 @@ class DismissibleRowProduct extends StatelessWidget {
                   height: 50,
                   child: (product.imageUrl.isNotEmpty) ? ImageFound(path: product.imageUrl) : const ImageNotFound(),
                 ),
-                Text(" SKU ${product.sku} - ${product.modelo}"),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    " SKU: ${convertToUnifiedLabel(product.sku)} - ${product.modelo}",
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
               ],
             ),
           ],

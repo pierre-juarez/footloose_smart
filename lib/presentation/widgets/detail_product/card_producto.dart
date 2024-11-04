@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footloose_tickets/config/helpers/convert_data_product.dart';
 import 'package:footloose_tickets/config/helpers/helpers.dart';
 import 'package:footloose_tickets/config/helpers/roboto_style.dart';
 import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
@@ -70,7 +71,7 @@ class CardProduct extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "SKU: ${etiqueta.sku}",
+                              "SKU: ${convertToUnifiedLabel(etiqueta.sku)}",
                               style: robotoStyle(15, FontWeight.w400, const Color(0xff666666)),
                             ),
                             Text(

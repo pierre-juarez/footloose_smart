@@ -52,7 +52,7 @@ class PreviewPrintScreenState extends ConsumerState<PreviewPrintScreen> {
     List<String> listSvg = [];
 
     for (var i = 0; i < listProducts.length; i++) {
-      final svg = barcode.toSvg(listProducts[i].sku, width: 400, height: 150);
+      final svg = barcode.toSvg(listProducts[i].sku, width: 400, height: 150, drawText: false);
       listSvg.add(svg);
     }
     return listSvg;

@@ -181,8 +181,12 @@ class Datum {
         nombre: json["nombre"] ?? "",
         preciocostoSiva: json["precioCostoSiva"]?.toDouble() ?? 0.0,
         preciobancoCiva: json["precioBancoCiva"]?.toDouble() ?? 0.0,
-        fechacompra: json["fechaCompra"].toString().isNotEmpty ? DateTime.parse(json["fechaCompra"]) : DateTime.now(),
-        fechaing: json["fechaIng"].toString().isNotEmpty ? DateTime.parse(json["fechaIng"]) : DateTime.now(),
+        fechacompra: json["fechaCompra"] != null && json["fechaCompra"].toString().isNotEmpty
+            ? DateTime.parse(json["fechaCompra"].replaceAll("Z", ""))
+            : DateTime.now(),
+        fechaing: json["fechaIng"] != null && json["fechaIng"].toString().isNotEmpty
+            ? DateTime.parse(json["fechaIng"].replaceAll("Z", ""))
+            : DateTime.now(),
         fechaIngCd: json["fechaIngCD"] ?? "",
         fechaIngTd: json["fechaIngTD"] ?? "",
         proveedor: json["proveedor"] ?? "",

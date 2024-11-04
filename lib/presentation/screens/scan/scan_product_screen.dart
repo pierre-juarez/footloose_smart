@@ -6,6 +6,7 @@ import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/appbar_custom.dart';
+import 'package:footloose_tickets/presentation/widgets/floating_button.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/camera_container.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/list_product_queue.dart';
@@ -67,9 +68,9 @@ class ScannerPageState extends ConsumerState<ScanerPage> {
     List<EtiquetaModel> skusUnicos = list.toSet().toList();
 
     Widget? floatingOption = (list.isNotEmpty)
-        ? FloatingActionButton(
+        ? FloatingButton(
             onPressed: () async => await appRouter.pushReplacement('/preview'),
-            child: const Icon(Icons.list),
+            icon: Icons.label_important_outline_sharp,
           )
         : null;
 

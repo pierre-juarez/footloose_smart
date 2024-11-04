@@ -8,6 +8,7 @@ import 'package:footloose_tickets/config/router/app_router.dart';
 import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/product_provider.dart';
+import 'package:footloose_tickets/presentation/providers/product/unified_label_provider.dart';
 import 'package:footloose_tickets/presentation/theme/theme.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/button_outline.dart';
 import 'package:footloose_tickets/presentation/widgets/scan/loading_camera.dart';
@@ -71,6 +72,7 @@ class CameraContainer extends ConsumerWidget {
 
           // Soporte para etiqueta unificada
           if (codeProduct.isNotEmpty && codeProduct.length == 23) {
+            ref.read(unifiedLabelProvider.notifier).setUnifiedLabel(codeProduct); // Guardar la etiqueta unificada
             codeProduct = codeProduct.substring(0, 11);
           }
 

@@ -5,6 +5,7 @@ import 'package:footloose_tickets/infraestructure/models/etiqueta_model.dart';
 import 'package:footloose_tickets/infraestructure/models/product_detail_model.dart';
 import 'package:footloose_tickets/presentation/providers/login/configuration_provider.dart';
 import 'package:footloose_tickets/presentation/providers/product/list_product_provider.dart';
+import 'package:footloose_tickets/presentation/providers/product/unified_label_provider.dart';
 import 'package:uuid/uuid.dart';
 
 Future<EtiquetaModel> convertDataProduct(ProductDetailModel productDetail, BuildContext context, WidgetRef ref) async {
@@ -36,6 +37,8 @@ Future<EtiquetaModel> convertDataProduct(ProductDetailModel productDetail, Build
   final String configID = await config.getConfigId();
   final String formattedPrice = "${configID == "1" ? "S/." : "\$/."} $pvp"; // Configuration type money
 
+  String unifiedLabel = ref.read(unifiedLabelProvider);
+
   EtiquetaModel etiqueta = EtiquetaModel(
     id: const Uuid().v4(),
     nombre: nombre,
@@ -46,7 +49,7 @@ Future<EtiquetaModel> convertDataProduct(ProductDetailModel productDetail, Build
     material: material.trim(),
     precio: formattedPrice,
     talla: talla,
-    sku: sku,
+    sku: unifiedLabel.isNotEmpty ? unifiedLabel : sku,
     cu: "cu",
     fechaCreacion: fechaCreacion,
     temporada: temporada,
@@ -59,12 +62,19 @@ Future<EtiquetaModel> convertDataProduct(ProductDetailModel productDetail, Build
   final list = ref.watch(listProductProvider)['products'] ?? [];
   bool exists = list.any((p) => p.sku == etiqueta.sku);
 
+  EtiquetaModel etiquetaReturn = EtiquetaModel.empty();
+
   if (!exists) {
     ref.read(listProductProvider.notifier).saveProduct(etiqueta);
-    return etiqueta;
+    etiquetaReturn = etiqueta;
   } else {
-    if (!context.mounted) return EtiquetaModel.empty();
+    if (!context.mounted) return etiquetaReturn;
     showError(context, title: "Error", errorMessage: "El producto ya ha sido agregado a la fila");
-    return EtiquetaModel.empty();
   }
+  ref.read(unifiedLabelProvider.notifier).resetLabel();
+  return etiquetaReturn;
 }
+
+String convertToUnifiedLabel(String sku) => (sku.length == 23) ? sku.substring(0, 11) : sku;
+
+String convertSkuToUnifiedLabel(String sku) => (sku.length == 23) ? sku.substring(11) : sku;
