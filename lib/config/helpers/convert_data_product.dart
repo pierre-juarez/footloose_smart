@@ -9,12 +9,13 @@ import 'package:uuid/uuid.dart';
 
 Future<EtiquetaModel> convertDataProduct(ProductDetailModel productDetail, BuildContext context, WidgetRef ref) async {
   final config = ref.read(configurationProvider);
-  final productData = productDetail.data?.first;
 
-  if (productData == null) {
+  if (productDetail.productDetail == null) {
     showError(context, title: "Error", errorMessage: "Datos de producto inválidos");
     return EtiquetaModel.empty();
   }
+
+  final productData = productDetail.productDetail!;
 
   final String temporada = productData.temporada;
   final String tipoArticulo = productData.tipoDeArticulo ?? "-";

@@ -17,6 +17,10 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setupDio() {
+    dio.options.headers['Authorization'] = 'Basic ${Environment.tokenSmart}';
+  }
+
   Future<ProductDetailModel> getProduct(String sku, String urlParam, String typeRequest) async {
     try {
       Options options = Options(method: typeRequest);
@@ -24,8 +28,10 @@ class ProductProvider extends ChangeNotifier {
       final String url = "$urlParam/$sku";
 
       if (!Environment.withAPIProduct) {
-        return ProductDetailModel.fromDatum(ProductDetailModel.getDummyData());
+        return ProductDetailModel.fromDatum();
       }
+
+      setupDio();
 
       Response resp = await dio.request(url, options: options).timeout(
         const Duration(seconds: 25),
@@ -42,6 +48,7 @@ class ProductProvider extends ChangeNotifier {
       infoLog("getProduct statusCode: ${resp.statusCode}");
 
       if (resp.statusCode == 200) {
+        print(resp.data);
         return ProductDetailModel.fromJson(resp.data);
       } else {
         return ProductDetailModel();

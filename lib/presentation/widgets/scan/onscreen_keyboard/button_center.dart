@@ -82,7 +82,7 @@ class ButtonCenterState extends ConsumerState<ButtonCenter> {
 
           ProductDetailModel productDetail = await product.getProduct(skuSearch, widget.urlScan, widget.typeRequest);
 
-          if (productDetail.data == null) {
+          if (productDetail.productDetail == null) {
             throw Exception("Error al obtener detalle del producto, inténtalo nuevamente");
           }
           if (!context.mounted) return;

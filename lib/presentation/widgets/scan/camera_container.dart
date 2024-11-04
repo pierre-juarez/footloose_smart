@@ -93,7 +93,7 @@ class CameraContainer extends ConsumerWidget {
 
           ProductDetailModel productDetail = await product.getProduct(codeProduct, urlScan, typeRequest);
 
-          if (productDetail.data == null) {
+          if (productDetail.productDetail == null) {
             throw Exception("Error al obtener detalle del producto, inténtalo nuevamente");
           }
           if (!context.mounted) return;
