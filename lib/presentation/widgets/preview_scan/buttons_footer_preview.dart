@@ -54,20 +54,19 @@ class ButtonsFooterPreviewState extends ConsumerState<ButtonsFooterPreview> {
       for (int i = 0; i < widget._globalKeys.length; i++) {
         GlobalKey key = widget._globalKeys[i];
 
-        // Desplazarse al widget actual para asegurarse de que esté renderizado
         await widget.scrollController.animateTo(
-          widget.scrollController.position.minScrollExtent + i * 350.0, // Ajusta este valor según el tamaño de cada widget
+          widget.scrollController.position.minScrollExtent + i * 350.0, // Ajusta este valor
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
 
-        await Future.delayed(const Duration(milliseconds: 300)); // Espera un tiempo para asegurarse de que se renderice
+        await Future.delayed(const Duration(milliseconds: 500)); // Aumenta el tiempo de espera
 
         RenderRepaintBoundary? boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
 
         if (boundary != null) {
           if (boundary.debugNeedsPaint) {
-            await Future.delayed(const Duration(milliseconds: 20));
+            await Future.delayed(const Duration(milliseconds: 50));
             await WidgetsBinding.instance.endOfFrame;
             boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
             if (boundary == null || boundary.debugNeedsPaint) {
@@ -76,10 +75,14 @@ class ButtonsFooterPreviewState extends ConsumerState<ButtonsFooterPreview> {
             }
           }
 
-          // Capturar la imagen del widget
-          ui.Image image = await boundary.toImage(pixelRatio: 1.0);
-          ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png) ?? ByteData(0);
-          pngBytesList.add(byteData.buffer.asUint8List());
+          try {
+            ui.Image image = await boundary.toImage(pixelRatio: 1.0);
+            ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png) ?? ByteData(0);
+            pngBytesList.add(byteData.buffer.asUint8List());
+          } catch (e) {
+            infoLog("Error al capturar la imagen del widget - $e");
+            throw Exception("Error al capturar la imagen del widget $key: $e");
+          }
         } else {
           infoLog("No se encontró RenderRepaintBoundary para la etiqueta $key");
           throw Exception("No se encontró RenderRepaintBoundary para una de las etiquetas.");
@@ -118,7 +121,6 @@ class ButtonsFooterPreviewState extends ConsumerState<ButtonsFooterPreview> {
           }
 
           final jsonEncodedList = Uri.encodeComponent(jsonEncode(imagePrintsList));
-          Navigator.pop(context);
           context.push('/print?images=$jsonEncodedList');
         } else {
           throw Exception("Error capturando las imágenes y navegando a la pantalla de impresión");
@@ -126,6 +128,8 @@ class ButtonsFooterPreviewState extends ConsumerState<ButtonsFooterPreview> {
       } catch (e) {
         String error = e.toString().replaceAll("Exception: ", "");
         showError(context, title: "Error", errorMessage: "Error al capturar las imágenes. $error");
+      } finally {
+        Navigator.pop(context);
       }
     }
 
